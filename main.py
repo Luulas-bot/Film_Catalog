@@ -1,7 +1,6 @@
 # Imports
 import pygame
 import sys
-import pyodbc
 from Files.Constants import size_login, WHITE, clock, fps, BLUE, GREY, LIGHTGREY, color_user_textbox, color_pass_textbox
 
 # Inicialización de pygame
