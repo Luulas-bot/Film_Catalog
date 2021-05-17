@@ -1,13 +1,15 @@
 import pygame
 import sys
-from Files.Constants import WHITE, BLUE, GRAY, LIGHTGRAY, color_re_pass_textbox
+from Files.Constants import WHITE, BLUE, GRAY, LIGHTGRAY, LIGHTBLUE, color_re_pass_textbox
 
 class Sign_up():
 
+    # Función constructora
     def __init__(self, size):
         self.size_sign_up = size
         self.init_stats()
 
+    # Función que setea las variables inciales
     def init_stats(self):
         self.screen = pygame.display.set_mode(self.size_sign_up)
         
@@ -18,11 +20,11 @@ class Sign_up():
         font4 = pygame.font.SysFont("consolas", 20, bold = True)
         self.text_box_font1 = pygame.font.SysFont("consolas", 20)
         self.text_box_font2 = pygame.font.SysFont("consolas", 20)
-        self.new_user_title = font1.render("Crea un nuevo", True, BLUE)
-        self.new_user_title_2 = font1.render("usuario y contraseña", True, BLUE)
-        self.username = font2.render("Nuevo usuario", True, BLUE)
-        self.password = font2.render("Contraseña", True, BLUE)
-        self.re_password = font4.render("Re-escriba la contraseña", True, BLUE)
+        self.new_user_title = font1.render("Crea un nuevo", True, LIGHTBLUE)
+        self.new_user_title_2 = font1.render("usuario y contraseña", True, LIGHTBLUE)
+        self.username = font2.render("Nuevo usuario", True, LIGHTBLUE)
+        self.password = font2.render("Contraseña", True, LIGHTBLUE)
+        self.re_password = font4.render("Re-escriba la contraseña", True, LIGHTBLUE)
         
         # Variables modificables del texto entrado por el usuario
         self.username_text = ""
@@ -41,79 +43,81 @@ class Sign_up():
         self.pass_textbox_active = False
         self.re_pass_textbox_active = False
     
+    # Función que registra los eventos
     def events(self):
         for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    sys.exit()
+            if event.type == pygame.QUIT:
+                sys.exit()
 
-                # Condiciones que registran la si está presionado o no una textbox
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if self.user_text_box.collidepoint(event.pos):
-                        self.user_textbox_active = True
-                    else:
-                        self.user_textbox_active = False  
-                    if self.pass_text_box.collidepoint(event.pos):
-                        self.pass_textbox_active = True
-                    else:
-                        self.pass_textbox_active = False 
-                    if self.re_pass_text_box.collidepoint(event.pos):
-                        self.re_pass_textbox_active = True
-                    else:
-                        self.re_pass_textbox_active = False
+            # Condiciones que registran la si está presionado o no una textbox
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if self.user_text_box.collidepoint(event.pos):
+                    self.user_textbox_active = True
+                else:
+                    self.user_textbox_active = False  
+                if self.pass_text_box.collidepoint(event.pos):
+                    self.pass_textbox_active = True
+                else:
+                    self.pass_textbox_active = False 
+                if self.re_pass_text_box.collidepoint(event.pos):
+                    self.re_pass_textbox_active = True
+                else:
+                    self.re_pass_textbox_active = False
 
-                # Condiciones que registran lo que presiona el usuario y lo guardan en las variables.
-                if self.user_textbox_active:
-                    if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_BACKSPACE:
-                            self.username_text = self.username_text[:-1]
-                        elif len(self.username_text) < 26:
-                            self.username_text += event.unicode
-                if self.pass_textbox_active:
-                    if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_BACKSPACE:
-                            self.password_text = self.password_text[:-1]
-                        elif len(self.password_text) < 26:
-                            self.password_text += event.unicode
-                if self.pass_textbox_active:
-                    if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_BACKSPACE:
-                            self.hidden_password = self.hidden_password[:-1]
-                        elif len(self.hidden_password) < 26:
-                            self.hidden_password += "*"
-                if self.re_pass_textbox_active:
-                    if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_BACKSPACE:
-                            self.re_password_text = self.re_password_text[:-1]
-                        elif len(self.re_password_text) < 26:
-                            self.re_password_text += event.unicode
-                if self.re_pass_textbox_active:
-                    if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_BACKSPACE:
-                            self.re_hidden_password = self.re_hidden_password[:-1]
-                        elif len(self.re_hidden_password) < 26:
-                            self.re_hidden_password += "*"
+            # Condiciones que registran lo que presiona el usuario y lo guardan en las variables.
+            if self.user_textbox_active:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_BACKSPACE:
+                        self.username_text = self.username_text[:-1]
+                    elif len(self.username_text) < 26:
+                        self.username_text += event.unicode
+            if self.pass_textbox_active:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_BACKSPACE:
+                        self.password_text = self.password_text[:-1]
+                    elif len(self.password_text) < 26:
+                        self.password_text += event.unicode
+            if self.pass_textbox_active:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_BACKSPACE:
+                        self.hidden_password = self.hidden_password[:-1]
+                    elif len(self.hidden_password) < 26:
+                        self.hidden_password += "*"
+            if self.re_pass_textbox_active:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_BACKSPACE:
+                        self.re_password_text = self.re_password_text[:-1]
+                    elif len(self.re_password_text) < 26:
+                        self.re_password_text += event.unicode
+            if self.re_pass_textbox_active:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_BACKSPACE:
+                        self.re_hidden_password = self.re_hidden_password[:-1]
+                    elif len(self.re_hidden_password) < 26:
+                        self.re_hidden_password += "*"
 
+    # Función que dibuja por pantalla los elementos
     def draw_on_screen(self):
-        self.screen.fill(WHITE)
+        self.screen.fill(GRAY)
             
         # Cambio del color de las textboxes dependiendo si están presionadas o no
         if self.user_textbox_active:
-            color_user_textbox = GRAY
+            color_user_textbox = WHITE
         else:
             color_user_textbox = LIGHTGRAY
         if self.pass_textbox_active:
-            color_pass_textbox = GRAY
+            color_pass_textbox = WHITE
         else:
             color_pass_textbox = LIGHTGRAY
         if self.re_pass_textbox_active:
-            color_re_pass_textbox = GRAY
+            color_re_pass_textbox = WHITE
         else:
             color_re_pass_textbox = LIGHTGRAY
 
         # Se dibujan por pantalla las textboxes
-        pygame.draw.rect(self.screen, color_user_textbox, self.user_text_box)
-        pygame.draw.rect(self.screen, color_pass_textbox, self.pass_text_box)
-        pygame.draw.rect(self.screen, color_re_pass_textbox, self.re_pass_text_box)
+        pygame.draw.rect(self.screen, color_user_textbox, self.user_text_box, 0, 5)
+        pygame.draw.rect(self.screen, color_pass_textbox, self.pass_text_box, 0, 5)
+        pygame.draw.rect(self.screen, color_re_pass_textbox, self.re_pass_text_box, 0, 5)
             
         # Se dibujan por pantalla los títulos y subtítulos
         self.screen.blit(self.new_user_title, (110, 30))
