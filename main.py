@@ -6,6 +6,7 @@ from Files.Constants import (LIGHTBLUE, size_login, WHITE, clock, fps, BLUE, GRA
                             )
 from Files.Sign_up import Sign_up
 from Files.main_menu import Main_menu
+from Files.Database_Connection import c, e
 
 # Inicialización de pygame
 pygame.init()
@@ -17,8 +18,12 @@ class Login():
         self.size = size
         self.init_stats()
     
+    # Función que corre la pantalla del login
     def run_login(self):
         self.done = True
+
+        self.screen = pygame.display.set_mode(self.size)
+        pygame.display.set_caption("Login")
 
        # Bucle principal
         while self.done:
@@ -28,6 +33,7 @@ class Login():
             pygame.display.flip()
             clock.tick(fps)
    
+    # función que registra los eventos
     def events(self):
         for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -84,28 +90,42 @@ class Login():
                             self.password_text = self.password_text[:-1]
                             self.hidden_password = self.hidden_password[:-1]
                             self.pass_textbox_active = False
+                            self.user_textbox_active = True
 
                 # Condiciones para el enter
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_RETURN:
-                        self.done = False
-                        pygame.display.quit()
-                        return run_main_menu()
-                
+                try:
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_RETURN:
+                            self.password_text = self.password_text[:-1]
+                            self.hidden_password = self.hidden_password[:-1]
+                            e.select_login(self.username_text, self.password_text)
+                            if str(self.username_text) == str(e.user_sl[0]):
+                                self.done = False
+                                pygame.display.quit()
+                                return run_main_menu()
+                            else:
+                                pass
+                except IndexError:
+                    print("El usuario no existe")
+                    self.sign_up_corr_bol = False
+                    self.wrong_user = True
+    
     # Función que determina las variables iniciales
     def init_stats(self):
-        self.screen = pygame.display.set_mode(self.size)
         
         # Fuentes y renderizados de los textos estáticos
         font1 = pygame.font.SysFont("consolas", 70, bold = True)
         font2 = pygame.font.SysFont("consolas", 30, bold = True)
         font3 = pygame.font.SysFont("consolas", 15, bold = True)
+        font4 = pygame.font.SysFont("consolas", 20, bold = True)
         self.text_box_font1 = pygame.font.SysFont("consolas", 20)
         self.text_box_font2 = pygame.font.SysFont("consolas", 20)
         self.bienvenido = font1.render("Bienvenido", True, LIGHTBLUE)
         self.username = font2.render("Usuario", True, LIGHTBLUE)
         self.password = font2.render("Contraseña", True, LIGHTBLUE)
         self.new_user = font3.render("¿No tienes un usuario todavia?", True, LIGHTBLUE)
+        self.sign_up_corr = font4.render("El usuario se ha creado correctamente", True, LIGHTBLUE)
+        self.wrong_user_text = font4.render("El usuario o la contraseña son incorrectos", True, LIGHTBLUE)
         
         # Variables modificables del texto entrado por el usuario
         self.username_text = ""
@@ -120,6 +140,10 @@ class Login():
         # Boleanos para saber si las textboxes están activas o no
         self.user_textbox_active = False
         self.pass_textbox_active = False
+
+        # Boleanos para manejar los mensajes al usuario
+        self.sign_up_corr_bol = False
+        self.wrong_user = False
 
     def draw_on_screen(self):
         self.screen.fill(GRAY)
@@ -150,6 +174,15 @@ class Login():
         text_surface2 = self.text_box_font2.render(self.hidden_password, True, BLUE)
         self.screen.blit(text_surface2, (107, 338))
 
+        # Se dibuja por pantalla que se ha creado un nuevo usuario
+        if su.new_user_created_text >= 1:
+            if self.sign_up_corr_bol:
+                self.screen.blit(self.sign_up_corr, (50, 410))
+        
+        # Se dibuja por pantalla si el usuario o las contraseñas son incorrectas
+        if self.wrong_user:
+            self.screen.blit(self.wrong_user_text, (25, 410))
+
 # Creación de las clases que serán ventanas
 su = Sign_up(size_sign_up)
 m = Main_menu(size_main_menu)
@@ -179,9 +212,24 @@ def run_sign_up():
         su.events()
         su.draw_on_screen() 
 
+        # Condición para la creación de una nueva ventana de Login luego el Sign Up
+        if su.new_user_created >= 1:
+            pygame.display.quit()
+            su.new_user_created -= 1
+            lg.sign_up_corr_bol = True
+            lg.wrong_user = False
+            lg.username_text = ""
+            lg.password_text = ""
+            lg.hidden_password = ""
+            lg.run_login()
+            break
+
         pygame.display.flip()
         clock.tick(fps)
 
 # Creacion de un objeto de la clase y definicion de las variables
 lg = Login(size_login)
 lg.run_login()
+
+# TODO: Mejorar que cuando se presione el enter para entrar con el usuario y la contraseña, se borre el último caracter dependiendo 
+# si está activo el cuadro de texto del user o del password.

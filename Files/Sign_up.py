@@ -1,6 +1,8 @@
 import pygame
 import sys
 from Files.Constants import WHITE, BLUE, GRAY, LIGHTGRAY, LIGHTBLUE, color_re_pass_textbox
+from Files.Database_Connection import c, e
+from sqlalchemy.exc import IntegrityError
 
 class Sign_up():
 
@@ -15,7 +17,6 @@ class Sign_up():
         
         # Fuentes y renderizados de los textos estáticos
         font1 = pygame.font.SysFont("consolas", 40, bold = True)
-        font3 = pygame.font.SysFont("consolas", 40, bold = True)
         font2 = pygame.font.SysFont("consolas", 30, bold = True)
         font4 = pygame.font.SysFont("consolas", 20, bold = True)
         self.text_box_font1 = pygame.font.SysFont("consolas", 20)
@@ -25,7 +26,20 @@ class Sign_up():
         self.username = font2.render("Nuevo usuario", True, LIGHTBLUE)
         self.password = font2.render("Contraseña", True, LIGHTBLUE)
         self.re_password = font4.render("Re-escriba la contraseña", True, LIGHTBLUE)
-        
+
+        # Fuentes y textos del Sign Up correctamente con sus errores
+        font5 = pygame.font.SysFont("consolas", 20, bold = True)
+        font6 = pygame.font.SysFont("consolas", 17, bold = True)
+        self.text1 = font5.render("Las contraseñas no concuerdan", True, LIGHTBLUE)
+        self.text2 = font6.render("La contraseña debe ser mayor a 6 carácteres", True, LIGHTBLUE)
+        self.text3 = font6.render("El campo 'Usuario' no puede estar en blanco", True, LIGHTBLUE)
+        self.text4 = font5.render("El nombre de usuario ya está ocupado", True, LIGHTBLUE)
+
+        # Boleanos de los errores
+        self.pass_no_match = False
+        self.pass_no_min = False
+        self.user_no_min = False
+
         # Variables modificables del texto entrado por el usuario
         self.username_text = ""
         self.password_text = ""
@@ -42,6 +56,11 @@ class Sign_up():
         self.user_textbox_active = False
         self.pass_textbox_active = False
         self.re_pass_textbox_active = False
+        self.user_error = False
+
+        # Variable que registra si se ha creado un usuario
+        self.new_user_created = 0
+        self.new_user_created_text = 0
     
     # Función que registra los eventos
     def events(self):
@@ -96,6 +115,78 @@ class Sign_up():
                     elif len(self.re_hidden_password) < 26:
                         self.re_hidden_password += "*"
 
+            # Condición que registra el enter
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    if self.pass_textbox_active:
+                        self.password_text = self.password_text[:-1]
+                        self.hidden_password = self.hidden_password[:-1]
+                    elif self.re_pass_textbox_active:
+                        self.re_password_text = self.re_password_text[:-1]
+                        self.re_hidden_password = self.re_hidden_password[:-1]
+           
+            # Condiciones que registran si son válidas las entradas del usuario, la contraseña y la confirmación de la contraseña
+            try:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        if len(self.password_text) > 6: 
+                            if self.password_text == self.re_password_text:
+                                if len(self.username_text) > 0:
+                                    e.insert(self.username_text, self.password_text)
+                                    self.new_user_created += 1
+                                    self.new_user_created_text += 1
+                                    self.username_text = ""
+                                    self.password_text = ""
+                                    self.hidden_password = ""
+                                    self.re_password_text = ""
+                                    self.re_hidden_password = ""
+                            
+                                else:
+                                    self.user_no_min = True
+                                    self.pass_no_min = False
+                                    self.pass_no_match = False
+                                    self.user_error = False
+                            else:
+                                self.pass_no_match = True
+                                self.pass_no_min = False
+                                self.user_no_min = False
+                                self.user_error = False
+                        else:
+                            self.pass_no_min = True
+                            self.pass_no_match = False
+                            self.user_no_min = False
+                            self.user_error = False
+
+                if self.user_textbox_active:
+                        if event.type == pygame.KEYDOWN:
+                            if event.key == pygame.K_TAB:
+                                self.username_text = self.username_text[:-1]
+                                self.user_textbox_active = False
+                                self.pass_textbox_active = True
+                                self.re_pass_textbox_active = False
+                elif self.pass_textbox_active:
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_TAB:
+                            self.password_text = self.password_text[:-1]
+                            self.hidden_password = self.hidden_password[:-1]
+                            self.pass_textbox_active = False
+                            self.user_textbox_active = False
+                            self.re_pass_textbox_active = True
+                elif self.re_pass_textbox_active:
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_TAB:
+                            self.re_password_text = self.re_password_text[:-1]
+                            self.re_hidden_password = self.re_hidden_password[:-1]
+                            self.pass_textbox_active = False
+                            self.user_textbox_active = True
+                            self.re_pass_textbox_active = False
+            except IntegrityError:
+                self.pass_no_min = False
+                self.pass_no_match = False
+                self.user_no_min = False
+                self.user_error = True
+                c.session.rollback()
+
     # Función que dibuja por pantalla los elementos
     def draw_on_screen(self):
         self.screen.fill(GRAY)
@@ -134,3 +225,11 @@ class Sign_up():
         text_surface3 = self.text_box_font1.render(self.re_hidden_password, True, BLUE)
         self.screen.blit(text_surface3, (107, 393))
  
+        if self.pass_no_match:
+            self.screen.blit(self.text1, (90, 450))
+        if self.pass_no_min:
+            self.screen.blit(self.text2, (60, 450))
+        if self.user_no_min:
+            self.screen.blit(self.text3, (60, 450))
+        if self.user_error:
+            self.screen.blit(self.text4, (60, 450))

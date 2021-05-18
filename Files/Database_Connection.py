@@ -4,6 +4,9 @@ from sqlalchemy import Column, String, Integer, DateTime
 from datetime import datetime
 from sqlalchemy.orm import sessionmaker
 
+test_user = 'a'
+test_pass = '1234567'
+
 Base = declarative_base()
 
 class Connection():
@@ -27,18 +30,18 @@ class Connection():
     def run_engine(self):
         self.engine = create_engine(self.DATABASE_CONNECTION)
 
-c = Connection()
-
 class User(Base):
     __tablename__ = 'Usuario'
 
     id = Column(Integer(), primary_key = True)
     username = Column(String(50), nullable = False, unique = True)
-    password = Column(String(50), nullable = False, unique = True)
+    password = Column(String(50), nullable = False, unique = False)
     created_at = Column(DateTime, default = datetime.now)
 
     def __str__(self):
         return self.username
+
+c = Connection()
 
 class Execute():
     
@@ -49,17 +52,27 @@ class Execute():
 
     def insert(self, in_var1, in_var2):
         self.in_var1 = in_var1
-        self.in_var2 = in_var1
-        self.user = User(username = f'{in_var1}', password = f'{in_var2}')
+        self.in_var2 = in_var2
+        self.user = User(username = f'{self.in_var1}', password = f'{self.in_var2}')
 
         c.session.add(self.user)
 
         c.session.commit()
         
 
-    def select(self):
-        pass
+    def select_login(self, username, password):
+        self.username_sl = username
+        self.password_sl = password
+        self.user_sl = c.session.query(User).filter(
+            User.username == self.username_sl
+        ).filter(
+            User.password == self.password_sl
+        )  
 
+        #print(self.user_sl[0])
+
+        #self.final_user_sl = self.user_sl[0]
+        #print(self.final_user_sl)
     def update(self):
         pass
 
@@ -75,3 +88,4 @@ e = Execute()
 # e.insert()
 # e.select()
 # e.update()
+#e.select_login("a", "1234567")
