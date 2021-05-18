@@ -96,8 +96,11 @@ class Login():
                 try:
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_RETURN:
-                            self.password_text = self.password_text[:-1]
-                            self.hidden_password = self.hidden_password[:-1]
+                            if self.pass_textbox_active:
+                                self.password_text = self.password_text[:-1]
+                                self.hidden_password = self.hidden_password[:-1]
+                            elif self.user_textbox_active:
+                                self.username_text = self.username_text[:-1]
                             e.select_login(self.username_text, self.password_text)
                             if str(self.username_text) == str(e.user_sl[0]):
                                 self.done = False
@@ -106,7 +109,6 @@ class Login():
                             else:
                                 pass
                 except IndexError:
-                    print("El usuario no existe")
                     self.sign_up_corr_bol = False
                     self.wrong_user = True
     
@@ -231,5 +233,3 @@ def run_sign_up():
 lg = Login(size_login)
 lg.run_login()
 
-# TODO: Mejorar que cuando se presione el enter para entrar con el usuario y la contraseña, se borre el último caracter dependiendo 
-# si está activo el cuadro de texto del user o del password.
