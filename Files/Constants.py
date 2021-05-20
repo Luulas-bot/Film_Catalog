@@ -33,6 +33,19 @@ worst_button = pygame.image.load("Images/worst_button.png")
 country_button = pygame.image.load("Images/country_button.png")
 exit_button = pygame.image.load("Images/exit_button.png")
 
+# Generos
+action_button = pygame.image.load("Images/action_button.png")
+science_fiction_button = pygame.image.load("Images/science_fiction_button.png")
+comedy_button = pygame.image.load("Images/comedy_button.png")
+drama_button = pygame.image.load("Images/drama_button.png")
+fantasy_button = pygame.image.load("Images/fantasy_button.png")
+melodrama_button = pygame.image.load("Images/melodrama_button.png")
+musical_button = pygame.image.load("Images/musical_button.png")
+romance_button = pygame.image.load("Images/romance_button.png")
+suspense_button = pygame.image.load("Images/suspense_button.png")
+terror_button = pygame.image.load("Images/terror_button.png")
+documentary_button = pygame.image.load("Images/documentary_button.png")
+
 # Imágenes de los botones presionados
 all_button_pressed = pygame.image.load("Images/all_pressed_button.png")
 genre_button_pressed = pygame.image.load("Images/genre_pressed_button.png")

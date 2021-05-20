@@ -54,40 +54,73 @@ class Main_menu():
             elif event.type == pygame.MOUSEBUTTONUP:
                 if self.all_button_rect.collidepoint(mx, my):
                     self.all_button_active = False
+                    self.genre_button_active = False
+                    self.to_watch_button_active = False
+                    self.already_seen_button_active = False
+                    self.top_button_active = False
+                    self.worst_button_active = False
+                    self.country_button_active = False
+                    self.exit_button_active = False
 
             # genre_button
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if self.genre_button_rect.collidepoint(mx, my):
-                    self.genre_button_active = True
+                if self.genre_button_active == False:
+                    if self.genre_button_rect.collidepoint(mx, my):
+                        self.genre_button_active = True
+                else:
+                    if self.genre_button_rect.collidepoint(mx, my):
+                        self.genre_button_active = False
+
 
             # to_watch_button
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if self.to_watch_button_rect.collidepoint(mx, my):
-                    self.to_watch_button_active = True
-                    self.already_seen_button_active = False
+                if self.to_watch_button_active == False:
+                    if self.to_watch_button_rect.collidepoint(mx, my):
+                        self.to_watch_button_active = True
+                        self.already_seen_button_active = False
+                else:
+                    if self.to_watch_button_rect.collidepoint(mx, my):
+                        self.to_watch_button_active = False
             
             # already_seen_button
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if self.already_seen_button_rect.collidepoint(mx, my):
-                    self.already_seen_button_active = True
-                    self.to_watch_button_active = False
-            
+                if self.already_seen_button_active == False:
+                    if self.already_seen_button_rect.collidepoint(mx, my):
+                        self.already_seen_button_active = True
+                        self.to_watch_button_active = False
+                else:
+                    if self.already_seen_button_rect.collidepoint(mx, my):
+                        self.already_seen_button_active = False
+
             # top_button
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if self.top_button_rect.collidepoint(mx, my):
-                    self.top_button_active = True
-                    self.worst_button_active = False
+                if self.top_button_active == False:
+                    if self.top_button_rect.collidepoint(mx, my):
+                        self.top_button_active = True
+                        self.worst_button_active = False
+                else:
+                    if self.top_button_rect.collidepoint(mx, my):
+                        self.top_button_active = False
 
             # worst_button
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if self.worst_button_rect.collidepoint(mx, my):
-                    self.worst_button_active = True
-                    self.top_button_active = False
+                if self.worst_button_active == False:    
+                    if self.worst_button_rect.collidepoint(mx, my):
+                        self.worst_button_active = True
+                        self.top_button_active = False
+
+                else:
+                    if self.worst_button_rect.collidepoint(mx, my):
+                        self.worst_button_active = False
 
             # country_button           
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if self.country_button_rect.collidepoint(mx, my):
-                    self.country_button_active = True
+                if self.country_button_active == False:    
+                    if self.country_button_rect.collidepoint(mx, my):
+                        self.country_button_active = True
+                else:
+                    if self.country_button_rect.collidepoint(mx, my):
+                        self.country_button_active = False
             
             # exit_button
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -130,7 +163,7 @@ class Main_menu():
         if self.exit_button_active:
             self.screen.blit(exit_button_pressed,(0, 700))
 
-# TODO - hay que hacer 11 botones mas que contengan los diferentes generos de peliculas. cada uno de estos va a ser de 120 x 60
+# TODO - Hacer los boleanos de los generos y dibujarlos por pantalla
 # - Tambien para buscar los paises ya que son muchos es mejor dejar que el usuario escriba el pais que quiera buscar. 
 # Poner todos los paises que quiero en una base de datos y ver si concuerdan con lo que el usuario, escribe, si es asi,
 # poner una condicion que busque por el nombre del pais todas las peliculas
