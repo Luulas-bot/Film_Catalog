@@ -3,7 +3,11 @@ import sys
 from Files.Constants import (WHITE, BLUE, GRAY, all_button, genre_button, to_watch_button, already_seen_button,
                             top_button, worst_button, country_button, exit_button, all_button_pressed, genre_button_pressed,
                             to_watch_button_pressed, already_seen_button_pressed, top_button_pressed, worst_button_pressed,
-                            country_button_pressed, exit_button_pressed
+                            country_button_pressed, exit_button_pressed, action_button, science_fiction_button, comedy_button,
+                            drama_button, fantasy_button, melodrama_button, musical_button, romance_button, suspense_button,
+                            terror_button, documentary_button, action_pressed_button, comedy_pressed_button, science_fiction_pressed_button,
+                            drama_pressed_button, fantasy_pressed_button, melodrama_pressed_button, musical_pressed_button, romance_pressed_button,
+                            suspense_pressed_button, terror_pressed_button, documentary_pressed_button
                             )
 
 class Main_menu():
@@ -27,6 +31,25 @@ class Main_menu():
         self.country_button_active = False
         self.exit_button_active = False
 
+        # Boleanos para saber si los botónes de género están individualmente presionados
+        self.action_button_active = False
+        self.comedy_button_active = False
+        self.science_fiction_button_active = False
+        self.drama_button_active = False
+        self.fantasy_button_active = False
+        self.melodrama_button_active = False
+        self.musical_button_active = False
+        self.romance_button_active = False
+        self.suspense_button_active = False
+        self.terror_button_active = False
+        self.documentary_button_active = False
+
+        # Boleano para saber si los botones de los géneros están presionados o no
+        self.all_genre_buttons_active = False
+
+        # Boleano para saber si los botones de los países están presionados o no
+        self.all_country_buttons_active = False
+
         # Hitboxes de los botones
         self.all_button_rect = pygame.Rect(0, 0, 200, 100)
         self.genre_button_rect = pygame.Rect(0, 100, 200, 100)
@@ -36,6 +59,19 @@ class Main_menu():
         self.worst_button_rect = pygame.Rect(0, 500, 200, 100)
         self.country_button_rect = pygame.Rect(0, 600, 200, 100)
         self.exit_button_rect = pygame.Rect(0, 700, 200, 100)
+
+        # Hitboxes de los botones de género
+        self.action_button_rect = pygame.Rect(200, 70, 120, 60)
+        self.science_fiction_button_rect = pygame.Rect(200, 130, 120, 60)
+        self.comedy_button_rect = pygame.Rect(200, 190, 120, 60)
+        self.drama_button_rect = pygame.Rect(200, 250, 120, 60)
+        self.fantasy_button_rect = pygame.Rect(200, 310, 120, 60)
+        self.melodrama_button_rect = pygame.Rect(200, 370, 120, 60)
+        self.musical_button_rect = pygame.Rect(200, 430, 120, 60)
+        self.romance_button_rect = pygame.Rect(200, 490, 120, 60)
+        self.suspense_button_rect = pygame.Rect(200, 550, 120, 60)
+        self.terror_button_rect = pygame.Rect(200, 610, 120, 60)
+        self.documentary_button_rect = pygame.Rect(200, 670, 120, 60)
 
     # Función que registra los eventos
     def events(self):
@@ -71,6 +107,10 @@ class Main_menu():
                     if self.genre_button_rect.collidepoint(mx, my):
                         self.genre_button_active = False
 
+            # genre buttons
+            if self.genre_button_active == True:
+                self.all_genre_buttons_active = True
+                self.all_country_buttons_active = False
 
             # to_watch_button
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -131,6 +171,119 @@ class Main_menu():
                     self.exit_button_active = False
                     sys.exit()
 
+            # Botónes de género
+            if self.all_genre_buttons_active:
+                
+                # Action
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if self.action_button_rect.collidepoint(mx, my):
+                        self.action_button_active = True
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    if self.action_button_rect.collidepoint(mx, my):
+                        self.action_button_active = False
+                        self.all_genre_buttons_active = False
+                        self.genre_button_active = False
+
+                # Comedy
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if self.comedy_button_rect.collidepoint(mx, my):
+                        self.comedy_button_active = True
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    if self.comedy_button_rect.collidepoint(mx, my):
+                        self.comedy_button_active = False
+                        self.all_genre_buttons_active = False
+                        self.genre_button_active = False
+                
+                # Science fiction
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if self.science_fiction_button_rect.collidepoint(mx, my):
+                        self.science_fiction_button_active = True
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    if self.science_fiction_button_rect.collidepoint(mx, my):
+                        self.science_fiction_button_active = False
+                        self.all_genre_buttons_active = False
+                        self.genre_button_active = False
+                
+                # Drama
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if self.drama_button_rect.collidepoint(mx, my):
+                        self.drama_button_active = True
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    if self.drama_button_rect.collidepoint(mx, my):
+                        self.drama_button_active = False
+                        self.all_genre_buttons_active = False
+                        self.genre_button_active = False
+                
+                # Fanatasy
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if self.fantasy_button_rect.collidepoint(mx, my):
+                        self.fantasy_button_active = True
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    if self.fantasy_button_rect.collidepoint(mx, my):
+                        self.fantasy_button_active = False
+                        self.all_genre_buttons_active = False
+                        self.genre_button_active = False
+                
+                # Melodrama
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if self.melodrama_button_rect.collidepoint(mx, my):
+                        self.melodrama_button_active = True
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    if self.action_button_rect.collidepoint(mx, my):
+                        self.action_button_active = False
+                        self.all_genre_buttons_active = False
+                        self.genre_button_active = False
+                
+                # Musical
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if self.action_button_rect.collidepoint(mx, my):
+                        self.action_button_active = True
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    if self.action_button_rect.collidepoint(mx, my):
+                        self.action_button_active = False
+                        self.all_genre_buttons_active = False
+                        self.genre_button_active = False
+                
+                # Romance
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if self.action_button_rect.collidepoint(mx, my):
+                        self.action_button_active = True
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    if self.action_button_rect.collidepoint(mx, my):
+                        self.action_button_active = False
+                        self.all_genre_buttons_active = False
+                        self.genre_button_active = False
+                
+                # Suspense
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if self.action_button_rect.collidepoint(mx, my):
+                        self.action_button_active = True
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    if self.action_button_rect.collidepoint(mx, my):
+                        self.action_button_active = False
+                        self.all_genre_buttons_active = False
+                        self.genre_button_active = False
+
+                # Terror
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if self.action_button_rect.collidepoint(mx, my):
+                        self.action_button_active = True
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    if self.action_button_rect.collidepoint(mx, my):
+                        self.action_button_active = False
+                        self.all_genre_buttons_active = False
+                        self.genre_button_active = False
+
+                # Documentary
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if self.action_button_rect.collidepoint(mx, my):
+                        self.action_button_active = True
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    if self.action_button_rect.collidepoint(mx, my):
+                        self.action_button_active = False
+                        self.all_genre_buttons_active = False
+                        self.genre_button_active = False
+
     # Función que dibuja por pantalla los elementos
     def draw_on_screen(self):
         self.screen.fill(GRAY)
@@ -163,6 +316,21 @@ class Main_menu():
         if self.exit_button_active:
             self.screen.blit(exit_button_pressed,(0, 700))
 
+        # Dibuja los botónes de género por pantalla
+        if self.all_genre_buttons_active == True:
+            self.screen.blit(action_button, (200, 70))
+            self.screen.blit(science_fiction_button, (200, 130))
+            self.screen.blit(comedy_button, (200, 190))
+            self.screen.blit(drama_button, (200, 250))
+            self.screen.blit(fantasy_button, (200, 310))
+            self.screen.blit(melodrama_button, (200, 370))
+            self.screen.blit(musical_button, (200, 430))
+            self.screen.blit(romance_button, (200, 490))
+            self.screen.blit(suspense_button, (200, 550))
+            self.screen.blit(terror_button, (200, 610))
+            self.screen.blit(documentary_button, (200, 670))
+
+    
 # TODO - Hacer los boleanos de los generos y dibujarlos por pantalla
 # - Tambien para buscar los paises ya que son muchos es mejor dejar que el usuario escriba el pais que quiera buscar. 
 # Poner todos los paises que quiero en una base de datos y ver si concuerdan con lo que el usuario, escribe, si es asi,
