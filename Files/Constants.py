@@ -1,4 +1,5 @@
 import pygame
+from Files.Buttons import Buttons
 
 pygame.init()
 
@@ -22,49 +23,48 @@ clock = pygame.time.Clock()
 pygame.display.set_caption("Login")
 fps = 60
 
-# Imágenes
-# Imágenes de los botones
-all_button = pygame.image.load("Images/all_button.png")
-genre_button = pygame.image.load("Images/genre_button.png")
-to_watch_button = pygame.image.load("Images/to_watch_button.png")
-already_seen_button = pygame.image.load("Images/already_seen_button.png")
-top_button = pygame.image.load("Images/top_button.png")
-worst_button = pygame.image.load("Images/worst_button.png")
-country_button = pygame.image.load("Images/country_button.png")
-exit_button = pygame.image.load("Images/exit_button.png")
+# Lista de los botones
+button_list = []
+genre_button_list = []
 
-# Generos
-action_button = pygame.image.load("Images/action_button.png")
-science_fiction_button = pygame.image.load("Images/science_fiction.png")
-comedy_button = pygame.image.load("Images/comedy_button.png")
-drama_button = pygame.image.load("Images/drama_button.png")
-fantasy_button = pygame.image.load("Images/fantasy_button.png")
-melodrama_button = pygame.image.load("Images/melodrama_button.png")
-musical_button = pygame.image.load("Images/musical_button.png")
-romance_button = pygame.image.load("Images/romance_button.png")
-suspense_button = pygame.image.load("Images/suspense_button.png")
-terror_button = pygame.image.load("Images/terror_button.png")
-documentary_button = pygame.image.load("Images/documentary_button.png")
+# Botones principales
+all_button = Buttons("Images/all_button.png", "Images/all_pressed_button.png", (0, 0, 200, 100), (0, 0))
+button_list.append(all_button)
+genre_button = Buttons("Images/genre_button.png", "Images/genre_pressed_button.png", (0, 100, 200, 100), (0, 100))
+button_list.append(genre_button)
+to_watch_button = Buttons("Images/to_watch_button.png", "Images/to_watch_pressed_button.png", (0, 200, 200, 100), (0, 200))
+button_list.append(to_watch_button)
+already_seen_button = Buttons("Images/already_seen_button.png", "Images/already_seen_pressed_button.png", (0, 300, 200, 100), (0, 300))
+button_list.append(already_seen_button)
+top_button = Buttons("Images/top_button.png", "Images/top_pressed_button.png", (0, 400, 200, 100), (0, 400))
+button_list.append(top_button)
+worst_button = Buttons("Images/worst_button.png", "Images/worst_pressed_button.png", (0, 500, 200, 100), (0, 500))
+button_list.append(worst_button)
+country_button = Buttons("Images/country_button.png", "Images/country_pressed_button.png", (0, 600, 200, 100), (0, 600))
+button_list.append(country_button)
+exit_button = Buttons("Images/exit_button.png", "Images/exit_pressed_button.png", (0, 700, 200, 100), (0, 700))
+button_list.append(exit_button)
 
-# Imágenes de los botones presionados
-all_button_pressed = pygame.image.load("Images/all_pressed_button.png")
-genre_button_pressed = pygame.image.load("Images/genre_pressed_button.png")
-to_watch_button_pressed = pygame.image.load("Images/to_watch_pressed_button.png")
-already_seen_button_pressed = pygame.image.load("Images/already_seen_pressed_button.png")
-top_button_pressed = pygame.image.load("Images/top_pressed_button.png")
-worst_button_pressed = pygame.image.load("Images/worst_pressed_button.png")
-country_button_pressed = pygame.image.load("Images/country_pressed_button.png")
-exit_button_pressed = pygame.image.load("Images/exit_pressed_button.png")
-
-# Botónes de los géneros presionados
-action_pressed_button = pygame.image.load("Images/action_pressed_button.png")
-science_fiction_pressed_button = pygame.image.load("Images/science_fiction_pressed_button.png")
-comedy_pressed_button = pygame.image.load("Images/comedy_pressed_button.png")
-drama_pressed_button = pygame.image.load("Images/drama_pressed_button.png")
-fantasy_pressed_button = pygame.image.load("Images/fantasy_pressed_button.png")
-melodrama_pressed_button = pygame.image.load("Images/melodrama_pressed_button.png")
-musical_pressed_button = pygame.image.load("Images/musical_pressed_button.png")
-romance_pressed_button = pygame.image.load("Images/romance_pressed_button.png")
-suspense_pressed_button = pygame.image.load("Images/suspense_pressed_button.png")
-terror_pressed_button = pygame.image.load("Images/terror_pressed_button.png")
-documentary_pressed_button = pygame.image.load("Images/documentary_pressed_button.png")
+# Botones de los géneros
+action_button = Buttons("Images/action_button.png", "Images/action_pressed_button.png", (200, 70, 120, 60), (200, 70))
+genre_button_list.append(action_button)
+science_fiction_button = Buttons("Images/science_fiction.png", "Images/science_fiction_pressed_button.png", (200, 130, 120, 60), (200, 130))
+genre_button_list.append(science_fiction_button)
+comedy_button = Buttons("Images/comedy_button.png", "Images/comedy_pressed_button.png", (200, 190, 120, 60), (200, 190))
+genre_button_list.append(comedy_button)
+drama_button = Buttons("Images/drama_button.png", "Images/drama_pressed_button.png", (200, 250, 120, 60), (200, 250))
+genre_button_list.append(drama_button)
+fantasy_button = Buttons("Images/fantasy_button.png", "Images/fantasy_pressed_button.png", (200, 310, 120, 60), (200, 310))
+genre_button_list.append(fantasy_button)
+melodrama_button = Buttons("Images/melodrama_button.png", "Images/melodrama_pressed_button.png", (200, 370, 120, 60), (200, 370))
+genre_button_list.append(melodrama_button)
+musical_button = Buttons("Images/musical_button.png", "Images/musical_pressed_button.png", (200, 430, 120, 60), (200, 430))
+genre_button_list.append(musical_button)
+romance_button = Buttons("Images/romance_button.png", "Images/romance_pressed_button.png", (200, 490, 120, 60), (200, 490))
+genre_button_list.append(romance_button)
+suspense_button = Buttons("Images/suspense_button.png", "Images/suspense_pressed_button.png", (200, 550, 120, 60), (200, 550))
+genre_button_list.append(suspense_button)
+terror_button = Buttons("Images/terror_button.png", "Images/terror_pressed_button.png", (200, 610, 120, 60), (200, 610))
+genre_button_list.append(terror_button)
+documentary_button = Buttons("Images/documentary_button.png", "Images/documentary_pressed_button.png", (200, 670, 120, 60), (200, 670))
+genre_button_list.append(documentary_button)
