@@ -35,82 +35,17 @@ class Login():
    
     # función que registra los eventos
     def events(self):
-        for event in pygame.event.get():
-                if event.type == pygame.QUIT:
+        for self.event in pygame.event.get():
+                if self.event.type == pygame.QUIT:
                     sys.exit()
 
-                # Condiciones que registran la si está presionado o no una textbox
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if self.user_text_box.collidepoint(event.pos):
-                        self.user_textbox_active = True
-                    else:
-                        self.user_textbox_active = False  
-                    if self.pass_text_box.collidepoint(event.pos):
-                        self.pass_textbox_active = True
-                    else:
-                        self.pass_textbox_active = False
-                if event.type == pygame.MOUSEBUTTONUP:
-                    if self.new_user_hitbox.collidepoint(event.pos): 
-                        self.done = False
-                        pygame.display.quit()
-                        return run_sign_up()                 
+                self.get_textbox_press()                
 
-                # Condiciones que registran lo que presiona el usuario y lo guardan en las variables.
-                if self.user_textbox_active:
-                    if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_BACKSPACE:
-                            self.username_text = self.username_text[:-1]
-                        elif len(self.username_text) < 26:
-                            self.username_text += event.unicode
-                if self.pass_textbox_active:
-                    if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_BACKSPACE:
-                            self.password_text = self.password_text[:-1]
-                        elif len(self.password_text) < 26:
-                            self.password_text += event.unicode
-                        if event.key == pygame.K_TAB:
-                            self.password_text = self.password_text[:-1]
-                if self.pass_textbox_active:
-                    if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_BACKSPACE:
-                            self.hidden_password = self.hidden_password[:-1]
-                        elif len(self.hidden_password) < 26:
-                            self.hidden_password += "*"
+                self.textboxes_login()
+                
+                self.tab_mechanics()
 
-                # Condiciones para el taburador
-                if self.user_textbox_active:
-                    if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_TAB:
-                            self.username_text = self.username_text[:-1]
-                            self.user_textbox_active = False
-                            self.pass_textbox_active = True
-                elif self.pass_textbox_active:
-                    if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_TAB:
-                            self.password_text = self.password_text[:-1]
-                            self.hidden_password = self.hidden_password[:-1]
-                            self.pass_textbox_active = False
-                            self.user_textbox_active = True
-
-                # Condiciones para el enter
-                try:
-                    if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_RETURN:
-                            if self.pass_textbox_active:
-                                self.password_text = self.password_text[:-1]
-                                self.hidden_password = self.hidden_password[:-1]
-                            elif self.user_textbox_active:
-                                self.username_text = self.username_text[:-1]
-                            e.select_login(self.username_text, self.password_text)
-                            if str(self.username_text) == str(e.user_sl[0]):
-                                self.done = False
-                                pygame.display.quit()
-                                return run_main_menu()
-                            else:
-                                pass
-                except IndexError:
-                    self.sign_up_corr_bol = False
-                    self.wrong_user = True
+                self.enter_mechanics()
     
     # Función que determina las variables iniciales
     def init_stats(self):
@@ -147,6 +82,7 @@ class Login():
         self.sign_up_corr_bol = False
         self.wrong_user = False
 
+    # Dibuja por pantalla los elementos que se quieren
     def draw_on_screen(self):
         self.screen.fill(GRAY)
             
@@ -184,6 +120,80 @@ class Login():
         # Se dibuja por pantalla si el usuario o las contraseñas son incorrectas
         if self.wrong_user:
             self.screen.blit(self.wrong_user_text, (25, 410))
+    
+    # Mecánicas del enter
+    def enter_mechanics(self):
+        try:
+            if self.event.type == pygame.KEYDOWN:
+                if self.event.key == pygame.K_RETURN:
+                    if self.pass_textbox_active:
+                        self.password_text = self.password_text[:-1]
+                        self.hidden_password = self.hidden_password[:-1]
+                    if self.user_textbox_active:
+                        self.username_text = self.username_text[:-1]
+                    e.select_login(self.username_text, self.password_text)
+                    if str(self.username_text) == str(e.user_sl[0]):
+                        self.done = False
+                        pygame.display.quit()
+                        return run_main_menu()
+        except IndexError:
+            self.sign_up_corr_bol = False
+            self.wrong_user = True
+
+    # Mecánicas del taburador
+    def tab_mechanics(self):
+        if self.user_textbox_active:
+            if self.event.type == pygame.KEYDOWN:
+                if self.event.key == pygame.K_TAB:
+                    self.username_text = self.username_text[:-1]
+                    self.user_textbox_active = False
+                    self.pass_textbox_active = True
+        elif self.pass_textbox_active:
+            if self.event.type == pygame.KEYDOWN:
+                if self.event.key == pygame.K_TAB:
+                    self.hidden_password = self.hidden_password[:-1]
+                    self.pass_textbox_active = False
+                    self.user_textbox_active = True
+
+    # Condiciones que registran la si está presionado o no una textbox
+    def get_textbox_press(self):
+        if self.event.type == pygame.MOUSEBUTTONDOWN:
+            if self.user_text_box.collidepoint(self.event.pos):
+                self.user_textbox_active = True
+            else:
+                self.user_textbox_active = False  
+            if self.pass_text_box.collidepoint(self.event.pos):
+                self.pass_textbox_active = True
+            else:
+                self.pass_textbox_active = False
+        if self.event.type == pygame.MOUSEBUTTONUP:
+            if self.new_user_hitbox.collidepoint(self.event.pos): 
+                self.done = False
+                pygame.display.quit()
+                return run_sign_up()
+    
+    # Función que registra lo que el usuario escribe y lo guarda en una variable
+    def textboxes_login(self):
+        if self.user_textbox_active:
+            if self.event.type == pygame.KEYDOWN:
+                if self.event.key == pygame.K_BACKSPACE:
+                    self.username_text = self.username_text[:-1]
+                elif len(self.username_text) < 26:
+                    self.username_text += self.event.unicode
+        if self.pass_textbox_active:
+                if self.event.type == pygame.KEYDOWN:
+                    if self.event.key == pygame.K_BACKSPACE:
+                        self.password_text = self.password_text[:-1]
+                    elif len(self.password_text) < 26:
+                        self.password_text += self.event.unicode
+                    if self.event.key == pygame.K_TAB:
+                            self.password_text = self.password_text[:-1]
+                if self.pass_textbox_active:
+                    if self.event.type == pygame.KEYDOWN:
+                        if self.event.key == pygame.K_BACKSPACE:
+                            self.hidden_password = self.hidden_password[:-1]
+                        elif len(self.hidden_password) < 26:
+                            self.hidden_password += "*"
 
 # Creación de las clases que serán ventanas
 su = Sign_up(size_sign_up)

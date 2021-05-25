@@ -5,3 +5,4 @@
 /Lib
 /Files/__pycache__
 *.pyc
+*.cfg

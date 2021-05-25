@@ -4,16 +4,16 @@ from sqlalchemy import Column, String, Integer, DateTime
 from datetime import datetime
 from sqlalchemy.orm import sessionmaker
 
-test_user = 'a'
-test_pass = '1234567'
-
+# Se crea la base
 Base = declarative_base()
 
+# Creación de la conexión con la base de datos
 class Connection():
 
     def __init__(self):
         self.set_vars()
-
+    
+    # Inicializa las variables
     def set_vars(self):
         self.SERVER = '192.168.0.252:1433'
         self.DATABASE = 'Film'
@@ -22,14 +22,17 @@ class Connection():
         self.PASSWORD = 'papadopulos'
         self.DATABASE_CONNECTION = f'mssql://{self.USERNAME}:{self.PASSWORD}@{self.SERVER}/{self.DATABASE}?driver={self.DRIVER}'
 
+    # Crea una sesión
     def create_session(self):
         Session = sessionmaker()
         self.session = Session.configure(bind = self.engine)
         self.session = Session()
 
+    # Corre el motor de la base de datos
     def run_engine(self):
         self.engine = create_engine(self.DATABASE_CONNECTION)
 
+# Creación de la tabla de usuario
 class User(Base):
     __tablename__ = 'Usuario'
 
@@ -43,6 +46,7 @@ class User(Base):
 
 c = Connection()
 
+# Creación de la clase que contiene lo scripts para manejar la base de datos
 class Execute():
     
     def __init__(self):
@@ -50,6 +54,7 @@ class Execute():
         c.create_session()
         Base.metadata.create_all(c.engine)
 
+    # Inserción de los datos de un nuevo usuario creado a la tabla Usuario
     def insert(self, in_var1, in_var2):
         self.in_var1 = in_var1
         self.in_var2 = in_var2
@@ -59,7 +64,7 @@ class Execute():
 
         c.session.commit()
         
-
+    # Lectura de los datos de un usuario en específico
     def select_login(self, username, password):
         self.username_sl = username
         self.password_sl = password
@@ -69,10 +74,6 @@ class Execute():
             User.password == self.password_sl
         )  
 
-        #print(self.user_sl[0])
-
-        #self.final_user_sl = self.user_sl[0]
-        #print(self.final_user_sl)
     def update(self):
         pass
 
@@ -84,8 +85,7 @@ class Execute():
         c.session.commit()
 
 e = Execute()
-# e.delete()
-# e.insert()
-# e.select()
-# e.update()
-#e.select_login("a", "1234567")
+
+# ATENCIÓN: La base de datos no es manejada por un sistema de tipo crear y borrar. Esto significa que cada vez que se quiere
+# modificar la base de datos, no se inserta todo y se borra todo, sino que se inserta solo. Después existe la funcion de borrar.
+# está heca de este modo, para una optimización mayor.
