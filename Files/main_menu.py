@@ -44,6 +44,8 @@ class Main_menu():
                 if all_button.rect.collidepoint(self.mx, self.my):
                     for button in button_list:
                         button.state = False
+                        self.all_genre_buttons_active = False
+                        self.country_textbox_active = False
             
             # Registra el presionado de todos los botones
             for button in button_list[1:-1]:    
@@ -120,7 +122,7 @@ class Main_menu():
         if self.country_textbox_active:
             pygame.draw.rect(self.screen, color_user_textbox, self.country_textbox, 0, 5)
             text_surface = self.text_box_font.render(self.country_text, True, BLUE)
-            self.screen.blit(text_surface, (207, 640))
+            self.screen.blit(text_surface, (207, 645))
                 
     # Crea una textbox para determinar el país que se usará como filtro
     def country_textbox_mechanics(self):    
