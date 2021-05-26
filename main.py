@@ -1,8 +1,8 @@
 # Imports
 import pygame
 import sys
-from Files.Constants import (LIGHTBLUE, size_login, WHITE, clock, fps, BLUE, GRAY, LIGHTGRAY, color_user_textbox, color_pass_textbox, size_sign_up,
-                            size_main_menu
+from Files.Constants import (LIGHTBLUE, size_login, WHITE, clock, fps, BLUE, GRAY, LIGHTGRAY, color_user_textbox,
+                            color_pass_textbox, size_sign_up, size_main_menu
                             )
 from Files.Sign_up import Sign_up
 from Files.main_menu import Main_menu
@@ -39,12 +39,9 @@ class Login():
                 if self.event.type == pygame.QUIT:
                     sys.exit()
 
-                self.get_textbox_press()                
-
-                self.textboxes_login()
-                
+                self.get_textbox_press()               
+                self.get_user_text()
                 self.tab_mechanics()
-
                 self.enter_mechanics()
     
     # Función que determina las variables iniciales
@@ -86,19 +83,7 @@ class Login():
     def draw_on_screen(self):
         self.screen.fill(GRAY)
             
-        # Cambio del color de las textboxes dependiendo si están presionadas o no
-        if self.user_textbox_active:
-            color_user_textbox = WHITE
-        else:
-            color_user_textbox = LIGHTGRAY
-        if self.pass_textbox_active:
-            color_pass_textbox = WHITE
-        else:
-            color_pass_textbox = LIGHTGRAY
-
-        # Se dibujan por pantalla las textboxes
-        pygame.draw.rect(self.screen, color_user_textbox, self.user_text_box, 0, 5)
-        pygame.draw.rect(self.screen, color_pass_textbox, self.pass_text_box, 0, 5)
+        self.select_draw_color_textbox()
             
         # Se dibujan por pantalla los títulos y subtítulos
         self.screen.blit(self.bienvenido, (60, 50))
@@ -173,27 +158,32 @@ class Login():
                 return run_sign_up()
     
     # Función que registra lo que el usuario escribe y lo guarda en una variable
-    def textboxes_login(self):
+    def get_user_text(self):
+        if self.event.type == pygame.KEYDOWN:
+            if self.event.key == pygame.K_BACKSPACE and self.user_textbox_active:
+                self.username_text = self.username_text[:-1]
+            elif self.user_textbox_active and len(self.username_text) < 26:
+                self.username_text += self.event.unicode
+            if self.event.key == pygame.K_BACKSPACE and self.pass_textbox_active:
+                self.password_text = self.password_text[:-1]
+                self.hidden_password = self.hidden_password[:-1]
+            elif self.pass_textbox_active and len(self.password_text) < 26:
+                self.password_text += self.event.unicode
+                self.hidden_password += "*"
+
+    # Cambia y dibuja el color de las textboxes dependiendo si están activas o no
+    def select_draw_color_textbox(self):
         if self.user_textbox_active:
-            if self.event.type == pygame.KEYDOWN:
-                if self.event.key == pygame.K_BACKSPACE:
-                    self.username_text = self.username_text[:-1]
-                elif len(self.username_text) < 26:
-                    self.username_text += self.event.unicode
+            color_user_textbox = WHITE
+        else:
+            color_user_textbox = LIGHTGRAY
         if self.pass_textbox_active:
-                if self.event.type == pygame.KEYDOWN:
-                    if self.event.key == pygame.K_BACKSPACE:
-                        self.password_text = self.password_text[:-1]
-                    elif len(self.password_text) < 26:
-                        self.password_text += self.event.unicode
-                    if self.event.key == pygame.K_TAB:
-                            self.password_text = self.password_text[:-1]
-                if self.pass_textbox_active:
-                    if self.event.type == pygame.KEYDOWN:
-                        if self.event.key == pygame.K_BACKSPACE:
-                            self.hidden_password = self.hidden_password[:-1]
-                        elif len(self.hidden_password) < 26:
-                            self.hidden_password += "*"
+            color_pass_textbox = WHITE
+        else:
+            color_pass_textbox = LIGHTGRAY
+
+        pygame.draw.rect(self.screen, color_user_textbox, self.user_text_box, 0, 5)
+        pygame.draw.rect(self.screen, color_pass_textbox, self.pass_text_box, 0, 5)
 
 # Creación de las clases que serán ventanas
 su = Sign_up(size_sign_up)
