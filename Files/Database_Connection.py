@@ -44,6 +44,29 @@ class User(Base):
     def __str__(self):
         return self.username
 
+class Movie_db(Base):
+    __tablename__ = "Pelicula"
+
+    id = Column(Integer(), primary_key = True)
+    name = Column(String(70), nullable = False, unique = True)
+    movie_date = Column(String(50), nullable = True, unique = False)
+    movie_genre_id = Column(String(3), nullable = False, unique = False)
+    rating = Column(Integer(), nullable = True, unique = False)
+    country_id = Column(String(3), nullable = True, unique = False)
+    description = Column(String(500), nullable = True, unique = False)
+
+class Country(Base):
+    __tablename__ = 'Pais'
+
+    id = Column(Integer(), primary_key = True)
+    name = Column(String(50), nullable = False, unique = True)
+
+class Genre(Base):
+    __tablename__ = "Genero"
+
+    id = Column(Integer(), primary_key = True)
+    name = Column(String(50), nullable = False, unique = True)
+
 c = Connection()
 
 # Creación de la clase que contiene lo scripts para manejar la base de datos

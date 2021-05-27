@@ -1,9 +1,10 @@
 # Imports
 import pygame
 import sys
-from Files.Constants import (LIGHTBLUE, size_login, WHITE, clock, fps, BLUE, GRAY, LIGHTGRAY, color_user_textbox,
-                            color_pass_textbox, size_sign_up, size_main_menu
-                            )
+from Files.Constants import (
+    LIGHTBLUE, size_login, WHITE, clock, fps, BLUE, GRAY, LIGHTGRAY, color_user_textbox,
+    color_pass_textbox, size_sign_up, size_main_menu
+)
 from Files.Sign_up import Sign_up
 from Files.main_menu import Main_menu
 from Files.Database_Connection import c, e

@@ -1,5 +1,7 @@
 import pygame
 from Files.Buttons import Buttons
+from Files.Movies import Movies
+from Files.Add_new_Textboxes import Textbox
 
 pygame.init()
 
@@ -7,6 +9,7 @@ pygame.init()
 size_login = (500, 500)
 size_sign_up = (500, 500)
 size_main_menu = (1100, 800)
+size_add_new = (600, 600)
 
 # Colors
 WHITE = (255, 255, 255)
@@ -44,6 +47,8 @@ country_button = Buttons("Images/country_button.png", "Images/country_pressed_bu
 button_list.append(country_button)
 exit_button = Buttons("Images/exit_button.png", "Images/exit_pressed_button.png", (0, 700, 200, 100), (0, 700))
 button_list.append(exit_button)
+add_button = Buttons("Images/add_new_button.png", "Images/add_new_pressed_button.png", (900, 0, 200, 100), (900, 0))
+button_list.append(add_button)
 
 # Botones de los géneros
 action_button = Buttons("Images/action_button.png", "Images/action_pressed_button.png", (200, 70, 120, 60), (200, 70))
@@ -68,3 +73,21 @@ terror_button = Buttons("Images/terror_button.png", "Images/terror_pressed_butto
 genre_button_list.append(terror_button)
 documentary_button = Buttons("Images/documentary_button.png", "Images/documentary_pressed_button.png", (200, 670, 120, 60), (200, 670))
 genre_button_list.append(documentary_button)
+
+# Rectángulo de las peliculas -------- OPTIMIZAR ESTO, SOLO DE PRUEBA----------------------------
+all_sprites_list = pygame.sprite.Group()
+movie = Movies("Images/movies_rect.png", (290, 120))
+movie2 = Movies("Images/movies_rect.png", (540, 120))
+movie3 = Movies("Images/movies_rect.png", (800, 120))
+movie4 = Movies("Images/movies_rect.png", (290, 450))
+movie5 = Movies("Images/movies_rect.png", (540, 450))
+movie6 = Movies("Images/movies_rect.png", (800, 450))
+all_sprites_list.add(movie)
+all_sprites_list.add(movie2)
+all_sprites_list.add(movie3)
+all_sprites_list.add(movie4)
+all_sprites_list.add(movie5)
+all_sprites_list.add(movie6)
+
+# Textboxes del agregadode películas
+movie_name = Textbox((50, 50, 500, 50), (50, 50))
