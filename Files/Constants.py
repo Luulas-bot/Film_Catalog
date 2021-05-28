@@ -20,6 +20,10 @@ LIGHTGRAY = (181, 181, 181)
 color_user_textbox = LIGHTGRAY
 color_pass_textbox = LIGHTGRAY
 color_re_pass_textbox = LIGHTGRAY
+color_movie_name_tx = LIGHTGRAY
+color_movie_date_tx = LIGHTGRAY
+color_movie_country_tx = LIGHTGRAY
+color_movie_description_tx = LIGHTGRAY
 
 # Pygmae variables
 clock = pygame.time.Clock()
@@ -90,4 +94,13 @@ all_sprites_list.add(movie5)
 all_sprites_list.add(movie6)
 
 # Textboxes del agregadode películas
-movie_name = Textbox((50, 50, 500, 50), (50, 50))
+tx_list = []
+
+movie_name = Textbox((50, 50, 500, 30), (50, 50))
+tx_list.append(movie_name)
+movie_date = Textbox((50, 125, 500, 30), (50, 100))
+tx_list.append(movie_date)
+movie_country = Textbox((50, 200, 500, 30), (50, 150))
+tx_list.append(movie_country)
+movie_description = Textbox((50, 275, 500, 275), (50, 200))
+tx_list.append(movie_description)

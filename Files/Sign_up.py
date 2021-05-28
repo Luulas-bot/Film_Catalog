@@ -1,6 +1,8 @@
 import pygame
 import sys
-from Files.Constants import WHITE, BLUE, GRAY, LIGHTGRAY, LIGHTBLUE, color_re_pass_textbox
+from Files.Constants import (
+    WHITE, BLUE, GRAY, LIGHTGRAY, LIGHTBLUE, color_user_textbox, color_pass_textbox, color_re_pass_textbox
+)
 from Files.Database_Connection import c, e
 from sqlalchemy.exc import IntegrityError
 
