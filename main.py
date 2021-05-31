@@ -200,7 +200,7 @@ def run_main_menu():
     while bol_main_menu:
         m.events()
         m.draw_on_screen()
-
+        
         pygame.display.flip()
         clock.tick(fps)
 
@@ -224,6 +224,17 @@ def run_sign_up():
             lg.username_text = ""
             lg.password_text = ""
             lg.hidden_password = ""
+            lg.run_login()
+            break
+
+        if su.escape >= 1:
+            pygame.display.quit()
+            su.escape -= 1
+            lg.username_text = ""
+            lg.password_text = ""
+            lg.hidden_password = ""
+            lg.sign_up_corr_bol = False
+            lg.wrong_user = False
             lg.run_login()
             break
 

@@ -63,7 +63,9 @@ class Sign_up():
         # Variable que registra si se ha creado un usuario
         self.new_user_created = 0
         self.new_user_created_text = 0
-    
+
+        self.escape = 0
+
     # Función que registra los eventos
     def events(self):
         for self.event in pygame.event.get():
@@ -74,7 +76,7 @@ class Sign_up():
             self.get_user_text()
             self.tab_mechanics()
             self.enter_mechanics()
-        
+            self.esc_mechanics()
 
     # Función que dibuja por pantalla los elementos
     def draw_on_screen(self):
@@ -202,6 +204,12 @@ class Sign_up():
                     self.pass_textbox_active = False
                     self.user_textbox_active = True
                     self.re_pass_textbox_active = False
+
+    # mecánicas del escape
+    def esc_mechanics(self):
+        if self.event.type == pygame.KEYDOWN:
+            if self.event.key == pygame.K_ESCAPE:
+                self.escape += 1
 
     # Cambio del color de las textboxes dependiendo si están presionadas o no y se las diubja
     def select_draw_color_textbox(self):

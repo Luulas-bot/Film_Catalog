@@ -32,6 +32,8 @@ class AddMovie():
         self.ypos_description = 282
         self.description_count = 0
 
+        self.escape = 0
+
     def events(self):
         for self.event in pygame.event.get():
             if self.event.type == pygame.QUIT:
@@ -42,6 +44,7 @@ class AddMovie():
             self.get_tx_state()
             self.write_user_text()
             self.tab_mechanics()
+            self.esc_mechanics()
 
     def draw_on_screen(self):
         self.screen.fill(GRAY)
@@ -148,3 +151,8 @@ class AddMovie():
                     self.description_text = self.description_text[:-1]
                     movie_description.state = False
                     movie_name.state = True
+
+    def esc_mechanics(self):
+        if self.event.type == pygame.KEYDOWN:
+            if self.event.key == pygame.K_ESCAPE:
+                self.escape += 1

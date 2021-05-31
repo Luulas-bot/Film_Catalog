@@ -16,6 +16,21 @@ class Main_menu():
         self.size = size
         self.init_stats()
 
+    # Función alterna para correr el main_menu
+    def run_main_menu(self):
+
+        bol_main_menu = True   
+
+        self.screen = pygame.display.set_mode((self.size))
+        pygame.display.set_caption("Sign Up")
+        self.init_stats()
+
+        while bol_main_menu:
+            self.events()
+            self.draw_on_screen()
+        
+            pygame.display.flip()
+        
     # Función que determina las variables iniciales
     def init_stats(self):
         self.screen = pygame.display.set_mode((self.size))
@@ -163,7 +178,7 @@ class Main_menu():
                     button.state = False
                     self.all_genre_buttons_active = False
                     self.country_textbox_active = False
-                run_add_new_movie()
+                self.run_add_new_movie()
 
     # Dibuja los botones por pantalla
     def draw_buttons(self):
@@ -189,17 +204,27 @@ class Main_menu():
             text_surface = self.text_box_font.render(self.country_text, True, BLUE)
             self.screen.blit(text_surface, (207, 645))
 
-# Corre el menú para crear una nueva película
-def run_add_new_movie():
-    
-    am = AddMovie(size_add_new)
-    am.screen = pygame.display.set_mode(am.size)
-    pygame.display.set_caption("Add New Movie")
+    # Corre el menú para crear una nueva película
+    def run_add_new_movie(self):
+        
+        am = AddMovie(size_add_new)
+        am.screen = pygame.display.set_mode(am.size)
+        pygame.display.set_caption("Add New Movie")
 
-    while True:
-        am.events()
-        am.draw_on_screen()
+        while True:
+            am.events()
+            am.draw_on_screen()
 
-        pygame.display.flip()
-        clock.tick(fps)
+            if am.escape >= 1:
+                am.escape -= 1
+                am.name_text = ""
+                am.date_text = ""
+                am.country_text = ""
+                am.description_text = ""
+                self.run_main_menu
+                pygame.display.quit()
+                break
+
+            pygame.display.flip()
+            clock.tick(fps)
     
