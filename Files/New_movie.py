@@ -2,7 +2,7 @@ import pygame
 import sys
 from Files.Constants import (
     GRAY, WHITE, LIGHTGRAY, BLUE, LIGHTBLUE, color_user_textbox, movie_name, movie_date, movie_country, movie_description,
-    color_movie_name_tx, color_movie_date_tx, color_movie_country_tx, color_movie_description_tx, tx_list
+    color_movie_name_tx, color_movie_date_tx, color_movie_country_tx, color_movie_description_tx, tx_list, tick
 )
 # from Files.Add_new_Textboxes import Textbox
 
@@ -34,6 +34,8 @@ class AddMovie():
 
         self.escape = 0
 
+        self.tick_rect = pygame.Rect(500, 500, 30, 30)
+
     def events(self):
         for self.event in pygame.event.get():
             if self.event.type == pygame.QUIT:
@@ -45,6 +47,8 @@ class AddMovie():
             self.write_user_text()
             self.tab_mechanics()
             self.esc_mechanics()
+            self.enter_mechanics()
+            self.get_tick()
 
     def draw_on_screen(self):
         self.screen.fill(GRAY)
@@ -64,6 +68,8 @@ class AddMovie():
         self.screen.blit(text_surface3, (55, 207))
         text_surface4 = self.font2.render(self.description_text, True, BLUE)
         self.screen.blit(text_surface4, (55, self.ypos_description))
+
+        self.screen.blit(tick, (500, 500))
 
     def get_tx_state(self):
         if self.event.type == pygame.MOUSEBUTTONDOWN:
@@ -127,11 +133,8 @@ class AddMovie():
             elif movie_description.state and self.description_count < 61:
                 self.description_text += self.event.unicode
                 self.description_count += 1
-            if self.description_count == 60:
-                self.description_count -= 60
-                self.description_text += "/n"
-            # NO FUNCIONA
 
+    # Mecánicas del taburador
     def tab_mechanics(self):
         if self.event.type == pygame.KEYDOWN:
             if self.event.key == pygame.K_TAB:
@@ -156,3 +159,16 @@ class AddMovie():
         if self.event.type == pygame.KEYDOWN:
             if self.event.key == pygame.K_ESCAPE:
                 self.escape += 1
+
+    def enter_mechanics(self):
+        if self.event.type == pygame.KEYDOWN:
+            if self.event.key == pygame.K_RETURN:
+                if movie_description.state:
+                    pass
+    
+    def get_tick(self):
+        if self.event.type == pygame.MOUSEBUTTONDOWN:
+            if self.tick_rect.collidepoint(self.mx, self.my):
+                pass
+
+# TODO Terminar bien las mecanicas del tick

@@ -21,7 +21,7 @@ class Main_menu():
 
         bol_main_menu = True   
 
-        self.screen = pygame.display.set_mode((self.size))
+        self.screen = pygame.display.set_mode(self.size)
         pygame.display.set_caption("Sign Up")
         self.init_stats()
 
@@ -33,7 +33,7 @@ class Main_menu():
         
     # Función que determina las variables iniciales
     def init_stats(self):
-        self.screen = pygame.display.set_mode((self.size))
+        self.screen = pygame.display.set_mode(self.size)
 
         # Boleano para saber si los botones de los géneros están presionados o no
         self.all_genre_buttons_active = False
@@ -178,6 +178,7 @@ class Main_menu():
                     button.state = False
                     self.all_genre_buttons_active = False
                     self.country_textbox_active = False
+                pygame.display.quit()
                 self.run_add_new_movie()
 
     # Dibuja los botones por pantalla
@@ -216,13 +217,13 @@ class Main_menu():
             am.draw_on_screen()
 
             if am.escape >= 1:
+                pygame.display.quit()
                 am.escape -= 1
                 am.name_text = ""
                 am.date_text = ""
                 am.country_text = ""
                 am.description_text = ""
-                self.run_main_menu
-                pygame.display.quit()
+                self.run_main_menu()
                 break
 
             pygame.display.flip()

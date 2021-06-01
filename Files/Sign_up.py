@@ -152,7 +152,7 @@ class Sign_up():
             if len(self.password_text) > 6: 
                 if self.password_text == self.re_password_text:
                     if len(self.username_text) > 0:
-                        e.insert(self.username_text, self.password_text)
+                        e.insert_sign_up(self.username_text, self.password_text)
                         self.new_user_created += 1
                         self.new_user_created_text += 1
                         self.username_text = ""

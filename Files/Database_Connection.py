@@ -50,8 +50,6 @@ class Movie_db(Base):
     id = Column(Integer(), primary_key = True)
     name = Column(String(70), nullable = False, unique = True)
     movie_date = Column(String(50), nullable = True, unique = False)
-    movie_genre_id = Column(String(3), nullable = False, unique = False)
-    rating = Column(Integer(), nullable = True, unique = False)
     country_id = Column(String(3), nullable = True, unique = False)
     description = Column(String(500), nullable = True, unique = False)
 
@@ -78,7 +76,7 @@ class Execute():
         Base.metadata.create_all(c.engine)
 
     # Inserción de los datos de un nuevo usuario creado a la tabla Usuario
-    def insert(self, in_var1, in_var2):
+    def insert_sign_up(self, in_var1, in_var2):
         self.in_var1 = in_var1
         self.in_var2 = in_var2
         self.user = User(username = f'{self.in_var1}', password = f'{self.in_var2}')
@@ -96,6 +94,18 @@ class Execute():
         ).filter(
             User.password == self.password_sl
         )  
+
+    # Función para insertar peliculas
+    def insert_movies(self, name, date, country, description):
+        self.name_movie = name
+        self.date_movie = date
+        self.country_movie = country
+        self.description_movie = description
+
+        self.movie = Movie_db(name = f'{self.name_movie}', movie_date = f'{self.date_movie}', movie_genre_id = f'{self.country_movie}', description = f'{self.description_movie}' )
+
+        c.session.add(self.movie)
+        c.session.commit()
 
     def update(self):
         pass
