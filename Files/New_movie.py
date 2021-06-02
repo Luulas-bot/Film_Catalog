@@ -28,14 +28,16 @@ class AddMovie():
         self.date_text = ""
         self.country_text = ""
         self.description_text = ""
+        self.description_text2 = ""
+        self.description_text3 = ""
 
-        self.ypos_description = 282
-        self.description_count = 0
-
+        # Variable que maneja cuando se saca la screen actual 
         self.escape = 0
 
-        self.tick_rect = pygame.Rect(500, 500, 30, 30)
+        # Hitbox del tick
+        self.tick_rect = pygame.Rect(550, 550, 30, 30)
 
+    # Función que registra los eventos
     def events(self):
         for self.event in pygame.event.get():
             if self.event.type == pygame.QUIT:
@@ -50,9 +52,11 @@ class AddMovie():
             self.enter_mechanics()
             self.get_tick()
 
+    # Función que dibuja por pantalla todo
     def draw_on_screen(self):
         self.screen.fill(GRAY)
-
+        
+        # Muestra por pantalla los título
         self.screen.blit(self.name_title, (50, 30))
         self.screen.blit(self.date_title, (50, 105))
         self.screen.blit(self.country_title, (50, 180))
@@ -60,6 +64,7 @@ class AddMovie():
 
         self.change_tx_color()
 
+        # Dibuja por pantalla los inputs de texto del usuario
         text_surface1 = self.font2.render(self.name_text, True, BLUE)
         self.screen.blit(text_surface1, (55, 57))
         text_surface2 = self.font2.render(self.date_text, True, BLUE)
@@ -67,10 +72,16 @@ class AddMovie():
         text_surface3 = self.font2.render(self.country_text, True, BLUE)
         self.screen.blit(text_surface3, (55, 207))
         text_surface4 = self.font2.render(self.description_text, True, BLUE)
-        self.screen.blit(text_surface4, (55, self.ypos_description))
+        self.screen.blit(text_surface4, (55, 282))
+        text_surface5 = self.font2.render(self.description_text2, True, BLUE)
+        self.screen.blit(text_surface5, (55, 300))
+        text_surface6 = self.font2.render(self.description_text3, True, BLUE)
+        self.screen.blit(text_surface6, (55, 317))
 
-        self.screen.blit(tick, (500, 500))
+        # Dibuja por pantalla el tick
+        self.screen.blit(tick, (550, 550))
 
+    # Define si están activas o no las textboxes
     def get_tx_state(self):
         if self.event.type == pygame.MOUSEBUTTONDOWN:
             if movie_name.rect.collidepoint(self.mx, self.my):
@@ -90,6 +101,7 @@ class AddMovie():
             else:
                 movie_description.state = False
 
+    # Variable que cambia el color de las textboxes según su estado
     def change_tx_color(self):
         if movie_name.state == True:
             color_movie_name_tx = WHITE
@@ -108,11 +120,13 @@ class AddMovie():
         else:
             color_movie_description_tx = LIGHTGRAY
 
+        # Dibuja las textboxes con su color por pantalla
         pygame.draw.rect(self.screen, color_movie_name_tx, movie_name, 0, 5)
         pygame.draw.rect(self.screen, color_movie_date_tx, movie_date, 0, 5)
         pygame.draw.rect(self.screen, color_movie_country_tx, movie_country, 0, 5)
         pygame.draw.rect(self.screen, color_movie_description_tx, movie_description, 0, 5)
     
+    # Escribe en las variables lo que el usuario escribe
     def write_user_text(self): 
         if self.event.type == pygame.KEYDOWN:
             if self.event.key == pygame.K_BACKSPACE and movie_name.state:
@@ -127,12 +141,19 @@ class AddMovie():
                 self.country_text = self.country_text[:-1]
             elif movie_country.state and len(self.country_text) < 61:
                 self.country_text += self.event.unicode
-            if self.event.key == pygame.K_BACKSPACE and movie_description.state:
+            if self.event.key == pygame.K_BACKSPACE and movie_description.state and len(self.description_text) < 61:
                 self.description_text = self.description_text[:-1]
-                self.description_count -= 1
-            elif movie_description.state and self.description_count < 61:
+            elif self.event.key == pygame.K_BACKSPACE and movie_description.state and len(self.description_text) > 60:
+                self.description_text2 = self.description_text2[:-1]
+            elif self.event.key == pygame.K_BACKSPACE and movie_description.state and len(self.description_text2) > 60:
+                self.description_text3 = self.description_text3[:-1]
+            elif movie_description.state and len(self.description_text) < 61:
                 self.description_text += self.event.unicode
-                self.description_count += 1
+            elif movie_description.state and len(self.description_text) > 60 and len(self.description_text2) < 61:
+                self.description_text2 += self.event.unicode
+            elif movie_description.state and len(self.description_text2) > 60 and len(self.description_text3) < 61:
+                self.description_text3 += self.event.unicode
+
 
     # Mecánicas del taburador
     def tab_mechanics(self):
@@ -155,20 +176,22 @@ class AddMovie():
                     movie_description.state = False
                     movie_name.state = True
 
+    # Mecánicas del escape
     def esc_mechanics(self):
         if self.event.type == pygame.KEYDOWN:
             if self.event.key == pygame.K_ESCAPE:
                 self.escape += 1
 
+    # Mecánicas del enter
     def enter_mechanics(self):
         if self.event.type == pygame.KEYDOWN:
             if self.event.key == pygame.K_RETURN:
                 if movie_description.state:
-                    pass
+                    self.description_text += "\n"
     
+    # Mecánicas del tick
     def get_tick(self):
         if self.event.type == pygame.MOUSEBUTTONDOWN:
             if self.tick_rect.collidepoint(self.mx, self.my):
-                pass
-
-# TODO Terminar bien las mecanicas del tick
+                self.escape += 1
+                # Acá también van todos los inserts a la base de datos

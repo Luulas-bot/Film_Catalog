@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, String, Integer, DateTime
+from sqlalchemy import Column, String, Integer, DateTime, CHAR, ForeignKey
 from datetime import datetime
 from sqlalchemy.orm import sessionmaker
 
@@ -40,6 +40,7 @@ class User(Base):
     username = Column(String(50), nullable = False, unique = True)
     password = Column(String(50), nullable = False, unique = False)
     created_at = Column(DateTime, default = datetime.now)
+    movies_id = Column(Integer(), ForeignKey('Pelicula.id'))
 
     def __str__(self):
         return self.username
@@ -50,19 +51,20 @@ class Movie_db(Base):
     id = Column(Integer(), primary_key = True)
     name = Column(String(70), nullable = False, unique = True)
     movie_date = Column(String(50), nullable = True, unique = False)
-    country_id = Column(String(3), nullable = True, unique = False)
+    country_id = Column(CHAR(3), ForeignKey('Pais.id'))
+    genre_id = Column(CHAR(3), ForeignKey('Genero.id'))
     description = Column(String(500), nullable = True, unique = False)
 
 class Country(Base):
     __tablename__ = 'Pais'
 
-    id = Column(Integer(), primary_key = True)
+    id = Column(CHAR(3), primary_key = True)
     name = Column(String(50), nullable = False, unique = True)
 
 class Genre(Base):
     __tablename__ = "Genero"
 
-    id = Column(Integer(), primary_key = True)
+    id = Column(CHAR(3), primary_key = True)
     name = Column(String(50), nullable = False, unique = True)
 
 c = Connection()

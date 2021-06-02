@@ -2,10 +2,8 @@ import pygame
 import sys
 from Files.Constants import (
     WHITE, BLUE, GRAY, LIGHTGRAY, all_button, genre_button, to_watch_button, already_seen_button,
-    top_button, worst_button, country_button, exit_button,add_button, action_button, science_fiction_button, 
-    comedy_button, drama_button, fantasy_button, melodrama_button, musical_button, romance_button,
-    suspense_button, terror_button, documentary_button, button_list, genre_button_list, color_user_textbox,
-    movie, all_sprites_list, clock, fps, size_add_new
+    top_button, worst_button, country_button, exit_button,add_button, button_list, genre_button_list, 
+    color_user_textbox, all_sprites_list, clock, fps, size_add_new
 )
 from Files.New_movie import AddMovie
 
@@ -70,12 +68,6 @@ class Main_menu():
 
         self.draw_buttons()
         self.draw_genre_buttons()
-        
-        # Determina el color de la textbox
-        if self.country_textbox_active:
-            color_user_textbox = WHITE
-        else:
-            color_user_textbox = LIGHTGRAY
 
         all_sprites_list.update()
         all_sprites_list.draw(self.screen)
@@ -201,7 +193,7 @@ class Main_menu():
     # Dibuja el texto ingresado por el usuario en la textbox de los países
     def draw_country_text(self):
         if self.country_textbox_active:
-            pygame.draw.rect(self.screen, color_user_textbox, self.country_textbox, 0, 5)
+            pygame.draw.rect(self.screen, WHITE, self.country_textbox, 0, 5)
             text_surface = self.text_box_font.render(self.country_text, True, BLUE)
             self.screen.blit(text_surface, (207, 645))
 
