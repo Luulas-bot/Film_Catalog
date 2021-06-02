@@ -2,6 +2,7 @@ import pygame
 from Files.Buttons import Buttons
 from Files.Movies import Movies
 from Files.Add_new_Textboxes import Textbox
+from Files.description_textbox import Description
 
 pygame.init()
 
@@ -105,4 +106,8 @@ tx_list.append(movie_country)
 movie_description = Textbox((50, 275, 500, 275), (50, 200))
 tx_list.append(movie_description)
 
+# Tick
 tick = pygame.image.load("Images/tick.png")
+
+# Description texts   
+description_text = Description((55, 282), "")

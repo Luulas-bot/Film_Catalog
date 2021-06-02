@@ -2,7 +2,8 @@ import pygame
 import sys
 from Files.Constants import (
     GRAY, WHITE, LIGHTGRAY, BLUE, LIGHTBLUE, color_user_textbox, movie_name, movie_date, movie_country, movie_description,
-    color_movie_name_tx, color_movie_date_tx, color_movie_country_tx, color_movie_description_tx, tx_list, tick
+    color_movie_name_tx, color_movie_date_tx, color_movie_country_tx, color_movie_description_tx, tx_list, tick, 
+    description_text
 )
 # from Files.Add_new_Textboxes import Textbox
 
@@ -27,7 +28,7 @@ class AddMovie():
         self.name_text = ""
         self.date_text = ""
         self.country_text = ""
-        self.description_text = ""
+        #self.description_text = ""
         self.description_text2 = ""
         self.description_text3 = ""
 
@@ -71,8 +72,7 @@ class AddMovie():
         self.screen.blit(text_surface2, (55, 132))
         text_surface3 = self.font2.render(self.country_text, True, BLUE)
         self.screen.blit(text_surface3, (55, 207))
-        text_surface4 = self.font2.render(self.description_text, True, BLUE)
-        self.screen.blit(text_surface4, (55, 282))
+        self.screen.blit(description_text.surface, (description_text.blit_coords))
         text_surface5 = self.font2.render(self.description_text2, True, BLUE)
         self.screen.blit(text_surface5, (55, 300))
         text_surface6 = self.font2.render(self.description_text3, True, BLUE)
@@ -141,19 +141,19 @@ class AddMovie():
                 self.country_text = self.country_text[:-1]
             elif movie_country.state and len(self.country_text) < 61:
                 self.country_text += self.event.unicode
-            if self.event.key == pygame.K_BACKSPACE and movie_description.state and len(self.description_text) < 61:
-                self.description_text = self.description_text[:-1]
-            elif self.event.key == pygame.K_BACKSPACE and movie_description.state and len(self.description_text) > 60:
+            if self.event.key == pygame.K_BACKSPACE and movie_description.state and len(description_text.text) < 61:
+                description_text.text = description_text.text[:-1]
+            elif self.event.key == pygame.K_BACKSPACE and movie_description.state and len(description_text.text) > 60:
                 self.description_text2 = self.description_text2[:-1]
             elif self.event.key == pygame.K_BACKSPACE and movie_description.state and len(self.description_text2) > 60:
                 self.description_text3 = self.description_text3[:-1]
-            elif movie_description.state and len(self.description_text) < 61:
-                self.description_text += self.event.unicode
-            elif movie_description.state and len(self.description_text) > 60 and len(self.description_text2) < 61:
+            elif movie_description.state and len(description_text.text) < 61:
+                description_text.text += self.event.unicode
+            elif movie_description.state and len(description_text.text) > 60 and len(self.description_text2) < 61:
                 self.description_text2 += self.event.unicode
             elif movie_description.state and len(self.description_text2) > 60 and len(self.description_text3) < 61:
                 self.description_text3 += self.event.unicode
-
+            print(description_text.text)
 
     # Mecánicas del taburador
     def tab_mechanics(self):
@@ -195,3 +195,8 @@ class AddMovie():
             if self.tick_rect.collidepoint(self.mx, self.my):
                 self.escape += 1
                 # Acá también van todos los inserts a la base de datos
+
+# TODO Terminar de pasar todos los reglones de la descripcion a la clase. Además hay que acrodarse que lo que no funciona el el display
+# del texto, eso significa que el texto está bien en la variable, pero no se muestra por pantalla, quizás algún error
+# en el blit o algo. También hacer todas las mecánicas utilizando los estados de cada reglon y por último, hacer que cuando,
+# se apriete backspace y no haya más letras en el reglon, vuelva un reglón para atrás. Suerte.
