@@ -111,3 +111,20 @@ tick = pygame.image.load("Images/tick.png")
 
 # Description texts   
 description_text = Description((55, 282), "")
+description_text2 = Description((55, 300), "")
+description_text3 = Description((55, 318), "")
+description_text4 = Description((55, 336), "")
+description_text5 = Description((55, 354), "")
+description_text6 = Description((55, 372), "")
+description_text7 = Description((55, 390), "")
+description_text8 = Description((55, 408), "")
+description_text9 = Description((55, 426), "")
+description_text10 = Description((55, 444), "")
+description_text11 = Description((55, 462), "")
+description_text12 = Description((55, 480), "")
+description_text13 = Description((55, 498), "")
+description_text14 = Description((55, 516), "")
+description_text15 = Description((55, 534), "")
+description_list = [description_text, description_text2, description_text3, description_text4, description_text5, description_text6, 
+description_text7, description_text8, description_text9, description_text10, description_text11, description_text12, 
+description_text13, description_text14, description_text15]

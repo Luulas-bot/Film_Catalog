@@ -34,7 +34,7 @@ class Login():
             pygame.display.flip()
             clock.tick(fps)
    
-    # función que registra los eventos
+    # Función que registra los eventos
     def events(self):
         for self.event in pygame.event.get():
                 if self.event.type == pygame.QUIT:
@@ -47,6 +47,7 @@ class Login():
     
     # Función que determina las variables iniciales
     def init_stats(self):
+        
         
         # Fuentes y renderizados de los textos estáticos
         font1 = pygame.font.SysFont("consolas", 70, bold = True)
@@ -226,8 +227,9 @@ def run_sign_up():
             lg.hidden_password = ""
             lg.run_login()
             break
-
-        if su.escape >= 1:
+        
+        # Condición para retornar al menú de login
+        if su.escape == 1:
             pygame.display.quit()
             su.escape -= 1
             lg.username_text = ""
@@ -241,7 +243,6 @@ def run_sign_up():
         pygame.display.flip()
         clock.tick(fps)
 
-# Creacion de un objeto de la clase y definicion de las variables
 lg = Login(size_login)
 lg.run_login()
 

@@ -2,8 +2,7 @@ import pygame
 import sys
 from Files.Constants import (
     GRAY, WHITE, LIGHTGRAY, BLUE, LIGHTBLUE, color_user_textbox, movie_name, movie_date, movie_country, movie_description,
-    color_movie_name_tx, color_movie_date_tx, color_movie_country_tx, color_movie_description_tx, tx_list, tick, 
-    description_text
+    tick, description_list
 )
 # from Files.Add_new_Textboxes import Textbox
 
@@ -13,6 +12,7 @@ class AddMovie():
          self.size = size
          self.init_stats()
 
+    # función que define las variables inciales de la window
     def init_stats(self):
         self.screen = pygame.display.set_mode(self.size)
 
@@ -28,9 +28,7 @@ class AddMovie():
         self.name_text = ""
         self.date_text = ""
         self.country_text = ""
-        #self.description_text = ""
-        self.description_text2 = ""
-        self.description_text3 = ""
+        self.index = 0
 
         # Variable que maneja cuando se saca la screen actual 
         self.escape = 0
@@ -72,11 +70,8 @@ class AddMovie():
         self.screen.blit(text_surface2, (55, 132))
         text_surface3 = self.font2.render(self.country_text, True, BLUE)
         self.screen.blit(text_surface3, (55, 207))
-        self.screen.blit(description_text.surface, (description_text.blit_coords))
-        text_surface5 = self.font2.render(self.description_text2, True, BLUE)
-        self.screen.blit(text_surface5, (55, 300))
-        text_surface6 = self.font2.render(self.description_text3, True, BLUE)
-        self.screen.blit(text_surface6, (55, 317))
+        
+        self.description_display()
 
         # Dibuja por pantalla el tick
         self.screen.blit(tick, (550, 550))
@@ -141,19 +136,8 @@ class AddMovie():
                 self.country_text = self.country_text[:-1]
             elif movie_country.state and len(self.country_text) < 61:
                 self.country_text += self.event.unicode
-            if self.event.key == pygame.K_BACKSPACE and movie_description.state and len(description_text.text) < 61:
-                description_text.text = description_text.text[:-1]
-            elif self.event.key == pygame.K_BACKSPACE and movie_description.state and len(description_text.text) > 60:
-                self.description_text2 = self.description_text2[:-1]
-            elif self.event.key == pygame.K_BACKSPACE and movie_description.state and len(self.description_text2) > 60:
-                self.description_text3 = self.description_text3[:-1]
-            elif movie_description.state and len(description_text.text) < 61:
-                description_text.text += self.event.unicode
-            elif movie_description.state and len(description_text.text) > 60 and len(self.description_text2) < 61:
-                self.description_text2 += self.event.unicode
-            elif movie_description.state and len(self.description_text2) > 60 and len(self.description_text3) < 61:
-                self.description_text3 += self.event.unicode
-            print(description_text.text)
+            
+            self.description_mechanics()
 
     # Mecánicas del taburador
     def tab_mechanics(self):
@@ -186,8 +170,7 @@ class AddMovie():
     def enter_mechanics(self):
         if self.event.type == pygame.KEYDOWN:
             if self.event.key == pygame.K_RETURN:
-                if movie_description.state:
-                    self.description_text += "\n"
+                self.index += 1
     
     # Mecánicas del tick
     def get_tick(self):
@@ -196,7 +179,21 @@ class AddMovie():
                 self.escape += 1
                 # Acá también van todos los inserts a la base de datos
 
-# TODO Terminar de pasar todos los reglones de la descripcion a la clase. Además hay que acrodarse que lo que no funciona el el display
-# del texto, eso significa que el texto está bien en la variable, pero no se muestra por pantalla, quizás algún error
-# en el blit o algo. También hacer todas las mecánicas utilizando los estados de cada reglon y por último, hacer que cuando,
-# se apriete backspace y no haya más letras en el reglon, vuelva un reglón para atrás. Suerte.
+    # Muestra las líneas de la descripción por pantalla
+    def description_display(self):
+        for i in description_list:    
+            i.update_surface()
+            self.screen.blit(i.surface, (i.blit_coords))
+
+    # Funcionamiento de las líneas de la descripción
+    def description_mechanics(self):
+        description_list[self.index].state = True
+        if self.event.key == pygame.K_BACKSPACE and movie_description.state and description_list[self.index].state:
+            description_list[self.index].text = description_list[self.index].text[:-1]
+        elif movie_description.state and len(description_list[self.index].text) < 61:
+            description_list[self.index].text += self.event.unicode
+        if len(description_list[self.index].text) == 60 and self.index != 15:
+            self.index += 1
+        if len(description_list[self.index].text) == 0 and self.event.key == pygame.K_BACKSPACE and len(description_list[0].text) > 0:
+            self.index -= 1
+

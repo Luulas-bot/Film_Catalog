@@ -6,3 +6,5 @@
 /Files/__pycache__
 *.pyc
 *.cfg
+*.json
+/.vscode/settings.json
