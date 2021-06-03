@@ -18,24 +18,24 @@ class Sign_up():
         self.screen = pygame.display.set_mode(self.size_sign_up)
         
         # Fuentes y renderizados de los textos estáticos
-        font1 = pygame.font.SysFont("consolas", 40, bold = True)
-        font2 = pygame.font.SysFont("consolas", 30, bold = True)
-        font4 = pygame.font.SysFont("consolas", 20, bold = True)
+        self.font1 = pygame.font.SysFont("consolas", 40, bold = True)
+        self.font2 = pygame.font.SysFont("consolas", 30, bold = True)
+        self.font4 = pygame.font.SysFont("consolas", 20, bold = True)
         self.text_box_font1 = pygame.font.SysFont("consolas", 20)
         self.text_box_font2 = pygame.font.SysFont("consolas", 20)
-        self.new_user_title = font1.render("Crea un nuevo", True, LIGHTBLUE)
-        self.new_user_title_2 = font1.render("usuario y contraseña", True, LIGHTBLUE)
-        self.username = font2.render("Nuevo usuario", True, LIGHTBLUE)
-        self.password = font2.render("Contraseña", True, LIGHTBLUE)
-        self.re_password = font4.render("Re-escriba la contraseña", True, LIGHTBLUE)
+        self.new_user_title = self.font1.render("Crea un nuevo", True, LIGHTBLUE)
+        self.new_user_title_2 = self.font1.render("usuario y contraseña", True, LIGHTBLUE)
+        self.username = self.font2.render("Nuevo usuario", True, LIGHTBLUE)
+        self.password = self.font2.render("Contraseña", True, LIGHTBLUE)
+        self.re_password = self.font4.render("Re-escriba la contraseña", True, LIGHTBLUE)
 
         # Fuentes y textos del Sign Up correctamente con sus errores
-        font5 = pygame.font.SysFont("consolas", 20, bold = True)
-        font6 = pygame.font.SysFont("consolas", 17, bold = True)
-        self.text1 = font5.render("Las contraseñas no concuerdan", True, LIGHTBLUE)
-        self.text2 = font6.render("La contraseña debe ser mayor a 6 carácteres", True, LIGHTBLUE)
-        self.text3 = font6.render("El campo 'Usuario' no puede estar en blanco", True, LIGHTBLUE)
-        self.text4 = font5.render("El nombre de usuario ya está ocupado", True, LIGHTBLUE)
+        self.font5 = pygame.font.SysFont("consolas", 20, bold = True)
+        self.font6 = pygame.font.SysFont("consolas", 17, bold = True)
+        self.text1 = self.font5.render("Las contraseñas no concuerdan", True, LIGHTBLUE)
+        self.text2 = self.font6.render("La contraseña debe ser mayor a 6 carácteres", True, LIGHTBLUE)
+        self.text3 = self.font6.render("El campo 'Usuario' no puede estar en blanco", True, LIGHTBLUE)
+        self.text4 = self.font5.render("El nombre de usuario ya está ocupado", True, LIGHTBLUE)
 
         # Boleanos de los errores
         self.pass_no_match = False
@@ -252,3 +252,5 @@ class Sign_up():
         if len(self.re_password_text) >= 1:    
             text_surface3 = self.text_box_font1.render(self.re_hidden_password, True, BLUE)
             self.screen.blit(text_surface3, (107, 393))
+
+pygame.quit()

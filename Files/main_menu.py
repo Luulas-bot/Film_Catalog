@@ -31,8 +31,6 @@ class Main_menu():
         
     # Función que determina las variables iniciales
     def init_stats(self):
-        self.screen = pygame.display.set_mode(self.size)
-
         # Boleano para saber si los botones de los géneros están presionados o no
         self.all_genre_buttons_active = False
 
@@ -171,7 +169,7 @@ class Main_menu():
                     self.all_genre_buttons_active = False
                     self.country_textbox_active = False
                 pygame.display.quit()
-                self.run_add_new_movie()
+                return self.run_add_new_movie()
 
     # Dibuja los botones por pantalla
     def draw_buttons(self):
@@ -221,3 +219,4 @@ class Main_menu():
             pygame.display.flip()
             clock.tick(fps)
     
+pygame.quit()

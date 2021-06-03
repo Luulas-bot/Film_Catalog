@@ -26,7 +26,7 @@ class Login():
         self.screen = pygame.display.set_mode(self.size)
         pygame.display.set_caption("Login")
 
-       # Bucle principal
+        # Bucle principal
         while self.done:
             lg.events()
             lg.draw_on_screen()
@@ -47,21 +47,19 @@ class Login():
     
     # Función que determina las variables iniciales
     def init_stats(self):
-        
-        
         # Fuentes y renderizados de los textos estáticos
-        font1 = pygame.font.SysFont("consolas", 70, bold = True)
-        font2 = pygame.font.SysFont("consolas", 30, bold = True)
-        font3 = pygame.font.SysFont("consolas", 15, bold = True)
-        font4 = pygame.font.SysFont("consolas", 20, bold = True)
+        self.font1 = pygame.font.SysFont("consolas", 70, bold = True)
+        self.font2 = pygame.font.SysFont("consolas", 30, bold = True)
+        self.font3 = pygame.font.SysFont("consolas", 15, bold = True)
+        self.font4 = pygame.font.SysFont("consolas", 20, bold = True)
         self.text_box_font1 = pygame.font.SysFont("consolas", 20)
         self.text_box_font2 = pygame.font.SysFont("consolas", 20)
-        self.bienvenido = font1.render("Bienvenido", True, LIGHTBLUE)
-        self.username = font2.render("Usuario", True, LIGHTBLUE)
-        self.password = font2.render("Contraseña", True, LIGHTBLUE)
-        self.new_user = font3.render("¿No tienes un usuario todavia?", True, LIGHTBLUE)
-        self.sign_up_corr = font4.render("El usuario se ha creado correctamente", True, LIGHTBLUE)
-        self.wrong_user_text = font4.render("El usuario o la contraseña son incorrectos", True, LIGHTBLUE)
+        self.bienvenido = self.font1.render("Bienvenido", True, LIGHTBLUE)
+        self.username = self.font2.render("Usuario", True, LIGHTBLUE)
+        self.password = self.font2.render("Contraseña", True, LIGHTBLUE)
+        self.new_user = self.font3.render("¿No tienes un usuario todavia?", True, LIGHTBLUE)
+        self.sign_up_corr = self.font4.render("El usuario se ha creado correctamente", True, LIGHTBLUE)
+        self.wrong_user_text = self.font4.render("El usuario o la contraseña son incorrectos", True, LIGHTBLUE)
         
         # Variables modificables del texto entrado por el usuario
         self.username_text = ""
@@ -245,4 +243,6 @@ def run_sign_up():
 
 lg = Login(size_login)
 lg.run_login()
+
+pygame.quit()
 

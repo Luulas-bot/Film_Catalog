@@ -14,8 +14,6 @@ class AddMovie():
 
     # función que define las variables inciales de la window
     def init_stats(self):
-        self.screen = pygame.display.set_mode(self.size)
-
         # Fuentes de texto
         self.font1 = pygame.font.SysFont("consolas", 20, bold = True)
         self.font2 = pygame.font.SysFont("consolas", 15, bold = True)
@@ -156,7 +154,7 @@ class AddMovie():
                     movie_country.state = False
                     movie_description.state = True
                 elif movie_description.state:
-                    self.description_text = self.description_text[:-1]
+                    description_list[self.index].text = description_list[self.index].text[:-1]
                     movie_description.state = False
                     movie_name.state = True
 
@@ -188,12 +186,13 @@ class AddMovie():
     # Funcionamiento de las líneas de la descripción
     def description_mechanics(self):
         description_list[self.index].state = True
-        if self.event.key == pygame.K_BACKSPACE and movie_description.state and description_list[self.index].state:
+        if self.event.key == pygame.K_BACKSPACE and movie_description.state:
             description_list[self.index].text = description_list[self.index].text[:-1]
-        elif movie_description.state and len(description_list[self.index].text) < 61:
+        if movie_description.state and len(description_list[self.index].text) < 61:
             description_list[self.index].text += self.event.unicode
         if len(description_list[self.index].text) == 60 and self.index != 15:
             self.index += 1
         if len(description_list[self.index].text) == 0 and self.event.key == pygame.K_BACKSPACE and len(description_list[0].text) > 0:
             self.index -= 1
 
+pygame.quit()

@@ -95,16 +95,10 @@ all_sprites_list.add(movie5)
 all_sprites_list.add(movie6)
 
 # Textboxes del agregadode películas
-tx_list = []
-
 movie_name = Textbox((50, 50, 500, 30), (50, 50))
-tx_list.append(movie_name)
 movie_date = Textbox((50, 125, 500, 30), (50, 100))
-tx_list.append(movie_date)
 movie_country = Textbox((50, 200, 500, 30), (50, 150))
-tx_list.append(movie_country)
 movie_description = Textbox((50, 275, 500, 275), (50, 200))
-tx_list.append(movie_description)
 
 # Tick
 tick = pygame.image.load("Images/tick.png")
@@ -128,3 +122,5 @@ description_text15 = Description((55, 534), "")
 description_list = [description_text, description_text2, description_text3, description_text4, description_text5, description_text6, 
 description_text7, description_text8, description_text9, description_text10, description_text11, description_text12, 
 description_text13, description_text14, description_text15]
+
+pygame.quit()
