@@ -6,6 +6,8 @@ from Files.Constants import (
 from Files.Database_Connection import c, e
 from sqlalchemy.exc import IntegrityError
 
+pygame.init()
+
 class Sign_up():
 
     # Función constructora
@@ -15,7 +17,10 @@ class Sign_up():
 
     # Función que setea las variables inciales
     def init_stats(self):
+       
+        pygame.display.quit()
         self.screen = pygame.display.set_mode(self.size_sign_up)
+        pygame.display.set_caption("Sign Up")
         
         # Fuentes y renderizados de los textos estáticos
         self.font1 = pygame.font.SysFont("consolas", 40, bold = True)

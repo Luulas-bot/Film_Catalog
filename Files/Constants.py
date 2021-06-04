@@ -2,7 +2,7 @@ import pygame
 from Files.Buttons import Buttons
 from Files.Movies import Movies
 from Files.Add_new_Textboxes import Textbox
-from Files.description_textbox import Description
+from Files.NM_Texts import NM_Text
 
 pygame.init()
 
@@ -87,6 +87,7 @@ movie3 = Movies("Images/movies_rect.png", (800, 120))
 movie4 = Movies("Images/movies_rect.png", (290, 450))
 movie5 = Movies("Images/movies_rect.png", (540, 450))
 movie6 = Movies("Images/movies_rect.png", (800, 450))
+
 all_sprites_list.add(movie)
 all_sprites_list.add(movie2)
 all_sprites_list.add(movie3)
@@ -103,24 +104,35 @@ movie_description = Textbox((50, 275, 500, 275), (50, 200))
 # Tick
 tick = pygame.image.load("Images/tick.png")
 
-# Description texts   
-description_text = Description((55, 282), "")
-description_text2 = Description((55, 300), "")
-description_text3 = Description((55, 318), "")
-description_text4 = Description((55, 336), "")
-description_text5 = Description((55, 354), "")
-description_text6 = Description((55, 372), "")
-description_text7 = Description((55, 390), "")
-description_text8 = Description((55, 408), "")
-description_text9 = Description((55, 426), "")
-description_text10 = Description((55, 444), "")
-description_text11 = Description((55, 462), "")
-description_text12 = Description((55, 480), "")
-description_text13 = Description((55, 498), "")
-description_text14 = Description((55, 516), "")
-description_text15 = Description((55, 534), "")
+# NM_Text texts   
+name_text = NM_Text((55, 57), "")
+date_text = NM_Text((55, 132), "")
+country_text = NM_Text ((55, 207), "")
+description_text = NM_Text((55, 282), "")
+description_text2 = NM_Text((55, 300), "")
+description_text3 = NM_Text((55, 318), "")
+description_text4 = NM_Text((55, 336), "")
+description_text5 = NM_Text((55, 354), "")
+description_text6 = NM_Text((55, 372), "")
+description_text7 = NM_Text((55, 390), "")
+description_text8 = NM_Text((55, 408), "")
+description_text9 = NM_Text((55, 426), "")
+description_text10 = NM_Text((55, 444), "")
+description_text11 = NM_Text((55, 462), "")
+description_text12 = NM_Text((55, 480), "")
+description_text13 = NM_Text((55, 498), "")
+description_text14 = NM_Text((55, 516), "")
+description_text15 = NM_Text((55, 534), "")
+
+
 description_list = [description_text, description_text2, description_text3, description_text4, description_text5, description_text6, 
 description_text7, description_text8, description_text9, description_text10, description_text11, description_text12, 
 description_text13, description_text14, description_text15]
+
+texts_list = [name_text, date_text, country_text]
+
+all_text_list = [description_text, description_text2, description_text3, description_text4, description_text5, description_text6, 
+description_text7, description_text8, description_text9, description_text10, description_text11, description_text12, 
+description_text13, description_text14, description_text15, name_text, date_text, country_text]
 
 pygame.quit()

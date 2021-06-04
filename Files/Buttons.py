@@ -1,5 +1,7 @@
 import pygame
 
+pygame.init()
+
 # Clase de los botones
 class Buttons():
 
@@ -13,3 +15,5 @@ class Buttons():
         self.pressed_button = pygame.image.load(self.pressed_image)
         self.rect = pygame.Rect(self.hitbox)
         self.state = False
+
+pygame.quit()

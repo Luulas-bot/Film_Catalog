@@ -1,5 +1,7 @@
 import pygame
 
+pygame.init()
+
 class Movies(pygame.sprite.Sprite):
 
     def __init__(self, image, coords):
@@ -9,3 +11,4 @@ class Movies(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = coords
         
+pygame.quit()

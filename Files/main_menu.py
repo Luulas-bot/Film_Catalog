@@ -3,9 +3,11 @@ import sys
 from Files.Constants import (
     WHITE, BLUE, GRAY, LIGHTGRAY, all_button, genre_button, to_watch_button, already_seen_button,
     top_button, worst_button, country_button, exit_button,add_button, button_list, genre_button_list, 
-    color_user_textbox, all_sprites_list, clock, fps, size_add_new
+    color_user_textbox, all_sprites_list, clock, fps, size_add_new, description_list
 )
 from Files.New_movie import AddMovie
+
+pygame.init()
 
 class Main_menu():
 
@@ -19,8 +21,6 @@ class Main_menu():
 
         bol_main_menu = True   
 
-        self.screen = pygame.display.set_mode(self.size)
-        pygame.display.set_caption("Sign Up")
         self.init_stats()
 
         while bol_main_menu:
@@ -31,6 +31,11 @@ class Main_menu():
         
     # Función que determina las variables iniciales
     def init_stats(self):
+        
+        pygame.display.quit()
+        self.screen = pygame.display.set_mode(self.size)
+        pygame.display.set_caption("Sign Up")
+        
         # Boleano para saber si los botones de los géneros están presionados o no
         self.all_genre_buttons_active = False
 
@@ -168,7 +173,6 @@ class Main_menu():
                     button.state = False
                     self.all_genre_buttons_active = False
                     self.country_textbox_active = False
-                pygame.display.quit()
                 return self.run_add_new_movie()
 
     # Dibuja los botones por pantalla
@@ -197,26 +201,25 @@ class Main_menu():
 
     # Corre el menú para crear una nueva película
     def run_add_new_movie(self):
-        
+
         am = AddMovie(size_add_new)
-        am.screen = pygame.display.set_mode(am.size)
-        pygame.display.set_caption("Add New Movie")
 
         while True:
             am.events()
             am.draw_on_screen()
 
             if am.escape >= 1:
-                pygame.display.quit()
                 am.escape -= 1
                 am.name_text = ""
                 am.date_text = ""
                 am.country_text = ""
-                am.description_text = ""
+                for d in description_list:
+                    d.text = ""
+                del self.text_box_font
                 self.run_main_menu()
                 break
 
             pygame.display.flip()
             clock.tick(fps)
-    
+
 pygame.quit()
