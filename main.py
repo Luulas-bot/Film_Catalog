@@ -2,8 +2,7 @@
 import pygame
 import sys
 from Files.Constants import (
-    LIGHTBLUE, size_login, WHITE, clock, fps, BLUE, GRAY, LIGHTGRAY, color_user_textbox,
-    color_pass_textbox, size_sign_up, size_main_menu
+    LIGHTBLUE, size_login, WHITE, clock, fps, BLUE, GRAY, LIGHTGRAY, size_sign_up, size_main_menu
 )
 from Files.Sign_up import Sign_up
 from Files.main_menu import Main_menu
@@ -82,6 +81,10 @@ class Login():
         # Boleanos para manejar los mensajes al usuario
         self.sign_up_corr_bol = False
         self.wrong_user = False
+
+        # Colores de las Textboxes
+        self.color_user_textbox = LIGHTGRAY
+        self.color_pass_textbox = LIGHTGRAY
 
     # Dibuja por pantalla los elementos que se quieren
     def draw_on_screen(self):
@@ -176,16 +179,16 @@ class Login():
     # Cambia y dibuja el color de las textboxes dependiendo si están activas o no
     def select_draw_color_textbox(self):
         if self.user_textbox_active:
-            color_user_textbox = WHITE
+            self.color_user_textbox = WHITE
         else:
-            color_user_textbox = LIGHTGRAY
+            self.color_user_textbox = LIGHTGRAY
         if self.pass_textbox_active:
-            color_pass_textbox = WHITE
+            self.color_pass_textbox = WHITE
         else:
-            color_pass_textbox = LIGHTGRAY
+            self.color_pass_textbox = LIGHTGRAY
 
-        pygame.draw.rect(self.screen, color_user_textbox, self.user_text_box, 0, 5)
-        pygame.draw.rect(self.screen, color_pass_textbox, self.pass_text_box, 0, 5)
+        pygame.draw.rect(self.screen, self.color_user_textbox, self.user_text_box, 0, 5)
+        pygame.draw.rect(self.screen, self.color_pass_textbox, self.pass_text_box, 0, 5)
 
     # Corre el loop para generar la ventana del menú principal
     def run_main_menu(self):

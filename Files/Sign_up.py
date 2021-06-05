@@ -1,7 +1,7 @@
 import pygame
 import sys
 from Files.Constants import (
-    WHITE, BLUE, GRAY, LIGHTGRAY, LIGHTBLUE, color_user_textbox, color_pass_textbox, color_re_pass_textbox
+    WHITE, BLUE, GRAY, LIGHTGRAY, LIGHTBLUE
 )
 from Files.Database_Connection import c, e
 from sqlalchemy.exc import IntegrityError
@@ -69,7 +69,13 @@ class Sign_up():
         self.new_user_created = 0
         self.new_user_created_text = 0
 
+        # Variable que registra si se sale de la ventana o no
         self.escape = 0
+
+        # Colores de las textboxes
+        self.color_user_textbox = LIGHTGRAY
+        self.color_pass_textbox = LIGHTGRAY
+        self.color_re_pass_textbox = LIGHTGRAY
 
     # Función que registra los eventos
     def events(self):
@@ -219,21 +225,21 @@ class Sign_up():
     # Cambio del color de las textboxes dependiendo si están presionadas o no y se las diubja
     def select_draw_color_textbox(self):
         if self.user_textbox_active:
-            color_user_textbox = WHITE
+            self.color_user_textbox = WHITE
         else:
-            color_user_textbox = LIGHTGRAY
+            self.color_user_textbox = LIGHTGRAY
         if self.pass_textbox_active:
-            color_pass_textbox = WHITE
+            self.color_pass_textbox = WHITE
         else:
-            color_pass_textbox = LIGHTGRAY
+            self.color_pass_textbox = LIGHTGRAY
         if self.re_pass_textbox_active:
-            color_re_pass_textbox = WHITE
+            self.color_re_pass_textbox = WHITE
         else:
-            color_re_pass_textbox = LIGHTGRAY
+            self.color_re_pass_textbox = LIGHTGRAY
 
-        pygame.draw.rect(self.screen, color_user_textbox, self.user_text_box, 0, 5)
-        pygame.draw.rect(self.screen, color_pass_textbox, self.pass_text_box, 0, 5)
-        pygame.draw.rect(self.screen, color_re_pass_textbox, self.re_pass_text_box, 0, 5)
+        pygame.draw.rect(self.screen, self.color_user_textbox, self.user_text_box, 0, 5)
+        pygame.draw.rect(self.screen, self.color_pass_textbox, self.pass_text_box, 0, 5)
+        pygame.draw.rect(self.screen, self.color_re_pass_textbox, self.re_pass_text_box, 0, 5)
 
     # Dibuja los errores por pantalla
     def draw_errors(self):

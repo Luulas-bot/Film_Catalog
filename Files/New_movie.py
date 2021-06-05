@@ -1,10 +1,9 @@
 import pygame
 import sys
 from Files.Constants import (
-    GRAY, WHITE, LIGHTGRAY, BLUE, LIGHTBLUE, color_user_textbox, movie_name, movie_date, movie_country, movie_description,
-    tick, description_list, texts_list, all_text_list
+    GRAY, WHITE, LIGHTGRAY, BLUE, LIGHTBLUE, movie_name, movie_date, movie_country, movie_description,
 )
-# from Files.Add_new_Textboxes import Textbox
+from Files.NM_Texts import NM_Text, NM_Description
 
 pygame.init()
 
@@ -40,6 +39,44 @@ class AddMovie():
 
         self.font = pygame.font.SysFont("consolas", 15, bold = True)
 
+        # Color de las tx
+        self.color_movie_name_tx = LIGHTGRAY
+        self.color_movie_date_tx = LIGHTGRAY
+        self.color_movie_country_tx = LIGHTGRAY
+        self.color_movie_description_tx = LIGHTGRAY
+
+        # NM_Text texts   
+        self.name_text = NM_Text((55, 57), "")
+        self.date_text = NM_Text((55, 132), "")
+        self.country_text = NM_Text ((55, 207), "")
+        self.description_text = NM_Description((55, 282), "")
+        self.description_text2 = NM_Description((55, 300), "")
+        self.description_text3 = NM_Description((55, 318), "")
+        self.description_text4 = NM_Description((55, 336), "")
+        self.description_text5 = NM_Description((55, 354), "")
+        self.description_text6 = NM_Description((55, 372), "")
+        self.description_text7 = NM_Description((55, 390), "")
+        self.description_text8 = NM_Description((55, 408), "")
+        self.description_text9 = NM_Description((55, 426), "")
+        self.description_text10 = NM_Description((55, 444), "")
+        self.description_text11 = NM_Description((55, 462), "")
+        self.description_text12 = NM_Description((55, 480), "")
+        self.description_text13 = NM_Description((55, 498), "")
+        self.description_text14 = NM_Description((55, 516), "")
+        self.description_text15 = NM_Description((55, 534), "")
+
+        self.description_list = []
+        self.texts_list = []
+
+        for i in NM_Description.description_list_temp:
+            self.description_list.append(i)
+
+        for i in NM_Text.texts_list_temp:
+            self.texts_list.append(i)
+
+        # Tick
+        self.tick = pygame.image.load("Images/tick.png")
+
     # Función que registra los eventos
     def events(self):
         for self.event in pygame.event.get():
@@ -68,17 +105,17 @@ class AddMovie():
         self.change_tx_color()
 
         # Dibuja por pantalla los inputs de texto del usuario
-        text_surface1 = self.font2.render(texts_list[0].text, True, BLUE)
+        text_surface1 = self.font2.render(self.texts_list[0].text, True, BLUE)
         self.screen.blit(text_surface1, (55, 57))
-        text_surface2 = self.font2.render(texts_list[1].text, True, BLUE)
+        text_surface2 = self.font2.render(self.texts_list[1].text, True, BLUE)
         self.screen.blit(text_surface2, (55, 132))
-        text_surface3 = self.font2.render(texts_list[2].text, True, BLUE)
+        text_surface3 = self.font2.render(self.texts_list[2].text, True, BLUE)
         self.screen.blit(text_surface3, (55, 207))
         
         self.description_display()
 
         # Dibuja por pantalla el tick
-        self.screen.blit(tick, (550, 550))
+        self.screen.blit(self.tick, (550, 550))
 
     # Define si están activas o no las textboxes
     def get_tx_state(self):
@@ -103,43 +140,43 @@ class AddMovie():
     # Variable que cambia el color de las textboxes según su estado
     def change_tx_color(self):
         if movie_name.state == True:
-            color_movie_name_tx = WHITE
+            self.color_movie_name_tx = WHITE
         else:
-            color_movie_name_tx = LIGHTGRAY
+            self.color_movie_name_tx = LIGHTGRAY
         if movie_date.state == True:
-            color_movie_date_tx = WHITE
+            self.color_movie_date_tx = WHITE
         else:
-            color_movie_date_tx = LIGHTGRAY
+            self.color_movie_date_tx = LIGHTGRAY
         if movie_country.state == True:
-            color_movie_country_tx = WHITE
+            self.color_movie_country_tx = WHITE
         else:
-            color_movie_country_tx = LIGHTGRAY
+            self.color_movie_country_tx = LIGHTGRAY
         if movie_description.state == True:
-            color_movie_description_tx = WHITE
+            self.color_movie_description_tx = WHITE
         else:
-            color_movie_description_tx = LIGHTGRAY
+            self.color_movie_description_tx = LIGHTGRAY
 
         # Dibuja las textboxes con su color por pantalla
-        pygame.draw.rect(self.screen, color_movie_name_tx, movie_name, 0, 5)
-        pygame.draw.rect(self.screen, color_movie_date_tx, movie_date, 0, 5)
-        pygame.draw.rect(self.screen, color_movie_country_tx, movie_country, 0, 5)
-        pygame.draw.rect(self.screen, color_movie_description_tx, movie_description, 0, 5)
+        pygame.draw.rect(self.screen, self.color_movie_name_tx, movie_name, 0, 5)
+        pygame.draw.rect(self.screen, self.color_movie_date_tx, movie_date, 0, 5)
+        pygame.draw.rect(self.screen, self.color_movie_country_tx, movie_country, 0, 5)
+        pygame.draw.rect(self.screen, self.color_movie_description_tx, movie_description, 0, 5)
     
     # Escribe en las variables lo que el usuario escribe
     def write_user_text(self): 
         if self.event.type == pygame.KEYDOWN:
             if self.event.key == pygame.K_BACKSPACE and movie_name.state:
-                    texts_list[0].text = texts_list[0].text[:-1] 
-            elif movie_name.state and len(texts_list[0].text) < 61:
-                texts_list[0].text += self.event.unicode
+                    self.texts_list[0].text = self.texts_list[0].text[:-1] 
+            elif movie_name.state and len(self.texts_list[0].text) < 61:
+                self.texts_list[0].text += self.event.unicode
             if self.event.key == pygame.K_BACKSPACE and movie_date.state:
-                texts_list[1].text = texts_list[1].text[:-1]
-            elif movie_date.state and len(texts_list[1].text) < 61:
-                texts_list[1].text += self.event.unicode
+                self.texts_list[1].text = self.texts_list[1].text[:-1]
+            elif movie_date.state and len(self.texts_list[1].text) < 61:
+                self.texts_list[1].text += self.event.unicode
             if self.event.key == pygame.K_BACKSPACE and movie_country.state:
-                texts_list[2].text = texts_list[2].text[:-1]
-            elif movie_country.state and len(texts_list[2].text) < 61:
-                texts_list[2].text += self.event.unicode
+                self.texts_list[2].text = self.texts_list[2].text[:-1]
+            elif movie_country.state and len(self.texts_list[2].text) < 61:
+                self.texts_list[2].text += self.event.unicode
             
             self.description_mechanics()
 
@@ -148,19 +185,19 @@ class AddMovie():
         if self.event.type == pygame.KEYDOWN:
             if self.event.key == pygame.K_TAB:
                 if movie_name.state:    
-                    texts_list[0].text = texts_list[0].text[:-1]
+                    self.texts_list[0].text = self.texts_list[0].text[:-1]
                     movie_name.state = False
                     movie_date.state = True
                 elif movie_date.state:
-                    texts_list[1].text = texts_list[1].text[:-1]
+                    self.texts_list[1].text = self.texts_list[1].text[:-1]
                     movie_date.state = False
                     movie_country.state = True
                 elif movie_country.state:
-                    texts_list[2].text = texts_list[2].text[:-1]
+                    self.texts_list[2].text = self.texts_list[2].text[:-1]
                     movie_country.state = False
                     movie_description.state = True
                 elif movie_description.state:
-                    description_list[self.index].text = description_list[self.index].text[:-1]
+                    self.description_list[self.index].text = self.description_list[self.index].text[:-1]
                     movie_description.state = False
                     movie_name.state = True
 
@@ -187,21 +224,20 @@ class AddMovie():
 
     # Muestra las líneas de la descripción por pantalla
     def description_display(self):
-        for i in description_list:    
+        for i in self.description_list:    
             self.surface = self.font.render(i.text, True, (47, 86, 233))
             self.screen.blit(self.surface, (i.blit_coords))
 
     # Funcionamiento de las líneas de la descripción
     def description_mechanics(self):
         if self.event.key == pygame.K_BACKSPACE and movie_description.state:
-            description_list[self.index].text = description_list[self.index].text[:-1]
-            if self.index < 16 and len(description_list[self.index].text) < 1:
+            self.description_list[self.index].text = self.description_list[self.index].text[:-1]
+            if self.index < 16 and len(self.description_list[self.index].text) < 1:
                 self.index -= 1
-        elif movie_description.state and len(description_list[self.index].text) < 61:
-            description_list[self.index].text += self.event.unicode
-        elif len(description_list[self.index].text) > 59 and self.index < 16 and movie_description.state:
+        elif movie_description.state and len(self.description_list[self.index].text) < 61:
+            self.description_list[self.index].text += self.event.unicode
+        elif len(self.description_list[self.index].text) > 59 and self.index < 16 and movie_description.state:
             self.index += 1
-        print(f'{description_list[0].text} {description_list[1].text}')
 
 pygame.quit()
 
