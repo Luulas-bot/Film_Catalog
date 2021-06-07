@@ -1,6 +1,5 @@
 import pygame
 from Files.Movies import Movies
-from Files.Add_new_Textboxes import Textbox
 
 pygame.init()
 
@@ -37,11 +36,5 @@ all_sprites_list.add(movie3)
 all_sprites_list.add(movie4)
 all_sprites_list.add(movie5)
 all_sprites_list.add(movie6)
-
-# Textboxes del agregado de películas
-movie_name = Textbox((50, 50, 500, 30), (50, 50))
-movie_date = Textbox((50, 125, 500, 30), (50, 100))
-movie_country = Textbox((50, 200, 500, 30), (50, 150))
-movie_description = Textbox((50, 275, 500, 275), (50, 200))
 
 pygame.quit()

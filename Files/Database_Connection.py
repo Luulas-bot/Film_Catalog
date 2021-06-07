@@ -1,3 +1,4 @@
+from _typeshed import IdentityFunction
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String, Integer, DateTime, CHAR, ForeignKey
@@ -36,7 +37,7 @@ class Connection():
 class User(Base):
     __tablename__ = 'Usuario'
 
-    id = Column(Integer(), primary_key = True)
+    id = Column(Integer(), primary_key = True, autoincrement = 1)
     username = Column(String(50), nullable = False, unique = True)
     password = Column(String(50), nullable = False, unique = False)
     created_at = Column(DateTime, default = datetime.now)
@@ -48,7 +49,7 @@ class User(Base):
 class Movie_db(Base):
     __tablename__ = "Pelicula"
 
-    id = Column(Integer(), primary_key = True)
+    id = Column(Integer(), primary_key = True, autoincrement = 1)
     name = Column(String(70), nullable = False, unique = True)
     movie_date = Column(String(50), nullable = True, unique = False)
     country_id = Column(CHAR(3), ForeignKey('Pais.id'))
@@ -104,7 +105,7 @@ class Execute():
         self.country_movie = country
         self.description_movie = description
 
-        self.movie = Movie_db(name = f'{self.name_movie}', movie_date = f'{self.date_movie}', movie_genre_id = f'{self.country_movie}', description = f'{self.description_movie}' )
+        self.movie = Movie_db(name = f'{self.name_movie}', movie_date = f'{self.date_movie}', country_id = f'{self.country_movie}', description = f'{self.description_movie}' )
 
         c.session.add(self.movie)
         c.session.commit()
