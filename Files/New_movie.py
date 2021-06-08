@@ -24,16 +24,17 @@ class AddMovie():
         # Fuentes de texto
         self.font1 = pygame.font.SysFont("consolas", 20, bold = True)
         self.font2 = pygame.font.SysFont("consolas", 15, bold = True)
+        self.font3= pygame.font.SysFont("consolas", 13, bold = True)
         self.name_title = self.font1.render("Nombre de la película", True, LIGHTBLUE)
         self.date_title = self.font1.render("Fecha", True, LIGHTBLUE)
         self.country_title = self.font1.render("Nacionalidad", True, LIGHTBLUE)
         self.description_title = self.font1.render("Descripción", True, LIGHTBLUE)
         self.genre_title = self.font1.render("Género", True, LIGHTBLUE)
-        self.country_description = self.font2.render("""Para los países: buscar en google 'código países 3 letras' e introducirlo
-        en la casilla correspondiente. Todo en mayúsculas.""", True, LIGHTBLUE)
-        self.genre_description = self.font2.render("""Para los géneros las opciones dispoibles son:
-        ACC(Accion) - CFT(Ciencia Ficción) - COM(Comedia) - DOC(Documental) - DRA(Drama) - FAN(Fantasía) - MEL(Melodrama)
-        - MUS(Musical) - ROM(Romance) - SUS(Suspenso) - TER(Terror)""", True, LIGHTBLUE)
+        self.country_description1 = self.font3.render("Para los países: buscar en google 'código países 3 letras' e", True, LIGHTBLUE)
+        self.country_description2 = self.font3.render("introducirlo en la casilla correspondiente. Todo en mayúsculas.", True, LIGHTBLUE)
+        self.genre_description1 = self.font3.render("Para los géneros las opciones disponibles son: ACC(Acción) - DRA(Drama)", True, LIGHTBLUE)
+        self.genre_description2 = self.font3.render("COM(Comedia) - DOC(Documental) - CFT(Ciencia Ficción) - FAN(Fantasía)", True, LIGHTBLUE)
+        self.genre_description3 = self.font3.render("MEL(Melodrama) - MUS(Musical) - ROM(Romance) - SUS(Suspenso) - TER(Terror)", True, LIGHTBLUE)
 
         # Indice de las lines de las descripcion
         self.index = 0
@@ -109,8 +110,11 @@ class AddMovie():
         self.screen.blit(self.country_title, (50, 180))
         self.screen.blit(self.genre_title, (300, 180))
         self.screen.blit(self.description_title, (50, 255))
-        self.screen.blit(self.country_description, (50, 530))
-        self.screen.blit(self.genre_description, (50, 560))
+        self.screen.blit(self.country_description1, (50, 580))
+        self.screen.blit(self.country_description2, (50, 600))
+        self.screen.blit(self.genre_description1, (50, 630))
+        self.screen.blit(self.genre_description2, (50, 650))
+        self.screen.blit(self.genre_description3, (50, 670))
 
         self.change_tx_color()
 
@@ -283,5 +287,3 @@ class AddMovie():
             self.index += 1
 
 pygame.quit()
-
-# TODO Terminar de blitear bien con las coords bien las dos descripciones de ayuda para loa usarios del pais y del genero.
