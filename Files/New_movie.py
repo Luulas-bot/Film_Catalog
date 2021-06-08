@@ -28,6 +28,12 @@ class AddMovie():
         self.date_title = self.font1.render("Fecha", True, LIGHTBLUE)
         self.country_title = self.font1.render("Nacionalidad", True, LIGHTBLUE)
         self.description_title = self.font1.render("Descripción", True, LIGHTBLUE)
+        self.genre_title = self.font1.render("Género", True, LIGHTBLUE)
+        self.country_description = self.font2.render("""Para los países: buscar en google 'código países 3 letras' e introducirlo
+        en la casilla correspondiente. Todo en mayúsculas.""", True, LIGHTBLUE)
+        self.genre_description = self.font2.render("""Para los géneros las opciones dispoibles son:
+        ACC(Accion) - CFT(Ciencia Ficción) - COM(Comedia) - DOC(Documental) - DRA(Drama) - FAN(Fantasía) - MEL(Melodrama)
+        - MUS(Musical) - ROM(Romance) - SUS(Suspenso) - TER(Terror)""", True, LIGHTBLUE)
 
         # Indice de las lines de las descripcion
         self.index = 0
@@ -42,12 +48,14 @@ class AddMovie():
         self.color_movie_name_tx = LIGHTGRAY
         self.color_movie_date_tx = LIGHTGRAY
         self.color_movie_country_tx = LIGHTGRAY
+        self.color_movie_genre_tx = LIGHTGRAY
         self.color_movie_description_tx = LIGHTGRAY
 
         # NM_Text texts   
         self.name_text = NM_Text((55, 57), "", (50, 50, 500, 30), (50, 50))
         self.date_text = NM_Text((55, 132), "", (50, 125, 500, 30), (50, 100))
-        self.country_text = NM_Text ((55, 207), "", (50, 200, 500, 30), (50, 150))
+        self.country_text = NM_Text ((55, 207), "", (50, 200, 200, 30), (50, 150))
+        self.genre_text = NM_Text((305, 207),"", (300, 200, 200, 30), (200, 150))
         self.description_text = NM_Description((55, 282), "", (50, 275, 500, 275), (50, 200))
         self.description_text2 = NM_Description((55, 300), "", (50, 275, 500, 275), (50, 200))
         self.description_text3 = NM_Description((55, 318), "", (50, 275, 500, 275), (50, 200))
@@ -65,15 +73,10 @@ class AddMovie():
         self.description_text15 = NM_Description((55, 534), "", (50, 275, 500, 275), (50, 200))
 
         self.description_list = []
-        self.description_list_text = []
         self.texts_list = []
 
         for i in NM_Description.description_list_temp:
             self.description_list.append(i)
-
-        for i in NM_Description.description_list_temp:
-            self.description_list_text.append(i.text)
-            print(self.description_list_text)
 
         for i in NM_Text.texts_list_temp:
             self.texts_list.append(i)
@@ -104,7 +107,10 @@ class AddMovie():
         self.screen.blit(self.name_title, (50, 30))
         self.screen.blit(self.date_title, (50, 105))
         self.screen.blit(self.country_title, (50, 180))
+        self.screen.blit(self.genre_title, (300, 180))
         self.screen.blit(self.description_title, (50, 255))
+        self.screen.blit(self.country_description, (50, 530))
+        self.screen.blit(self.genre_description, (50, 560))
 
         self.change_tx_color()
 
@@ -115,6 +121,8 @@ class AddMovie():
         self.screen.blit(self.text_surface2, (55, 132))   
         self.text_surface3 = self.font2.render(self.texts_list[2].text, True, BLUE)
         self.screen.blit(self.text_surface3, (55, 207))
+        self.text_surface4 = self.font2.render(self.texts_list[3].text, True, BLUE)
+        self.screen.blit(self.text_surface4, (305, 207))
         
         self.description_display()
 
@@ -136,6 +144,10 @@ class AddMovie():
                 self.country_text.state = True
             else:
                 self.country_text.state = False
+            if self.genre_text.tx_rect.collidepoint(self.mx, self.my):
+                self.genre_text.state = True
+            else:
+                self.genre_text.state = False
             if self.description_text.tx_rect.collidepoint(self.mx, self.my):
                 self.description_text.state = True
             else:
@@ -155,6 +167,10 @@ class AddMovie():
             self.color_movie_country_tx = WHITE
         else:
             self.color_movie_country_tx = LIGHTGRAY
+        if self.genre_text.state:
+            self.color_movie_genre_tx = WHITE
+        else:
+            self.color_movie_genre_tx = LIGHTGRAY
         if self.description_text.state == True:
             self.color_movie_description_tx = WHITE
         else:
@@ -164,6 +180,7 @@ class AddMovie():
         pygame.draw.rect(self.screen, self.color_movie_name_tx, self.name_text.tx_rect, 0, 5)
         pygame.draw.rect(self.screen, self.color_movie_date_tx, self.date_text.tx_rect, 0, 5)
         pygame.draw.rect(self.screen, self.color_movie_country_tx, self.country_text.tx_rect, 0, 5)
+        pygame.draw.rect(self.screen, self.color_movie_genre_tx, self.genre_text.tx_rect, 0, 5)
         pygame.draw.rect(self.screen, self.color_movie_description_tx, self.description_text.tx_rect, 0, 5)
     
     # Escribe en las variables lo que el usuario escribe
@@ -179,8 +196,12 @@ class AddMovie():
                 self.texts_list[1].text += self.event.unicode
             if self.event.key == pygame.K_BACKSPACE and self.country_text.state:
                 self.texts_list[2].text = self.texts_list[2].text[:-1]
-            elif self.country_text.state and len(self.texts_list[2].text) < 61:
+            elif self.country_text.state and len(self.texts_list[2].text) <= 3:
                 self.texts_list[2].text += self.event.unicode
+            if self.event.key == pygame.K_BACKSPACE and self.genre_text.state:
+                self.texts_list[3].text = self.texts_list[3].text[:-1]
+            elif self.genre_text.state and len(self.texts_list[3].text) <= 3:
+                self.texts_list[3].text += self.event.unicode
             
             self.description_mechanics()
 
@@ -197,8 +218,14 @@ class AddMovie():
                     self.date_text.state = False
                     self.country_text.state = True
                 elif self.country_text.state:
-                    self.texts_list[2].text = self.texts_list[2].text[:-1]
+                    if len(self.country_text.text) != 3:
+                        self.texts_list[2].text = self.texts_list[2].text[:-1]
                     self.country_text.state = False
+                    self.genre_text.state = True
+                elif self.genre_text.state:
+                    if len(self.genre_text.text) != 3:    
+                        self.texts_list[3].text = self.texts_list[3].text[:-1]
+                    self.genre_text.state = False
                     self.description_text.state = True
                 elif self.description_text.state:
                     self.description_list[self.index].text = self.description_list[self.index].text[:-1]
@@ -221,23 +248,26 @@ class AddMovie():
                     self.date_text.text = self.date_text.text[:-1]
                 elif self.country_text.state and len(self.country_text.text) != 0:
                     self.country_text.text = self.country_text.text[:-1]
-                elif self.description_text.state and len(self.description_list[self.index].text) != 0:
+                elif self.genre_text.state and len(self.genre_text.text) != 0:
+                    self.genre_text.text = self.genre_text.text[:-1]
+                elif self.description_text.state and len(self.description_list[self.index].text) != 0 and self.index < 15:
                     self.index += 1
-                    self.description_list[self.index].text = self.description_list[self.index].text[:-1]
+                    self.description_list[self.index - 1].text = self.description_list[self.index - 1].text[:-1]
                     
     # Mecánicas del tick
     def get_tick(self):
         if self.event.type == pygame.MOUSEBUTTONDOWN:
             if self.tick_rect.collidepoint(self.mx, self.my):
+                self.description_list_text = []
+                for i in NM_Description.description_list_temp:
+                    self.description_list_text.append(i.text)
                 self.all_descriptions = ' '.join(self.description_list_text)
-                print(self.all_descriptions)
-                #e.insert_movies(self.name_text.text, self.date_text.text, self.country_text.text, self.all_descriptions)
+                e.insert_movies(self.name_text.text, self.date_text.text, self.country_text.text, self.genre_text.text, self.all_descriptions)
                 #self.escape += 1
                 
-
     # Muestra las líneas de la descripción por pantalla
     def description_display(self): 
-        for i in self.description_list:    
+        for i in self.description_list:   
             self.surface = self.font2.render(i.text, True, (47, 86, 233))
             self.screen.blit(self.surface, (i.blit_coords))
 
@@ -245,13 +275,13 @@ class AddMovie():
     def description_mechanics(self):
         if self.event.key == pygame.K_BACKSPACE and self.description_text.state:
             self.description_list[self.index].text = self.description_list[self.index].text[:-1]
-            if self.index < 16 and len(self.description_list[self.index].text) < 1:
+            if self.index < 15 and len(self.description_list[self.index].text) == 0 and self.index != 0:
                 self.index -= 1
         elif self.description_text.state and len(self.description_list[self.index].text) < 61:
             self.description_list[self.index].text += self.event.unicode
-        elif len(self.description_list[self.index].text) > 59 and self.index < 16 and self.description_text.state:
+        elif len(self.description_list[self.index].text) > 59 and self.index < 15 and self.description_text.state:
             self.index += 1
 
 pygame.quit()
 
-# TODO Resolver el bug del enter.
+# TODO Terminar de blitear bien con las coords bien las dos descripciones de ayuda para loa usarios del pais y del genero.

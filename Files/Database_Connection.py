@@ -1,4 +1,3 @@
-from _typeshed import IdentityFunction
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String, Integer, DateTime, CHAR, ForeignKey
@@ -99,13 +98,15 @@ class Execute():
         )  
 
     # Función para insertar peliculas
-    def insert_movies(self, name, date, country, description):
+    def insert_movies(self, name, date, country, genre, description):
         self.name_movie = name
         self.date_movie = date
         self.country_movie = country
+        self.genre_movie = genre
         self.description_movie = description
 
-        self.movie = Movie_db(name = f'{self.name_movie}', movie_date = f'{self.date_movie}', country_id = f'{self.country_movie}', description = f'{self.description_movie}' )
+        self.movie = Movie_db(name = f'{self.name_movie}', movie_date = f'{self.date_movie}', country_id = f'{self.country_movie}',
+        genre_id = f'{self.genre_movie}', description = f'{self.description_movie}')
 
         c.session.add(self.movie)
         c.session.commit()
