@@ -15,6 +15,7 @@ BLUE = (47, 86, 233)
 LIGHTBLUE = (131, 181, 255)
 GRAY = (61, 61, 61)
 LIGHTGRAY = (181, 181, 181)
+GOLD = (255, 215, 0)
 
 # Pygmae variables
 clock = pygame.time.Clock()

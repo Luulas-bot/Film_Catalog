@@ -1,10 +1,11 @@
 import pygame
 import sys
 from Files.Constants import (
-    GRAY, WHITE, LIGHTGRAY, BLUE, LIGHTBLUE
+    GRAY, WHITE, LIGHTGRAY, BLUE, LIGHTBLUE, GOLD
 )
 from Files.NM_Texts import NM_Text, NM_Description
-from Files.Database_Connection import e
+from Files.Database_Connection import c, e
+from sqlalchemy.exc import IntegrityError
 
 pygame.init()
 
@@ -35,12 +36,18 @@ class AddMovie():
         self.genre_description1 = self.font3.render("Para los géneros las opciones disponibles son: ACC(Acción) - DRA(Drama)", True, LIGHTBLUE)
         self.genre_description2 = self.font3.render("COM(Comedia) - DOC(Documental) - CFT(Ciencia Ficción) - FAN(Fantasía)", True, LIGHTBLUE)
         self.genre_description3 = self.font3.render("MEL(Melodrama) - MUS(Musical) - ROM(Romance) - SUS(Suspenso) - TER(Terror)", True, LIGHTBLUE)
+        self.error_c_g = self.font2.render("Error! La abreviación del país o del género es incorrecta.", True, GOLD)
+        self.error_name = self.font2.render("Error! La película debe tener un nombre.", True, GOLD)
 
         # Indice de las lines de las descripcion
         self.index = 0
 
         # Variable que maneja cuando se saca la screen actual 
         self.escape = 0
+
+        # Variable que define si hay o no error
+        self.error_c_g_state = False
+        self.error_name_state = False
 
         # Hitbox del tick
         self.tick_rect = pygame.Rect(550, 550, 30, 30)
@@ -72,6 +79,7 @@ class AddMovie():
         self.description_text13 = NM_Description((55, 498), "", (50, 275, 500, 275), (50, 200))
         self.description_text14 = NM_Description((55, 516), "", (50, 275, 500, 275), (50, 200))
         self.description_text15 = NM_Description((55, 534), "", (50, 275, 500, 275), (50, 200))
+
 
         self.description_list = []
         self.texts_list = []
@@ -129,6 +137,11 @@ class AddMovie():
         self.screen.blit(self.text_surface4, (305, 207))
         
         self.description_display()
+
+        if self.error_c_g_state == True:
+            self.screen.blit(self.error_c_g, (50, 557))
+        elif self.error_name_state == True:
+            self.screen.blit(self.error_name, (50, 557))
 
         # Dibuja por pantalla el tick
         self.screen.blit(self.tick, (550, 550))
@@ -260,14 +273,24 @@ class AddMovie():
                     
     # Mecánicas del tick
     def get_tick(self):
-        if self.event.type == pygame.MOUSEBUTTONDOWN:
-            if self.tick_rect.collidepoint(self.mx, self.my):
-                self.description_list_text = []
-                for i in NM_Description.description_list_temp:
-                    self.description_list_text.append(i.text)
-                self.all_descriptions = ' '.join(self.description_list_text)
-                e.insert_movies(self.name_text.text, self.date_text.text, self.country_text.text, self.genre_text.text, self.all_descriptions)
-                #self.escape += 1
+        try:    
+            if self.event.type == pygame.MOUSEBUTTONDOWN:
+                if self.tick_rect.collidepoint(self.mx, self.my):
+                    if len(self.name_text.text) != 0:    
+                        self.description_list_text = []
+                        for i in NM_Description.description_list_temp:
+                            self.description_list_text.append(i.text)
+                        self.all_descriptions = ' '.join(self.description_list_text)
+                        e.insert_movies(self.name_text.text, self.date_text.text, self.country_text.text, self.genre_text.text, self.all_descriptions)
+                        e.insert_movie_id()
+                        self.escape += 1
+                    else:
+                        self.error_name_state = True
+                        self.error_c_g_state = False    
+        except IntegrityError:
+            self.error_c_g_state = True
+            self.error_name_state = False
+            c.session.rollback()
                 
     # Muestra las líneas de la descripción por pantalla
     def description_display(self): 

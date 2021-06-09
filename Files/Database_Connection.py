@@ -36,7 +36,7 @@ class Connection():
 class User(Base):
     __tablename__ = 'Usuario'
 
-    id = Column(Integer(), primary_key = True, autoincrement = 1)
+    id = Column(Integer(), primary_key = True, autoincrement = True, nullable = False)
     username = Column(String(50), nullable = False, unique = True)
     password = Column(String(50), nullable = False, unique = False)
     created_at = Column(DateTime, default = datetime.now)
@@ -48,8 +48,8 @@ class User(Base):
 class Movie_db(Base):
     __tablename__ = "Pelicula"
 
-    id = Column(Integer(), primary_key = True, autoincrement = 1)
-    name = Column(String(70), nullable = False, unique = True)
+    id = Column(Integer(), primary_key = True, autoincrement = True, nullable = False)
+    name = Column(String(70), nullable = False, unique = False)
     movie_date = Column(String(50), nullable = True, unique = False)
     country_id = Column(CHAR(3), ForeignKey('Pais.id'))
     genre_id = Column(CHAR(3), ForeignKey('Genero.id'))
@@ -58,13 +58,13 @@ class Movie_db(Base):
 class Country(Base):
     __tablename__ = 'Pais'
 
-    id = Column(CHAR(3), primary_key = True)
+    id = Column(CHAR(3), primary_key = True, nullable = False)
     name = Column(String(50), nullable = False, unique = True)
 
 class Genre(Base):
     __tablename__ = "Genero"
 
-    id = Column(CHAR(3), primary_key = True)
+    id = Column(CHAR(3), primary_key = True, nullable = False)
     name = Column(String(50), nullable = False, unique = True)
 
 c = Connection()
@@ -97,6 +97,8 @@ class Execute():
             User.password == self.password_sl
         )  
 
+        self.working_user = username
+
     # Función para insertar peliculas
     def insert_movies(self, name, date, country, genre, description):
         self.name_movie = name
@@ -107,8 +109,26 @@ class Execute():
 
         self.movie = Movie_db(name = f'{self.name_movie}', movie_date = f'{self.date_movie}', country_id = f'{self.country_movie}',
         genre_id = f'{self.genre_movie}', description = f'{self.description_movie}')
-
+        
         c.session.add(self.movie)
+        c.session.flush()
+        c.session.commit()
+
+
+
+    def insert_movie_id(self):
+        
+        self.movie_id = c.session.query(Movie_db.id).filter(
+            Movie_db.name == self.name_movie
+        ).first()
+        
+        self.selected_user = c.session.query(User).filter(
+            User.username == self.working_user
+        ).first()
+        
+        self.selected_user.movies_id = self.movie_id[0]
+        
+        c.session.flush()
         c.session.commit()
 
     def update(self):
