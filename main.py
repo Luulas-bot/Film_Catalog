@@ -16,7 +16,6 @@ class Login():
     
     def __init__(self, size):
         self.size = size
-        self.init_stats()
     
     # Función que corre la pantalla del login
     def run_login(self):

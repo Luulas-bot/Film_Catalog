@@ -282,7 +282,6 @@ class AddMovie():
                             self.description_list_text.append(i.text)
                         self.all_descriptions = ' '.join(self.description_list_text)
                         e.insert_movies(self.name_text.text, self.date_text.text, self.country_text.text, self.genre_text.text, self.all_descriptions)
-                        e.insert_movie_id()
                         self.escape += 1
                     else:
                         self.error_name_state = True

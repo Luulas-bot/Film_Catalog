@@ -40,7 +40,6 @@ class User(Base):
     username = Column(String(50), nullable = False, unique = True)
     password = Column(String(50), nullable = False, unique = False)
     created_at = Column(DateTime, default = datetime.now)
-    movies_id = Column(Integer(), ForeignKey('Pelicula.id'))
 
     def __str__(self):
         return self.username
@@ -66,6 +65,13 @@ class Genre(Base):
 
     id = Column(CHAR(3), primary_key = True, nullable = False)
     name = Column(String(50), nullable = False, unique = True)
+
+class Movie_User(Base):
+    __tablename__ = 'Pelicula_Usuario'
+
+    id = Column(Integer(), primary_key = True, autoincrement = True, nullable = False)
+    movie_id = Column(Integer(), ForeignKey('Pelicula.id'))
+    user_id = Column(Integer(), ForeignKey('Usuario.id'))
 
 c = Connection()
 
@@ -114,8 +120,7 @@ class Execute():
         c.session.flush()
         c.session.commit()
 
-
-
+    # Esta de abajo hay que cambiarla
     def insert_movie_id(self):
         
         self.movie_id = c.session.query(Movie_db.id).filter(
@@ -146,3 +151,6 @@ e = Execute()
 # ATENCIÓN: La base de datos no es manejada por un sistema de tipo crear y borrar. Esto significa que cada vez que se quiere
 # modificar la base de datos, no se inserta todo y se borra todo, sino que se inserta solo. Después existe la funcion de borrar.
 # está heca de este modo, para una optimización mayor.
+
+# TODO Tengo que hacer una funcion dentro de la clase execute que recoja el id del usuario que inserto la pelicula y el id de
+# la pelicula que se inserto recientemente y las inserte dentro de la tabla 'Pelicula_Usuario' en sus respectivos campos.
