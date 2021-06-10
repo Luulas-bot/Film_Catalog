@@ -255,7 +255,6 @@ class Main_menu():
             am.draw_on_screen()
 
             if am.escape >= 1:
-                am.escape -= 1
                 del self.text_box_font
                 self.run_main_menu()
                 break

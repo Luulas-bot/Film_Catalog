@@ -49,8 +49,9 @@ class AddMovie():
         self.error_c_g_state = False
         self.error_name_state = False
 
-        # Hitbox del tick
+        # Tick
         self.tick_rect = pygame.Rect(550, 550, 30, 30)
+        self.tick = pygame.image.load("Images/tick.png")
 
         # Color de las tx
         self.color_movie_name_tx = LIGHTGRAY
@@ -79,7 +80,7 @@ class AddMovie():
         self.description_text13 = NM_Description((55, 498), "", (50, 275, 500, 275), (50, 200))
         self.description_text14 = NM_Description((55, 516), "", (50, 275, 500, 275), (50, 200))
         self.description_text15 = NM_Description((55, 534), "", (50, 275, 500, 275), (50, 200))
-
+    
         # Listas que contienen parcialmente o totalmente los textos y textboxes definidos arrriba
         self.description_list = []
         self.texts_list = []
@@ -89,9 +90,6 @@ class AddMovie():
 
         for i in NM_Text.texts_list_temp:
             self.texts_list.append(i)
-
-        # Tick
-        self.tick = pygame.image.load("Images/tick.png")
 
     # Función que registra los eventos
     def events(self):
@@ -276,7 +274,6 @@ class AddMovie():
         try:    
             if self.event.type == pygame.MOUSEBUTTONDOWN:
                 if self.tick_rect.collidepoint(self.mx, self.my):
-                    print(self.name_text.text)
                     if len(self.name_text.text) != 0:    
                         self.description_list_text = []
                         for i in NM_Description.description_list_temp:
@@ -291,6 +288,8 @@ class AddMovie():
                         self.genre_text.text = ''
                         for i in self.description_list:
                             i.text = ''
+                        NM_Text.texts_list_temp.clear()
+                        NM_Description.description_list_temp.clear()
                     else:
                         self.error_name_state = True
                         self.error_c_g_state = False    
