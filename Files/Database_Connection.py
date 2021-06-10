@@ -44,6 +44,7 @@ class User(Base):
     def __str__(self):
         return self.username
 
+# Creación de la tabla de las películas
 class Movie_db(Base):
     __tablename__ = "Pelicula"
 
@@ -54,18 +55,21 @@ class Movie_db(Base):
     genre_id = Column(CHAR(3), ForeignKey('Genero.id'))
     description = Column(String(500), nullable = True, unique = False)
 
+# Creación de la tabla de los países
 class Country(Base):
     __tablename__ = 'Pais'
 
     id = Column(CHAR(3), primary_key = True, nullable = False)
     name = Column(String(50), nullable = False, unique = True)
 
+# Creación de la tabla de los géneros
 class Genre(Base):
     __tablename__ = "Genero"
 
     id = Column(CHAR(3), primary_key = True, nullable = False)
     name = Column(String(50), nullable = False, unique = True)
 
+# Creación de la tabla que contiene a los usuarios con sus respectivas películas
 class Movie_User(Base):
     __tablename__ = 'Pelicula_Usuario'
 
@@ -93,7 +97,7 @@ class Execute():
 
         c.session.commit()
         
-    # Lectura de los datos de un usuario en específico
+    # Lectura de los datos de un usuario en específico para el Login
     def select_login(self, username, password):
         self.username_sl = username
         self.password_sl = password
@@ -120,19 +124,20 @@ class Execute():
         c.session.flush()
         c.session.commit()
 
-    # Esta de abajo hay que cambiarla
-    def insert_movie_id(self):
+    # Función para insertar a la tabla 'Pelicula_Usuario' la película insertada recientemente y el usuario que la insertó
+    def insert_Pelicula_Usuario(self):
         
         self.movie_id = c.session.query(Movie_db.id).filter(
             Movie_db.name == self.name_movie
         ).first()
         
-        self.selected_user = c.session.query(User).filter(
+        self.selected_user_id = c.session.query(User.id).filter(
             User.username == self.working_user
         ).first()
         
-        self.selected_user.movies_id = self.movie_id[0]
+        self.movie_user = Movie_User(movie_id = f'{self.movie_id[0]}', user_id = f'{self.selected_user_id[0]}')
         
+        c.session.add(self.movie_user)
         c.session.flush()
         c.session.commit()
 
@@ -152,5 +157,13 @@ e = Execute()
 # modificar la base de datos, no se inserta todo y se borra todo, sino que se inserta solo. Después existe la funcion de borrar.
 # está heca de este modo, para una optimización mayor.
 
-# TODO Tengo que hacer una funcion dentro de la clase execute que recoja el id del usuario que inserto la pelicula y el id de
-# la pelicula que se inserto recientemente y las inserte dentro de la tabla 'Pelicula_Usuario' en sus respectivos campos.
+# El TODO Más grande de la historia:
+# - Lo primero que tengo que hacer es crear una función que tome las primeras 6 peliculas del usuario que está usando el programa
+# en el momento y que las ponga en una lista o diccionario. Lo que tiene que leer es el nombre, el género y el rating.
+# - La segunda cosa que hay que hacer es dentro de la clase de las peliculas crear una función que tome estos datos y los ponga bien
+# donde tienen que ir, por ejemplo en el texto del nombre, y así
+# - Lo tercero que hay que hacer es dentro de la misma clase crear una fuente que se adapte al tamaño del nombre de la pelicula
+# - Lo cuarto que hay que hacer es encontrar las forma de hacer un display de todo esto en cada rectangulo.
+# - Lo quinto vemdría a ser, que cuando yo toque la flecha para avanzar, la función que lee las películas lea las siguientes seis 
+# peliculas y haga todo el recorrido de vuelta para mostrarlas por pantalla como es debido.
+# SUERTE! 

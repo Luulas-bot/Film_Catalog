@@ -80,7 +80,7 @@ class AddMovie():
         self.description_text14 = NM_Description((55, 516), "", (50, 275, 500, 275), (50, 200))
         self.description_text15 = NM_Description((55, 534), "", (50, 275, 500, 275), (50, 200))
 
-
+        # Listas que contienen parcialmente o totalmente los textos y textboxes definidos arrriba
         self.description_list = []
         self.texts_list = []
 
@@ -100,7 +100,7 @@ class AddMovie():
                 sys.exit()
             
             self.mx, self.my = pygame.mouse.get_pos()
-
+            
             self.get_tx_state()
             self.write_user_text()
             self.tab_mechanics()
@@ -276,13 +276,21 @@ class AddMovie():
         try:    
             if self.event.type == pygame.MOUSEBUTTONDOWN:
                 if self.tick_rect.collidepoint(self.mx, self.my):
+                    print(self.name_text.text)
                     if len(self.name_text.text) != 0:    
                         self.description_list_text = []
                         for i in NM_Description.description_list_temp:
                             self.description_list_text.append(i.text)
                         self.all_descriptions = ' '.join(self.description_list_text)
                         e.insert_movies(self.name_text.text, self.date_text.text, self.country_text.text, self.genre_text.text, self.all_descriptions)
+                        e.insert_Pelicula_Usuario()
                         self.escape += 1
+                        self.name_text.text = ''
+                        self.date_text.text = ''
+                        self.country_text.text = ''
+                        self.genre_text.text = ''
+                        for i in self.description_list:
+                            i.text = ''
                     else:
                         self.error_name_state = True
                         self.error_c_g_state = False    

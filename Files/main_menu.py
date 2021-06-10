@@ -1,10 +1,11 @@
 import pygame
 import sys
 from Files.Constants import (
-    WHITE, BLUE, GRAY, LIGHTGRAY, all_sprites_list, clock, fps, size_add_new
+    WHITE, BLUE, GRAY, LIGHTGRAY, clock, fps, size_add_new
 )
 from Files.New_movie import AddMovie
 from Files.Buttons import Buttons, Genre_Buttons
+from Files.Movies import Movies
 
 pygame.init()
 
@@ -78,6 +79,18 @@ class Main_menu():
         for i in Genre_Buttons.genre_buttons_list_temp:
             self.genre_button_list.append(i)
 
+        # Creación de las películas que se ven por pantalla
+        self.all_sprites_list = pygame.sprite.Group()
+        self.movie = Movies("Images/movies_rect.png", (290, 120))
+        self.movie2 = Movies("Images/movies_rect.png", (540, 120))
+        self.movie3 = Movies("Images/movies_rect.png", (800, 120))
+        self.movie4 = Movies("Images/movies_rect.png", (290, 450))
+        self.movie5 = Movies("Images/movies_rect.png", (540, 450))
+        self.movie6 = Movies("Images/movies_rect.png", (800, 450))
+
+        for i in Movies.movies_list_temp:
+            self.all_sprites_list.add(i)
+
     # Función que registra los eventos
     def events(self):
         for self.event in pygame.event.get():
@@ -105,8 +118,8 @@ class Main_menu():
         self.draw_buttons()
         self.draw_genre_buttons()
 
-        all_sprites_list.update()
-        all_sprites_list.draw(self.screen)
+        self.all_sprites_list.update()
+        self.all_sprites_list.draw(self.screen)
 
         self.draw_country_text()
                 
@@ -243,9 +256,6 @@ class Main_menu():
 
             if am.escape >= 1:
                 am.escape -= 1
-                am.name_text = ""
-                am.date_text = ""
-                am.country_text = ""
                 del self.text_box_font
                 self.run_main_menu()
                 break
