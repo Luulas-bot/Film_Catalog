@@ -6,6 +6,7 @@ from Files.Constants import (
 from Files.New_movie import AddMovie
 from Files.Buttons import Buttons, Genre_Buttons
 from Files.Movies import Movies
+from Files.Database_Connection import e
 
 pygame.init()
 
@@ -79,17 +80,15 @@ class Main_menu():
         for i in Genre_Buttons.genre_buttons_list_temp:
             self.genre_button_list.append(i)
 
-        # Creación de las películas que se ven por pantalla
-        self.all_sprites_list = pygame.sprite.Group()
-        self.movie = Movies("Images/movies_rect.png", (290, 120))
-        self.movie2 = Movies("Images/movies_rect.png", (540, 120))
-        self.movie3 = Movies("Images/movies_rect.png", (800, 120))
-        self.movie4 = Movies("Images/movies_rect.png", (290, 450))
-        self.movie5 = Movies("Images/movies_rect.png", (540, 450))
-        self.movie6 = Movies("Images/movies_rect.png", (800, 450))
+        self.index = 0
+        
+        e.select_movies_to_display()
 
-        for i in Movies.movies_list_temp:
-            self.all_sprites_list.add(i)
+        self.init_movies()
+
+        # Flecha para cambiar de página
+        self.arrow_right = pygame.image.load("Images/arrow_right.png")
+        self.arrow_right_rect = pygame.Rect(1050, 380, 40, 40)
 
     # Función que registra los eventos
     def events(self):
@@ -106,6 +105,7 @@ class Main_menu():
             self.country_textbox_mechanics()
             self.get_genre_button_press()
             self.exit_button_mecs()
+            self.get_arrow_right()
 
             # Registra si el genre_button está activo o no y descativa los botones de los géneros
             if self.genre_button.state == False:
@@ -122,6 +122,10 @@ class Main_menu():
         self.all_sprites_list.draw(self.screen)
 
         self.draw_country_text()
+
+        self.screen.blit(self.arrow_right, (1050, 380))
+
+        self.blit_movies()
                 
     # Crea una textbox para determinar el país que se usará como filtro
     def country_textbox_mechanics(self):    
@@ -245,6 +249,39 @@ class Main_menu():
             text_surface = self.text_box_font.render(self.country_text, True, BLUE)
             self.screen.blit(text_surface, (207, 645))
 
+    def get_arrow_right(self):
+        if self.event.type == pygame.MOUSEBUTTONDOWN:
+            if self.arrow_right_rect.collidepoint(self.mx, self.my):
+                self.index += 6
+                self.init_movies()
+    
+    def init_movies(self):
+        self.all_sprites_list = pygame.sprite.Group()
+        self.movie = Movies("Images/movies_rect.png", (290, 120), e.movies_display_name[self.index], e.movies_display_genre_name[self.index], (300, 130), (300, 170))
+        self.movie2 = Movies("Images/movies_rect.png", (540, 120), e.movies_display_name[self.index + 1], e.movies_display_genre_name[self.index + 1], (550, 130), (550, 170))
+        self.movie3 = Movies("Images/movies_rect.png", (800, 120), e.movies_display_name[self.index + 2], e.movies_display_genre_name[self.index + 2], (810, 130), (810, 170))
+        self.movie4 = Movies("Images/movies_rect.png", (290, 450), e.movies_display_name[self.index + 3], e.movies_display_genre_name[self.index + 3], (300, 460), (300, 500))
+        self.movie5 = Movies("Images/movies_rect.png", (540, 450), e.movies_display_name[self.index + 4], e.movies_display_genre_name[self.index + 4], (550, 460), (550, 500))
+        self.movie6 = Movies("Images/movies_rect.png", (800, 450), e.movies_display_name[self.index + 5], e.movies_display_genre_name[self.index + 5], (810, 460), (810, 500))
+
+        for i in Movies.movies_list_temp:
+            self.all_sprites_list.add(i)
+        
+    # Se dibujan por pantalla las películas
+    def blit_movies(self):
+        self.screen.blit(self.movie.name_blit, (self.movie.blit_coords_name))
+        self.screen.blit(self.movie.genre_blit, (self.movie.blit_coords_genre))
+        self.screen.blit(self.movie2.name_blit, (self.movie2.blit_coords_name))
+        self.screen.blit(self.movie2.genre_blit, (self.movie2.blit_coords_genre))
+        self.screen.blit(self.movie3.name_blit, (self.movie3.blit_coords_name))
+        self.screen.blit(self.movie3.genre_blit, (self.movie3.blit_coords_genre))
+        self.screen.blit(self.movie4.name_blit, (self.movie4.blit_coords_name))
+        self.screen.blit(self.movie4.genre_blit, (self.movie4.blit_coords_genre))
+        self.screen.blit(self.movie5.name_blit, (self.movie5.blit_coords_name))
+        self.screen.blit(self.movie5.genre_blit, (self.movie5.blit_coords_genre))
+        self.screen.blit(self.movie6.name_blit, (self.movie6.blit_coords_name))
+        self.screen.blit(self.movie6.genre_blit, (self.movie6.blit_coords_genre))
+        
     # Corre el menú para crear una nueva película
     def run_add_new_movie(self):
 

@@ -141,6 +141,44 @@ class Execute():
         c.session.flush()
         c.session.commit()
 
+    # Función que a través de select, filtros e inner joins arma algunas listas con los nombres de las películas y sus géneros
+    def select_movies_to_display(self):
+
+        self.movies_display_name_temp = []
+        self.movies_display_genreid_temp = []
+        self.movies_display_genre_name_temp = []
+        self.movies_display_name = []
+        self.movies_display_genreid = []
+        self.movies_display_genre_name = []
+
+        self.user_id_display = c.session.query(User.id).filter(
+            User.username == self.working_user
+        ).first()
+
+        self.movies_display_id = c.session.query(Movie_User.movie_id).filter(
+            Movie_User.user_id == self.user_id_display[0]
+        )
+        for i in self.movies_display_id:
+            self.movies_display_name_temp.append(c.session.query(Movie_db.name).filter(
+                Movie_db.id == i[0]
+            ))
+        
+        for i in self.movies_display_id:
+            self.movies_display_genreid_temp.append(c.session.query(Movie_db.genre_id).filter(
+                Movie_db.id == i[0]
+            ))
+
+        for i in self.movies_display_genreid_temp:
+            self.movies_display_genre_name_temp.append(c.session.query(Genre.name).filter(
+                Genre.id == i[0][0]
+            )) 
+
+        for i in self.movies_display_name_temp:
+            self.movies_display_name.append(i[0][0])
+            
+        for i in self.movies_display_genre_name_temp:
+            self.movies_display_genre_name.append(i[0][0])
+
     def update(self):
         pass
 
