@@ -40,8 +40,12 @@ class Main_menu():
         # Boleano para saber si los botones de los géneros están presionados o no
         self.all_genre_buttons_active = False
 
+        # Variable que contiene la pagina en la que se encuentra el usuario       
+        self.pag = 1
+        
         # Variables de la textbox de los países
         self.text_box_font = pygame.font.SysFont("consolas", 20)
+        self.font1 = pygame.font.SysFont("consolas", 22)
         self.country_text = ""
         self.country_textbox_active = False
         self.country_textbox = pygame.Rect(200, 625, 300, 50)
@@ -80,15 +84,22 @@ class Main_menu():
         for i in Genre_Buttons.genre_buttons_list_temp:
             self.genre_button_list.append(i)
 
+        # Variable que se usa para recorrer la lista de películas
         self.index = 0
         
         e.select_movies_to_display()
 
-        self.init_movies()
-
         # Flecha para cambiar de página
         self.arrow_right = pygame.image.load("Images/arrow_right.png")
         self.arrow_right_rect = pygame.Rect(1050, 380, 40, 40)
+        self.arrow_left = pygame.image.load("Images/arrow_left.png")
+        self.arrow_left_rect = pygame.Rect(220, 380, 40, 40)
+        self.arrow_left_bol = False
+
+        # Lista de las películas en fomr ade sprites
+        self.movies_sprites_list = pygame.sprite.Group()
+
+        self.init_movies()
 
     # Función que registra los eventos
     def events(self):
@@ -106,6 +117,7 @@ class Main_menu():
             self.get_genre_button_press()
             self.exit_button_mecs()
             self.get_arrow_right()
+            self.display_arrow_left()
 
             # Registra si el genre_button está activo o no y descativa los botones de los géneros
             if self.genre_button.state == False:
@@ -118,8 +130,8 @@ class Main_menu():
         self.draw_buttons()
         self.draw_genre_buttons()
 
-        self.all_sprites_list.update()
-        self.all_sprites_list.draw(self.screen)
+        self.movies_sprites_list.update()
+        self.movies_sprites_list.draw(self.screen)
 
         self.draw_country_text()
 
@@ -127,6 +139,13 @@ class Main_menu():
 
         self.blit_movies()
                 
+        if self.arrow_left_bol:
+            self.screen.blit(self.arrow_left, (220, 380))
+        
+        # Se dibuja la pagina por pantalla
+        self.text_pag = self.font1.render(f"Página {self.pag}", True, WHITE)
+        self.screen.blit(self.text_pag, (900, 760))
+
     # Crea una textbox para determinar el país que se usará como filtro
     def country_textbox_mechanics(self):    
         
@@ -252,35 +271,56 @@ class Main_menu():
     def get_arrow_right(self):
         if self.event.type == pygame.MOUSEBUTTONDOWN:
             if self.arrow_right_rect.collidepoint(self.mx, self.my):
-                self.index += 6
+                self.index += 1
                 self.init_movies()
+                self.pag += 1
+
+    def display_arrow_left(self):
+        if self.index < 6:
+            self.arrow_left_bol = False
+        elif self.index >= 6:
+            self.arrow_left_bol = True
+            if self.arrow_left_bol and self.event.type == pygame.MOUSEBUTTONDOWN:
+                if self.arrow_left_rect.collidepoint(self.mx, self.my):
+                    self.index -= 11
+                    self.init_movies()
+                    self.pag -= 1
     
     def init_movies(self):
-        self.all_sprites_list = pygame.sprite.Group()
-        self.movie = Movies("Images/movies_rect.png", (290, 120), e.movies_display_name[self.index], e.movies_display_genre_name[self.index], (300, 130), (300, 170))
-        self.movie2 = Movies("Images/movies_rect.png", (540, 120), e.movies_display_name[self.index + 1], e.movies_display_genre_name[self.index + 1], (550, 130), (550, 170))
-        self.movie3 = Movies("Images/movies_rect.png", (800, 120), e.movies_display_name[self.index + 2], e.movies_display_genre_name[self.index + 2], (810, 130), (810, 170))
-        self.movie4 = Movies("Images/movies_rect.png", (290, 450), e.movies_display_name[self.index + 3], e.movies_display_genre_name[self.index + 3], (300, 460), (300, 500))
-        self.movie5 = Movies("Images/movies_rect.png", (540, 450), e.movies_display_name[self.index + 4], e.movies_display_genre_name[self.index + 4], (550, 460), (550, 500))
-        self.movie6 = Movies("Images/movies_rect.png", (800, 450), e.movies_display_name[self.index + 5], e.movies_display_genre_name[self.index + 5], (810, 460), (810, 500))
+        self.movies_sprites_list.empty()
+        Movies.movies_list_temp.clear()
+        if self.index < len(e.movies_display_name):    
+            self.movie = Movies("Images/movies_rect.png", (290, 120), (300, 130), (300, 230), e.movies_display_name[self.index], e.movies_display_genre_name[self.index])
+        self.index += 1
+        if self.index < len(e.movies_display_name):  
+            self.movie2 = Movies("Images/movies_rect.png", (540, 120), (550, 130), (550, 230), e.movies_display_name[self.index], e.movies_display_genre_name[self.index])
+        self.index += 1
+        if self.index < len(e.movies_display_name):  
+            self.movie3 = Movies("Images/movies_rect.png", (800, 120), (810, 130), (810, 230), e.movies_display_name[self.index], e.movies_display_genre_name[self.index])
+        self.index += 1
+        if self.index < len(e.movies_display_name):  
+            self.movie4 = Movies("Images/movies_rect.png", (290, 450), (300, 460), (300, 560), e.movies_display_name[self.index], e.movies_display_genre_name[self.index])
+        self.index += 1
+        if self.index < len(e.movies_display_name):  
+            self.movie5 = Movies("Images/movies_rect.png", (540, 450), (550, 460), (550, 560), e.movies_display_name[self.index], e.movies_display_genre_name[self.index])
+        self.index += 1
+        if self.index < len(e.movies_display_name):  
+            self.movie6 = Movies("Images/movies_rect.png", (800, 450), (810, 460), (810, 560), e.movies_display_name[self.index], e.movies_display_genre_name[self.index])
+        else:
+            pass
 
         for i in Movies.movies_list_temp:
-            self.all_sprites_list.add(i)
+            self.movies_sprites_list.add(i)
         
     # Se dibujan por pantalla las películas
     def blit_movies(self):
-        self.screen.blit(self.movie.name_blit, (self.movie.blit_coords_name))
-        self.screen.blit(self.movie.genre_blit, (self.movie.blit_coords_genre))
-        self.screen.blit(self.movie2.name_blit, (self.movie2.blit_coords_name))
-        self.screen.blit(self.movie2.genre_blit, (self.movie2.blit_coords_genre))
-        self.screen.blit(self.movie3.name_blit, (self.movie3.blit_coords_name))
-        self.screen.blit(self.movie3.genre_blit, (self.movie3.blit_coords_genre))
-        self.screen.blit(self.movie4.name_blit, (self.movie4.blit_coords_name))
-        self.screen.blit(self.movie4.genre_blit, (self.movie4.blit_coords_genre))
-        self.screen.blit(self.movie5.name_blit, (self.movie5.blit_coords_name))
-        self.screen.blit(self.movie5.genre_blit, (self.movie5.blit_coords_genre))
-        self.screen.blit(self.movie6.name_blit, (self.movie6.blit_coords_name))
-        self.screen.blit(self.movie6.genre_blit, (self.movie6.blit_coords_genre))
+        for i in self.movies_sprites_list:
+            if len(i.movie_name) > 20:
+                self.screen.blit(i.name_blit1, (i.blit_coords_name))
+                self.screen.blit(i.name_blit2, (i.blit_coords_name2))
+            else:
+                self.screen.blit(i.name_blit, (i.blit_coords_name))
+            self.screen.blit(i.genre_blit, (i.blit_coords_genre))
         
     # Corre el menú para crear una nueva película
     def run_add_new_movie(self):

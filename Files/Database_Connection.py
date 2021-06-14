@@ -175,7 +175,7 @@ class Execute():
 
         for i in self.movies_display_name_temp:
             self.movies_display_name.append(i[0][0])
-            
+
         for i in self.movies_display_genre_name_temp:
             self.movies_display_genre_name.append(i[0][0])
 
@@ -195,13 +195,8 @@ e = Execute()
 # modificar la base de datos, no se inserta todo y se borra todo, sino que se inserta solo. Después existe la funcion de borrar.
 # está heca de este modo, para una optimización mayor.
 
-# El TODO Más grande de la historia:
-# - Lo primero que tengo que hacer es crear una función que tome las primeras 6 peliculas del usuario que está usando el programa
-# en el momento y que las ponga en una lista o diccionario. Lo que tiene que leer es el nombre, el género y el rating.
-# - La segunda cosa que hay que hacer es dentro de la clase de las peliculas crear una función que tome estos datos y los ponga bien
-# donde tienen que ir, por ejemplo en el texto del nombre, y así
-# - Lo tercero que hay que hacer es dentro de la misma clase crear una fuente que se adapte al tamaño del nombre de la pelicula
-# - Lo cuarto que hay que hacer es encontrar las forma de hacer un display de todo esto en cada rectangulo.
-# - Lo quinto vemdría a ser, que cuando yo toque la flecha para avanzar, la función que lee las películas lea las siguientes seis 
-# peliculas y haga todo el recorrido de vuelta para mostrarlas por pantalla como es debido.
-# SUERTE! 
+# TODO 
+# - Crear una textbox para poder buscar películas y que cuando se presione enter te salga la peli y te lleve a una pestaña donde poder
+# editarla
+# - Crear la mecánica a través de la cual cuando presiono en una película de las que veo en el main_menu, me lleva a la pestaña
+# para editarla. En esta pestaña se puede agregar el rating
