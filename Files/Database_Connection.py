@@ -86,6 +86,7 @@ class Execute():
         c.run_engine()
         c.create_session()
         Base.metadata.create_all(c.engine)
+        self.movie_name_search = ""
 
     # Inserción de los datos de un nuevo usuario creado a la tabla Usuario
     def insert_sign_up(self, in_var1, in_var2):
@@ -179,6 +180,26 @@ class Execute():
         for i in self.movies_display_genre_name_temp:
             self.movies_display_genre_name.append(i[0][0])
 
+    def select_data_movie(self):
+               
+        self.movies_date_edit_temp = []  
+        self.movie_date_edit = []  
+        self.movie_id_def = []   
+
+        self.user_id_edit = c.session.query(User.id).filter(
+            User.username == self.working_user
+        ).first()
+
+        self.movie_id_edit = c.session.query(Movie_User.movie_id).filter(
+            Movie_User.user_id == self.user_id_edit[0]
+        )
+        self.movie_id_def.append(c.session.query(Movie_db.id).filter(
+            Movie_db.name == self.movie_name_search
+        ))
+
+        print(self.movie_id_def[0][0])
+        
+
     def update(self):
         pass
 
@@ -191,9 +212,7 @@ class Execute():
 
 e = Execute()
 
-# ATENCIÓN: La base de datos no es manejada por un sistema de tipo crear y borrar. Esto significa que cada vez que se quiere
-# modificar la base de datos, no se inserta todo y se borra todo, sino que se inserta solo. Después existe la funcion de borrar.
-# está heca de este modo, para una optimización mayor.
+
 
 # TODO 
 # - Crear una textbox para poder buscar películas y que cuando se presione enter te salga la peli y te lleve a una pestaña donde poder

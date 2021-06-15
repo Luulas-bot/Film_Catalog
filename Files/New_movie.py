@@ -268,6 +268,8 @@ class AddMovie():
                 elif self.description_text.state and len(self.description_list[self.index].text) != 0 and self.index < 15:
                     self.index += 1
                     self.description_list[self.index - 1].text = self.description_list[self.index - 1].text[:-1]
+                elif self.index == 15:
+                    pass
                     
     # Mecánicas del tick
     def get_tick(self):

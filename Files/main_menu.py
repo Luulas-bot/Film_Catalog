@@ -1,12 +1,13 @@
 import pygame
 import sys
 from Files.Constants import (
-    WHITE, BLUE, GRAY, LIGHTGRAY, clock, fps, size_add_new
+    WHITE, BLUE, GRAY, LIGHTGRAY, clock, fps, size_add_new, size_edit
 )
 from Files.New_movie import AddMovie
 from Files.Buttons import Buttons, Genre_Buttons
 from Files.Movies import Movies
 from Files.Database_Connection import e
+from Files.Edit import Edit
 
 pygame.init()
 
@@ -97,7 +98,7 @@ class Main_menu():
         self.arrow_left_bol = False
 
         # Lista de las películas en fomr ade sprites
-        self.movies_sprites_list = pygame.sprite.Group()
+        self.movies_list = []
 
         self.init_movies()
 
@@ -118,6 +119,7 @@ class Main_menu():
             self.exit_button_mecs()
             self.get_arrow_right()
             self.display_arrow_left()
+            self.get_movies_press()
 
             # Registra si el genre_button está activo o no y descativa los botones de los géneros
             if self.genre_button.state == False:
@@ -130,8 +132,8 @@ class Main_menu():
         self.draw_buttons()
         self.draw_genre_buttons()
 
-        self.movies_sprites_list.update()
-        self.movies_sprites_list.draw(self.screen)
+        for i in self.movies_list:
+            self.screen.blit(i.image, (i.rect))
 
         self.draw_country_text()
 
@@ -286,8 +288,9 @@ class Main_menu():
                     self.init_movies()
                     self.pag -= 1
     
+    # Función que carga los datos de cada película en una variable
     def init_movies(self):
-        self.movies_sprites_list.empty()
+        self.movies_list.clear()
         Movies.movies_list_temp.clear()
         if self.index < len(e.movies_display_name):    
             self.movie = Movies("Images/movies_rect.png", (290, 120), (300, 130), (300, 230), e.movies_display_name[self.index], e.movies_display_genre_name[self.index])
@@ -310,11 +313,11 @@ class Main_menu():
             pass
 
         for i in Movies.movies_list_temp:
-            self.movies_sprites_list.add(i)
+            self.movies_list.append(i)
         
     # Se dibujan por pantalla las películas
     def blit_movies(self):
-        for i in self.movies_sprites_list:
+        for i in self.movies_list:
             if len(i.movie_name) > 20:
                 self.screen.blit(i.name_blit1, (i.blit_coords_name))
                 self.screen.blit(i.name_blit2, (i.blit_coords_name2))
@@ -322,6 +325,17 @@ class Main_menu():
                 self.screen.blit(i.name_blit, (i.blit_coords_name))
             self.screen.blit(i.genre_blit, (i.blit_coords_genre))
         
+    def get_movies_press(self):
+        for i in self.movies_list:
+            if self.event.type == pygame.MOUSEBUTTONDOWN:    
+                if i.rect.collidepoint(self.mx, self.my):
+                    e.movie_name_search = i.movie_name
+                    e.select_data_movie()
+                    self.run_edit_movie()
+                    del self.text_box_font
+                    del self.font1
+                    break
+
     # Corre el menú para crear una nueva película
     def run_add_new_movie(self):
 
@@ -333,6 +347,22 @@ class Main_menu():
 
             if am.escape >= 1:
                 del self.text_box_font
+                del self.font1
+                self.run_main_menu()
+                break
+
+            pygame.display.flip()
+            clock.tick(fps)
+
+    def run_edit_movie(self):
+        
+        ed = Edit(size_edit)
+
+        while True:
+            ed.events()
+            ed.draw_on_screen()
+
+            if ed.escape >= 1:
                 self.run_main_menu()
                 break
 

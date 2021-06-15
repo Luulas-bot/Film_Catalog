@@ -3,12 +3,11 @@ from Files.Constants import WHITE
 
 pygame.init()
 
-class Movies(pygame.sprite.Sprite):
+class Movies():
 
     movies_list_temp = []
 
     def __init__(self, image, rect_coords, blit_coords_name, blit_coords_genre, movie_name, genre_name):
-        super().__init__()
         self.movie_name = movie_name
         self.genre_name = genre_name
         self.blit_coords_name = blit_coords_name

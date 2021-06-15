@@ -7,6 +7,7 @@ size_login = (500, 500)
 size_sign_up = (500, 500)
 size_main_menu = (1100, 800)
 size_add_new = (600, 700)
+size_edit = (600, 700)
 
 # Colors
 WHITE = (255, 255, 255)
