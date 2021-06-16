@@ -1,7 +1,8 @@
 import pygame
 import sys
-from Files.Constants import GRAY, BLUE, WHITE, LIGHTGRAY, LIGHTBLUE
-from Files.Edit_Texts import Edit_Texts, Edit_Description
+from Constants.Constants import GRAY, BLUE, WHITE, LIGHTGRAY, LIGHTBLUE
+from Classes.Edit_Texts import Edit_Texts, Edit_Description
+from DataBase.Database_Connection import e
 
 class Edit():
 
@@ -27,26 +28,26 @@ class Edit():
         # Variable que define si se toca la tecla escape o no
         self.escape = 0
 
-        self.name_text = Edit_Texts((55, 57), "", (50, 50, 500, 30), (50, 50))
-        self.date_text = Edit_Texts((55, 132), "", (50, 125, 500, 30), (50, 100))
-        self.country_text = Edit_Texts ((55, 207), "", (50, 200, 200, 30), (50, 150))
-        self.genre_text = Edit_Texts((305, 207),"", (300, 200, 200, 30), (200, 150))
+        self.name_text = Edit_Texts((55, 57), f"{e.movie_name_edit}", (50, 50, 500, 30), (50, 50))
+        self.date_text = Edit_Texts((55, 132), f"{e.movie_date_edit}", (50, 125, 500, 30), (50, 100))
+        self.country_text = Edit_Texts ((55, 207), f"{e.movie_country_edit}", (50, 200, 200, 30), (50, 150))
+        self.genre_text = Edit_Texts((305, 207),f"{e.movie_genre_edit}", (300, 200, 200, 30), (200, 150))
         self.rating = Edit_Texts((55, 607), "", (50, 600, 500, 30), (50, 600))
-        self.description_text = Edit_Description((55, 282), "", (50, 275, 500, 275), (50, 200))
-        self.description_text2 = Edit_Description((55, 300), "", (50, 275, 500, 275), (50, 200))
-        self.description_text3 = Edit_Description((55, 318), "", (50, 275, 500, 275), (50, 200))
-        self.description_text4 = Edit_Description((55, 336), "", (50, 275, 500, 275), (50, 200))
-        self.description_text5 = Edit_Description((55, 354), "", (50, 275, 500, 275), (50, 200))
-        self.description_text6 = Edit_Description((55, 372), "", (50, 275, 500, 275), (50, 200))
-        self.description_text7 = Edit_Description((55, 390), "", (50, 275, 500, 275), (50, 200))
-        self.description_text8 = Edit_Description((55, 408), "", (50, 275, 500, 275), (50, 200))
-        self.description_text9 = Edit_Description((55, 426), "", (50, 275, 500, 275), (50, 200))
-        self.description_text10 = Edit_Description((55, 444), "", (50, 275, 500, 275), (50, 200))
-        self.description_text11 = Edit_Description((55, 462), "", (50, 275, 500, 275), (50, 200))
-        self.description_text12 = Edit_Description((55, 480), "", (50, 275, 500, 275), (50, 200))
-        self.description_text13 = Edit_Description((55, 498), "", (50, 275, 500, 275), (50, 200))
-        self.description_text14 = Edit_Description((55, 516), "", (50, 275, 500, 275), (50, 200))
-        self.description_text15 = Edit_Description((55, 534), "", (50, 275, 500, 275), (50, 200))
+        self.description_text = Edit_Description((55, 282), f"{e.movie_description_edit[:61]}", (50, 275, 500, 275), (50, 200))
+        self.description_text2 = Edit_Description((55, 300), f"{e.movie_description_edit[61:122]}", (50, 275, 500, 275), (50, 200))
+        self.description_text3 = Edit_Description((55, 318), f"{e.movie_description_edit[122:183]}", (50, 275, 500, 275), (50, 200))
+        self.description_text4 = Edit_Description((55, 336), f"{e.movie_description_edit[183:244]}", (50, 275, 500, 275), (50, 200))
+        self.description_text5 = Edit_Description((55, 354), f"{e.movie_description_edit[244:305]}", (50, 275, 500, 275), (50, 200))
+        self.description_text6 = Edit_Description((55, 372), f"{e.movie_description_edit[305:366]}", (50, 275, 500, 275), (50, 200))
+        self.description_text7 = Edit_Description((55, 390), f"{e.movie_description_edit[366:427]}", (50, 275, 500, 275), (50, 200))
+        self.description_text8 = Edit_Description((55, 408), f"{e.movie_description_edit[427:488]}", (50, 275, 500, 275), (50, 200))
+        self.description_text9 = Edit_Description((55, 426), f"{e.movie_description_edit[488:549]}", (50, 275, 500, 275), (50, 200))
+        self.description_text10 = Edit_Description((55, 444), f"{e.movie_description_edit[549:610]}", (50, 275, 500, 275), (50, 200))
+        self.description_text11 = Edit_Description((55, 462), f"{e.movie_description_edit[610:671]}", (50, 275, 500, 275), (50, 200))
+        self.description_text12 = Edit_Description((55, 480), f"{e.movie_description_edit[671:732]}", (50, 275, 500, 275), (50, 200))
+        self.description_text13 = Edit_Description((55, 498), f"{e.movie_description_edit[732:793]}", (50, 275, 500, 275), (50, 200))
+        self.description_text14 = Edit_Description((55, 516), f"{e.movie_description_edit[793:854]}", (50, 275, 500, 275), (50, 200))
+        self.description_text15 = Edit_Description((55, 534), f"{e.movie_description_edit[854:915]}", (50, 275, 500, 275), (50, 200))
 
         self.texts_list = []
         self.description_list = []
@@ -163,6 +164,9 @@ class Edit():
     def esc_mechanics(self):
         if self.event.type == pygame.KEYDOWN:
             if self.event.key == pygame.K_ESCAPE:
+                e.update_changes()
+                for i in Edit_Description.description_list_temp:
+                    i.text = ""
                 self.escape += 1
 
      # Mecánicas del enter

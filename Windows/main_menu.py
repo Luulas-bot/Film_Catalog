@@ -1,13 +1,13 @@
 import pygame
 import sys
-from Files.Constants import (
+from Constants.Constants import (
     WHITE, BLUE, GRAY, LIGHTGRAY, clock, fps, size_add_new, size_edit
 )
-from Files.New_movie import AddMovie
-from Files.Buttons import Buttons, Genre_Buttons
-from Files.Movies import Movies
-from Files.Database_Connection import e
-from Files.Edit import Edit
+from Windows.New_movie import AddMovie
+from Classes.Buttons import Buttons, Genre_Buttons
+from Classes.Movies import Movies
+from DataBase.Database_Connection import e
+from Windows.Edit import Edit
 
 pygame.init()
 
@@ -330,7 +330,7 @@ class Main_menu():
             if self.event.type == pygame.MOUSEBUTTONDOWN:    
                 if i.rect.collidepoint(self.mx, self.my):
                     e.movie_name_search = i.movie_name
-                    e.select_data_movie()
+                    e.select_edit_data()
                     self.run_edit_movie()
                     del self.text_box_font
                     del self.font1

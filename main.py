@@ -1,12 +1,12 @@
 # Imports
 import pygame
 import sys
-from Files.Constants import (
+from Constants.Constants import (
     LIGHTBLUE, size_login, WHITE, clock, fps, BLUE, GRAY, LIGHTGRAY, size_sign_up, size_main_menu
 )
-from Files.Sign_up import Sign_up
-from Files.main_menu import Main_menu
-from Files.Database_Connection import c, e
+from Windows.Sign_up import Sign_up
+from Windows.main_menu import Main_menu
+from DataBase.Database_Connection import c, e
 
 # Inicialización de pygame
 pygame.init()

@@ -1,9 +1,9 @@
 import pygame
 import sys
-from Files.Constants import (
+from Constants.Constants import (
     WHITE, BLUE, GRAY, LIGHTGRAY, LIGHTBLUE
 )
-from Files.Database_Connection import c, e
+from DataBase.Database_Connection import c, e
 from sqlalchemy.exc import IntegrityError
 
 pygame.init()

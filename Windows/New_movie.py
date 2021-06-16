@@ -1,10 +1,10 @@
 import pygame
 import sys
-from Files.Constants import (
+from Constants.Constants import (
     GRAY, WHITE, LIGHTGRAY, BLUE, LIGHTBLUE, GOLD
 )
-from Files.NM_Texts import NM_Text, NM_Description
-from Files.Database_Connection import c, e
+from Classes.NM_Texts import NM_Text, NM_Description
+from DataBase.Database_Connection import c, e
 from sqlalchemy.exc import IntegrityError
 
 pygame.init()
