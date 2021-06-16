@@ -363,6 +363,8 @@ class Main_menu():
             ed.draw_on_screen()
 
             if ed.escape >= 1:
+                del ed.font1
+                del ed.font2
                 self.run_main_menu()
                 break
 

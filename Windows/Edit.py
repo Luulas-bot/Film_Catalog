@@ -2,7 +2,8 @@ import pygame
 import sys
 from Constants.Constants import GRAY, BLUE, WHITE, LIGHTGRAY, LIGHTBLUE
 from Classes.Edit_Texts import Edit_Texts, Edit_Description
-from DataBase.Database_Connection import e
+from DataBase.Database_Connection import e, c
+from sqlalchemy.exc import DataError, IntegrityError
 
 class Edit():
 
@@ -51,6 +52,7 @@ class Edit():
 
         self.texts_list = []
         self.description_list = []
+        self.description_list_text = []
 
         for i in Edit_Description.description_list_temp:
             self.description_list.append(i)
@@ -162,12 +164,35 @@ class Edit():
                 self.rating.state = False
 
     def esc_mechanics(self):
-        if self.event.type == pygame.KEYDOWN:
-            if self.event.key == pygame.K_ESCAPE:
-                e.update_changes()
-                for i in Edit_Description.description_list_temp:
-                    i.text = ""
-                self.escape += 1
+        try:
+            if self.event.type == pygame.KEYDOWN:
+                if self.event.key == pygame.K_ESCAPE:
+                    for i in Edit_Description.description_list_temp:
+                        self.description_list_text.append(i.text)
+                    e.update_name = self.name_text.text
+                    e.update_date = self.date_text.text
+                    e.update_countryid = self.country_text.text
+                    e.update_genre_id = self.genre_text.text
+                    e.update_description = " ".join(self.description_list_text)
+                    e.update_rating = self.rating.text
+                    e.update_changes()
+                    Edit_Texts.texts_list_temp.clear()
+                    Edit_Description.description_list_temp.clear()
+                    for i in Edit_Description.description_list_temp:
+                        i.text = ""
+                    self.name_text.text = ""
+                    self.country_text.text = ""
+                    self.genre_text.text = ""
+                    self.rating.text = ""
+                    self.escape += 1
+        except DataError:
+            for i in Edit_Description.description_list_temp:
+                i.text = ""
+            c.session.rollback()
+        except IntegrityError:
+            for i in Edit_Description.description_list_temp:
+                i.text = ""
+            c.session.rollback()
 
      # Mecánicas del enter
     def enter_mechanics(self):
