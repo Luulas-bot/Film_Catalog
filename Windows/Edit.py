@@ -33,7 +33,7 @@ class Edit():
         self.date_text = Edit_Texts((55, 132), f"{e.movie_date_edit}", (50, 125, 500, 30), (50, 100))
         self.country_text = Edit_Texts ((55, 207), f"{e.movie_country_edit}", (50, 200, 200, 30), (50, 150))
         self.genre_text = Edit_Texts((305, 207),f"{e.movie_genre_edit}", (300, 200, 200, 30), (200, 150))
-        self.rating = Edit_Texts((55, 607), "", (50, 600, 500, 30), (50, 600))
+        self.rating = Edit_Texts((55, 607), f"{e.movie_rating_edit}", (50, 600, 500, 30), (50, 600))
         self.description_text = Edit_Description((55, 282), f"{e.movie_description_edit[:61]}", (50, 275, 500, 275), (50, 200))
         self.description_text2 = Edit_Description((55, 300), f"{e.movie_description_edit[61:122]}", (50, 275, 500, 275), (50, 200))
         self.description_text3 = Edit_Description((55, 318), f"{e.movie_description_edit[122:183]}", (50, 275, 500, 275), (50, 200))
@@ -49,6 +49,8 @@ class Edit():
         self.description_text13 = Edit_Description((55, 498), f"{e.movie_description_edit[732:793]}", (50, 275, 500, 275), (50, 200))
         self.description_text14 = Edit_Description((55, 516), f"{e.movie_description_edit[793:854]}", (50, 275, 500, 275), (50, 200))
         self.description_text15 = Edit_Description((55, 534), f"{e.movie_description_edit[854:915]}", (50, 275, 500, 275), (50, 200))
+
+        self.description_state = False
 
         self.texts_list = []
         self.description_list = []
@@ -118,7 +120,7 @@ class Edit():
             self.color_movie_genre_tx = WHITE
         else:
             self.color_movie_genre_tx = LIGHTGRAY
-        if self.description_text.state == True:
+        if self.description_state == True:
             self.color_movie_description_tx = WHITE
         else:
             self.color_movie_description_tx = LIGHTGRAY
@@ -155,9 +157,9 @@ class Edit():
             else:
                 self.genre_text.state = False
             if self.description_text.tx_rect.collidepoint(self.mx, self.my):
-                self.description_text.state = True
+                self.description_state = True
             else:
-                self.description_text.state = False
+                self.description_state = False
             if self.rating.tx_rect.collidepoint(self.mx, self.my):
                 self.rating.state = True
             else:
@@ -175,23 +177,24 @@ class Edit():
                     e.update_genre_id = self.genre_text.text
                     e.update_description = " ".join(self.description_list_text)
                     e.update_rating = self.rating.text
+                    self.description_list_text.clear()
                     e.update_changes()
                     Edit_Texts.texts_list_temp.clear()
                     Edit_Description.description_list_temp.clear()
-                    for i in Edit_Description.description_list_temp:
-                        i.text = ""
-                    self.name_text.text = ""
-                    self.country_text.text = ""
-                    self.genre_text.text = ""
-                    self.rating.text = ""
                     self.escape += 1
         except DataError:
-            for i in Edit_Description.description_list_temp:
-                i.text = ""
-            c.session.rollback()
-        except IntegrityError:
-            for i in Edit_Description.description_list_temp:
-                i.text = ""
+            if self.name_text.state:
+                self.name_text.text = self.name_text.text[:]
+            elif self.date_text.state:
+                self.date_text.text = self.date_text.text[:-1]
+            elif self.country_text.state:
+                self.country_text.text = self.country_text.text[:-1]
+            elif self.genre_text.state:
+                self.genre_text.text = self.genre_text.text[:-1]
+            elif self.rating.state:
+                self.rating.text = self.rating.text[:-1]
+            elif self.description_state:
+                self.description_list[self.index].text = self.description_list[self.index].text[:-1] 
             c.session.rollback()
 
      # Mecánicas del enter
@@ -206,11 +209,11 @@ class Edit():
                     self.country_text.text = self.country_text.text[:-1]
                 elif self.genre_text.state and len(self.genre_text.text) != 0:
                     self.genre_text.text = self.genre_text.text[:-1]
-                elif self.description_text.state and len(self.description_list[self.index].text) != 0 and self.index < 15:
-                    self.index += 1
-                    self.description_list[self.index - 1].text = self.description_list[self.index - 1].text[:-1]
                 elif self.rating.state and len(self.rating.text) != 0:
                     self.rating.text = self.rating.text[:-1]
+                elif self.description_state and len(self.description_list[self.index].text) != 0 and self.index < 15:
+                    self.index += 1
+                    self.description_list[self.index - 1].text = self.description_list[self.index - 1].text[:-1]
                 pass
 
     def write_user_mecs(self):
@@ -258,10 +261,10 @@ class Edit():
                     if len(self.genre_text.text) != 3:    
                         self.texts_list[3].text = self.texts_list[3].text[:-1]
                     self.genre_text.state = False
-                    self.description_text.state = True
-                elif self.description_text.state:
+                    self.description_state = True
+                elif self.description_state:
                     self.description_list[self.index].text = self.description_list[self.index].text[:-1]
-                    self.description_text.state = False
+                    self.description_state = False
                     self.rating.state = True
                 elif self.rating.state:   
                     self.rating.text = self.rating.text[:-1]
@@ -269,13 +272,15 @@ class Edit():
                     self.name_text.state = True
 
     def description_mechanics(self):
-        if self.event.key == pygame.K_BACKSPACE and self.description_text.state:
+        if self.event.key == pygame.K_BACKSPACE and self.description_state:
             self.description_list[self.index].text = self.description_list[self.index].text[:-1]
             if self.index < 15 and len(self.description_list[self.index].text) == 0 and self.index != 0:
                 self.index -= 1
-        elif self.description_text.state and len(self.description_list[self.index].text) < 61:
+        elif self.description_state and len(self.description_list[self.index].text) < 61:
             self.description_list[self.index].text += self.event.unicode
-        elif len(self.description_list[self.index].text) > 59 and self.index < 15 and self.description_text.state:
+        elif len(self.description_list[self.index].text) > 59 and self.index < 15 and self.description_state:
+            self.description_list[self.index].state = True
+            self.description_list[self.index - 1].state = False
             self.index += 1
         
     # Muestra las líneas de la descripción por pantalla

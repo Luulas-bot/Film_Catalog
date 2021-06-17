@@ -216,6 +216,7 @@ class Execute():
         self.movie_atr_edit_temp.append(c.session.query(Movie_db.name, Movie_db.movie_date, Movie_db.country_id, Movie_db.genre_id, Movie_db.description, Movie_db.rating).filter(
             Movie_db.id == self.movie_id_def
         )) 
+
         self.movie_name_edit = self.movie_atr_edit_temp[0][0][0]
         self.movie_date_edit = self.movie_atr_edit_temp[0][0][1]
         self.movie_country_edit = self.movie_atr_edit_temp[0][0][2]
