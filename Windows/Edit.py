@@ -64,6 +64,10 @@ class Edit():
 
         self.index = 0
 
+        # Tick
+        self.tick_rect = pygame.Rect(550, 550, 30, 30)
+        self.tick = pygame.image.load("Images/tick.png")
+
     def events(self):
         for self.event in pygame.event.get():
             if self.event.type == pygame.QUIT:
@@ -72,11 +76,12 @@ class Edit():
             # Obtiene la posición del mouse
             self.mx, self.my = pygame.mouse.get_pos()
 
-            self.esc_mechanics()
             self.get_tx_state()
             self.write_user_mecs()
             self.tab_mechanics()
             self.enter_mechanics()
+            self.esc_mechanics()
+            self.get_tick()
 
     def draw_on_screen(self):
         self.screen.fill(GRAY)
@@ -102,6 +107,9 @@ class Edit():
         self.screen.blit(self.text_surface5, (55, 607))
 
         self.description_display()
+
+        # Dibuja por pantalla el tick
+        self.screen.blit(self.tick, (550, 550))
 
     def change_tx_color(self):
         if self.name_text.state == True:
@@ -166,36 +174,9 @@ class Edit():
                 self.rating.state = False
 
     def esc_mechanics(self):
-        try:
-            if self.event.type == pygame.KEYDOWN:
-                if self.event.key == pygame.K_ESCAPE:
-                    for i in Edit_Description.description_list_temp:
-                        self.description_list_text.append(i.text)
-                    e.update_name = self.name_text.text
-                    e.update_date = self.date_text.text
-                    e.update_countryid = self.country_text.text
-                    e.update_genre_id = self.genre_text.text
-                    e.update_description = " ".join(self.description_list_text)
-                    e.update_rating = self.rating.text
-                    self.description_list_text.clear()
-                    e.update_changes()
-                    Edit_Texts.texts_list_temp.clear()
-                    Edit_Description.description_list_temp.clear()
-                    self.escape += 1
-        except DataError:
-            if self.name_text.state:
-                self.name_text.text = self.name_text.text[:]
-            elif self.date_text.state:
-                self.date_text.text = self.date_text.text[:-1]
-            elif self.country_text.state:
-                self.country_text.text = self.country_text.text[:-1]
-            elif self.genre_text.state:
-                self.genre_text.text = self.genre_text.text[:-1]
-            elif self.rating.state:
-                self.rating.text = self.rating.text[:-1]
-            elif self.description_state:
-                self.description_list[self.index].text = self.description_list[self.index].text[:-1] 
-            c.session.rollback()
+        if self.event.type == pygame.KEYDOWN:
+            if self.event.key == pygame.K_ESCAPE:
+                self.escape += 1
 
      # Mecánicas del enter
     def enter_mechanics(self):
@@ -211,7 +192,8 @@ class Edit():
                     self.genre_text.text = self.genre_text.text[:-1]
                 elif self.rating.state and len(self.rating.text) != 0:
                     self.rating.text = self.rating.text[:-1]
-                elif self.description_state and len(self.description_list[self.index].text) != 0 and self.index < 15:
+                elif self.description_state and len(self.description_list[self.index].text) != 0 and self.index < 14:
+                    print(self.index)
                     self.index += 1
                     self.description_list[self.index - 1].text = self.description_list[self.index - 1].text[:-1]
                 pass
@@ -274,11 +256,11 @@ class Edit():
     def description_mechanics(self):
         if self.event.key == pygame.K_BACKSPACE and self.description_state:
             self.description_list[self.index].text = self.description_list[self.index].text[:-1]
-            if self.index < 15 and len(self.description_list[self.index].text) == 0 and self.index != 0:
+            if self.index < 14 and len(self.description_list[self.index].text) == 0 and self.index != 0:
                 self.index -= 1
         elif self.description_state and len(self.description_list[self.index].text) < 61:
             self.description_list[self.index].text += self.event.unicode
-        elif len(self.description_list[self.index].text) > 59 and self.index < 15 and self.description_state:
+        elif len(self.description_list[self.index].text) > 59 and self.index < 14 and self.description_state:
             self.description_list[self.index].state = True
             self.description_list[self.index - 1].state = False
             self.index += 1
@@ -288,3 +270,35 @@ class Edit():
         for i in self.description_list:   
             self.surface = self.font2.render(i.text, True, (47, 86, 233))
             self.screen.blit(self.surface, (i.blit_coords))
+
+    def get_tick(self):
+        try:
+            if self.event.type == pygame.MOUSEBUTTONDOWN:
+                if self.tick_rect.collidepoint(self.mx, self.my):
+                    if self.name_text.state:
+                        self.name_text.text = self.name_text.text[:-1]
+                    elif self.date_text.state:
+                        self.date_text.text = self.date_text.text[:-1]
+                    elif self.country_text.state:
+                        self.country_text.text = self.country_text.text[:-1]
+                    elif self.genre_text.state:
+                        self.genre_text.text = self.genre_text.text[:-1]
+                    elif self.rating.state:
+                        self.rating.text = self.rating.text[:-1]
+                    elif self.description_state:
+                        self.description_list[self.index].text = self.description_list[self.index].text[:-1] 
+                    for i in Edit_Description.description_list_temp:
+                        self.description_list_text.append(i.text)
+                    e.update_name = self.name_text.text
+                    e.update_date = self.date_text.text
+                    e.update_countryid = self.country_text.text
+                    e.update_genre_id = self.genre_text.text
+                    e.update_description = " ".join(self.description_list_text)
+                    e.update_rating = self.rating.text
+                    self.description_list_text.clear()
+                    e.update_changes()
+                    Edit_Texts.texts_list_temp.clear()
+                    Edit_Description.description_list_temp.clear()
+                    self.escape += 1
+        except DataError:
+            c.session.rollback()

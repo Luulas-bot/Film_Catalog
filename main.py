@@ -200,7 +200,6 @@ class Login():
             m.events()
             m.draw_on_screen()
             
-            
             pygame.display.flip()
             clock.tick(fps)
             

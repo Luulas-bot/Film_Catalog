@@ -137,15 +137,13 @@ class Execute():
     # Función para insertar a la tabla 'Pelicula_Usuario' la película insertada recientemente y el usuario que la insertó
     def insert_Pelicula_Usuario(self):
         
-        self.movie_id = c.session.query(Movie_db.id).filter(
-            Movie_db.name == self.name_movie
-        ).first()
-        
+        self.movie_id = c.session.query(Movie_db.id).all()
+
         self.selected_user_id = c.session.query(User.id).filter(
             User.username == self.working_user
         ).first()
-        
-        self.movie_user = Movie_User(movie_id = f'{self.movie_id[0]}', user_id = f'{self.selected_user_id[0]}')
+
+        self.movie_user = Movie_User(movie_id = f'{self.movie_id[-1][0]}', user_id = f'{self.selected_user_id[0]}')
         
         c.session.add(self.movie_user)
         c.session.flush()
@@ -189,6 +187,7 @@ class Execute():
         for i in self.movies_display_genre_name_temp:
             self.movies_display_genre_name.append(i[0][0])
 
+    # Selecciona la data que se va a editar cuando se toca en una pelicula
     def select_edit_data(self):
                
         self.movie_atr_edit_temp = []   
@@ -197,16 +196,18 @@ class Execute():
         self.user_id_edit = c.session.query(User.id).filter(
             User.username == self.working_user
         ).first()
+        
         self.movie_id_edit = c.session.query(Movie_User.movie_id).filter(
             Movie_User.user_id == self.user_id_edit[0]
         ).all()
-
+        
         for id in self.movie_id_edit:
             self.movie_id_temp.append(c.session.query(Movie_db.id).filter(
                 Movie_db.name == self.movie_name_search
             ).filter(
                 Movie_db.id == id[0]
             ).first())
+        
         for i in self.movie_id_temp:
             if i != None:
                 self.movie_id_def = i[0]
@@ -224,6 +225,7 @@ class Execute():
         self.movie_description_edit = self.movie_atr_edit_temp[0][0][4].strip()
         self.movie_rating_edit = self.movie_atr_edit_temp[0][0][5]
 
+    # Actualiza los registros de la pelicula editada
     def update_changes(self):
 
         self.update_list = c.session.query(Movie_db).filter(
@@ -245,9 +247,6 @@ class Execute():
         self.update_description = ""
         self.update_rating = ""
 
-    def update(self):
-        pass
-
     def delete(self):
         c.session.query(User).filter(
             User.id > 0
@@ -260,11 +259,4 @@ e = Execute()
 
 
 # TODO 
-# Se fixeo el bug mayor que era ese que funcionaba todo en cualquiera cuando reseteabas el edit. Ahora hay algunos otros bugs a
-# resolver antes de poder pasar a la parte de los filtros. El primero y más importante es que cuando le doy al boton para ac
-# tualizar los registros en la parte de edicion y hay algo mal se añade la basura esa del escape. Para esto me parece que si se 
-# Aprieta esc y algo conlfictua lo mejor seria ver que tx esta activa y borrarle el ultimo pedazo de coso. Si es la de la descripcion
-# Borrarle como 15 lugares que son los que se acumulan. 
-# El segundo error es el de los nombres de las peliculas y el hecho que no se pueden insertar peliculas con el mismo nombre. Para el 
-# caso de un mismo usuario no es importante, el problema es cuando hay otro usuario que quiere usar el coso y escribe el mismo nombre.
-# El tercer problema que habria que solucionar es simplemente el tema del enter en el agregado de peliculas.
+# El unico bug que encuentro yo por lo menos es el del enter en el agregado de peliculas.
