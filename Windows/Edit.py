@@ -25,6 +25,7 @@ class Edit():
         self.description_title = self.font1.render("Descripción", True, LIGHTBLUE)
         self.genre_title = self.font1.render("Género", True, LIGHTBLUE)
         self.rating_title = self.font1.render("Rating", True, LIGHTBLUE)
+        self.delete_text = self.font2.render("BORRAR", True, BLUE)
 
         # Variable que define si se toca la tecla escape o no
         self.escape = 0
@@ -68,6 +69,10 @@ class Edit():
         self.tick_rect = pygame.Rect(550, 550, 30, 30)
         self.tick = pygame.image.load("Images/tick.png")
 
+        # Delete button
+        self.delete_button = pygame.Rect(50, 650, 100, 30)
+        self.delete_button_state = False
+
     def events(self):
         for self.event in pygame.event.get():
             if self.event.type == pygame.QUIT:
@@ -82,6 +87,7 @@ class Edit():
             self.enter_mechanics()
             self.esc_mechanics()
             self.get_tick()
+            self.get_delete()
 
     def draw_on_screen(self):
         self.screen.fill(GRAY)
@@ -111,6 +117,10 @@ class Edit():
         # Dibuja por pantalla el tick
         self.screen.blit(self.tick, (550, 550))
 
+        # Dibuja por pantalla el boton de delete
+        pygame.draw.rect(self.screen, self.color_delete_button, self.delete_button, 0, 5)
+        self.screen.blit(self.delete_text, (74, 658))
+
     def change_tx_color(self):
         if self.name_text.state == True:
             self.color_movie_name_tx = WHITE
@@ -136,6 +146,11 @@ class Edit():
             self.color_movie_rating_tx = WHITE
         else:
             self.color_movie_rating_tx = LIGHTGRAY
+
+        if self.delete_button_state:
+            self.color_delete_button = WHITE
+        else:
+            self.color_delete_button = LIGHTGRAY
 
         # Dibuja las textboxes con su color por pantalla
         pygame.draw.rect(self.screen, self.color_movie_name_tx, self.name_text.tx_rect, 0, 5)
@@ -302,3 +317,11 @@ class Edit():
                     self.escape += 1
         except DataError:
             c.session.rollback()
+
+    # Función que registra si se apreto el botón para borrar la película
+    def get_delete(self):
+        if self.delete_button.collidepoint(self.mx, self.my):
+            if self.event.type == pygame.MOUSEBUTTONDOWN:
+                self.delete_button_state = True
+            elif self.event.type == pygame.MOUSEBUTTONUP:
+                self.delete_button_state = False

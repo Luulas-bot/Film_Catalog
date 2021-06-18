@@ -259,4 +259,14 @@ e = Execute()
 
 
 # TODO 
-# El unico bug que encuentro yo por lo menos es el del enter en el agregado de peliculas.
+# Crear un nuevo file que se llame "Edit_Buttons" en el que se cree una clase con todos los atributos que van a llevar los botones
+# del edit. Estos van a ser el "to watch" "already seen" "top" "worst".
+# Una vez creados esos botones la segunda tarea seria atribuirles esas propiedades a las peliculas. Eso se puede hacer creando mas 
+# columnas con la caracteristica de ser binario y leer de esa forma si es True o False.
+# Para la logica de arriba va a ser necesario crear una logica adicional que permita leer si una peli ya esta por ejemplo en 
+# "already seen". Si ese es el caso y el usuario quiere camibarla a to watch. Insertar en la columna de "already seen" un cero
+# y en la otra un 1.
+# Una vez finalizado toda esa parte lo ultimo que quedaria por hacer seria aplicar los filtros de busqueda en el main menu y hacer
+# un poco mas lindo el display de peliculas.
+# Una vez terminado todo lo de arriba y considerando que van a aparecer bugs. Taran ta tan
+# ----> FINALIZACION DEL PROYECTO <--------
