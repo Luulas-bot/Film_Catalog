@@ -4,6 +4,7 @@ from Constants.Constants import GRAY, BLUE, WHITE, LIGHTGRAY, LIGHTBLUE
 from Classes.Edit_Texts import Edit_Texts, Edit_Description
 from DataBase.Database_Connection import e, c
 from sqlalchemy.exc import DataError, IntegrityError
+from Classes.Edit_Buttons import Edit_Buttons
 
 class Edit():
 
@@ -30,11 +31,11 @@ class Edit():
         # Variable que define si se toca la tecla escape o no
         self.escape = 0
 
-        self.name_text = Edit_Texts((55, 57), f"{e.movie_name_edit}", (50, 50, 500, 30), (50, 50))
-        self.date_text = Edit_Texts((55, 132), f"{e.movie_date_edit}", (50, 125, 500, 30), (50, 100))
-        self.country_text = Edit_Texts ((55, 207), f"{e.movie_country_edit}", (50, 200, 200, 30), (50, 150))
-        self.genre_text = Edit_Texts((305, 207),f"{e.movie_genre_edit}", (300, 200, 200, 30), (200, 150))
-        self.rating = Edit_Texts((55, 607), f"{e.movie_rating_edit}", (50, 600, 500, 30), (50, 600))
+        self.name_text = Edit_Texts((55, 57), f"{e.movie_name_edit}", (50, 50, 500, 30), (50, 50), (55, 57))
+        self.date_text = Edit_Texts((55, 132), f"{e.movie_date_edit}", (50, 125, 500, 30), (50, 100), (55, 132))
+        self.country_text = Edit_Texts ((55, 207), f"{e.movie_country_edit}", (50, 200, 200, 30), (50, 150), (55, 207))
+        self.genre_text = Edit_Texts((305, 207),f"{e.movie_genre_edit}", (300, 200, 200, 30), (200, 150), (305, 207))
+        self.rating = Edit_Texts((55, 607), f"{e.movie_rating_edit}", (50, 600, 500, 30), (50, 600), (55, 607))
         self.description_text = Edit_Description((55, 282), f"{e.movie_description_edit[:61]}", (50, 275, 500, 275), (50, 200))
         self.description_text2 = Edit_Description((55, 300), f"{e.movie_description_edit[61:122]}", (50, 275, 500, 275), (50, 200))
         self.description_text3 = Edit_Description((55, 318), f"{e.movie_description_edit[122:183]}", (50, 275, 500, 275), (50, 200))
@@ -69,9 +70,17 @@ class Edit():
         self.tick_rect = pygame.Rect(550, 550, 30, 30)
         self.tick = pygame.image.load("Images/tick.png")
 
-        # Delete button
-        self.delete_button = pygame.Rect(50, 650, 100, 30)
-        self.delete_button_state = False
+        self.edit_buttons_list = []
+
+        # Buttons
+        self.delete_button = Edit_Buttons((30, 650, 100, 30), "DELETE", (57, 658))
+        self.to_watch_button = Edit_Buttons((140, 650, 100, 30), "TO WATCH", (156, 658))
+        self.already_seen_button = Edit_Buttons((250, 650, 100, 30), "ALREADY SEEN", (252, 658))
+        self.top_button = Edit_Buttons((360, 650, 100, 30), "TOP", (398, 658))
+        self.worst_button = Edit_Buttons((470, 650, 100, 30), "WORST", (498, 658))
+        
+        for button in Edit_Buttons.temp_list:
+            self.edit_buttons_list.append(button)        
 
     def events(self):
         for self.event in pygame.event.get():
@@ -87,7 +96,7 @@ class Edit():
             self.enter_mechanics()
             self.esc_mechanics()
             self.get_tick()
-            self.get_delete()
+            self.get_buttons_press()
 
     def draw_on_screen(self):
         self.screen.fill(GRAY)
@@ -101,16 +110,9 @@ class Edit():
 
         self.change_tx_color()
 
-        self.text_surface1 = self.font2.render(self.name_text.text, True, BLUE)
-        self.screen.blit(self.text_surface1, (55, 57))
-        self.text_surface2 = self.font2.render(self.texts_list[1].text, True, BLUE)
-        self.screen.blit(self.text_surface2, (55, 132))   
-        self.text_surface3 = self.font2.render(self.texts_list[2].text, True, BLUE)
-        self.screen.blit(self.text_surface3, (55, 207))
-        self.text_surface4 = self.font2.render(self.texts_list[3].text, True, BLUE)
-        self.screen.blit(self.text_surface4, (305, 207))
-        self.text_surface5 = self.font2.render(self.rating.text, True, BLUE)
-        self.screen.blit(self.text_surface5, (55, 607))
+        for t in self.texts_list:
+            self.text_surface = self.font2.render(t.text, True, BLUE)
+            self.screen.blit(self.text_surface, t.text_coords) 
 
         self.description_display()
 
@@ -118,75 +120,42 @@ class Edit():
         self.screen.blit(self.tick, (550, 550))
 
         # Dibuja por pantalla el boton de delete
-        pygame.draw.rect(self.screen, self.color_delete_button, self.delete_button, 0, 5)
-        self.screen.blit(self.delete_text, (74, 658))
+        for b in self.edit_buttons_list:
+            pygame.draw.rect(self.screen, b.color, b.rect, 0, 5)
+            self.screen.blit(b.text, b.text_coords)
 
     def change_tx_color(self):
-        if self.name_text.state == True:
-            self.color_movie_name_tx = WHITE
-        else:
-            self.color_movie_name_tx = LIGHTGRAY
-        if self.date_text.state == True:
-            self.color_movie_date_tx = WHITE
-        else:
-            self.color_movie_date_tx = LIGHTGRAY
-        if self.country_text.state == True:
-            self.color_movie_country_tx = WHITE
-        else:
-            self.color_movie_country_tx = LIGHTGRAY
-        if self.genre_text.state:
-            self.color_movie_genre_tx = WHITE
-        else:
-            self.color_movie_genre_tx = LIGHTGRAY
+        for tx in self.texts_list:
+            tx.change_color()
+
         if self.description_state == True:
             self.color_movie_description_tx = WHITE
         else:
             self.color_movie_description_tx = LIGHTGRAY
-        if self.rating.state == True:
-            self.color_movie_rating_tx = WHITE
-        else:
-            self.color_movie_rating_tx = LIGHTGRAY
 
-        if self.delete_button_state:
-            self.color_delete_button = WHITE
-        else:
-            self.color_delete_button = LIGHTGRAY
+        # Esta parte de abajo cambia el color de los botones, no de ls tx
+        for b in self.edit_buttons_list:
+            b.change_color()
 
         # Dibuja las textboxes con su color por pantalla
-        pygame.draw.rect(self.screen, self.color_movie_name_tx, self.name_text.tx_rect, 0, 5)
-        pygame.draw.rect(self.screen, self.color_movie_date_tx, self.date_text.tx_rect, 0, 5)
-        pygame.draw.rect(self.screen, self.color_movie_country_tx, self.country_text.tx_rect, 0, 5)
-        pygame.draw.rect(self.screen, self.color_movie_genre_tx, self.genre_text.tx_rect, 0, 5)
+        for tx in self.texts_list:
+            pygame.draw.rect(self.screen, tx.color, tx.tx_rect, 0, 5)
+        
         pygame.draw.rect(self.screen, self.color_movie_description_tx, self.description_text.tx_rect, 0, 5)
-        pygame.draw.rect(self.screen, self.color_movie_rating_tx, self.rating.tx_rect, 0, 5)
 
     # Define si están activas o no las textboxes
     def get_tx_state(self):
-        if self.event.type == pygame.MOUSEBUTTONDOWN:
-            if self.name_text.tx_rect.collidepoint(self.mx, self.my):
-                self.name_text.state = True
-            else:
-                self.name_text.state = False
-            if self.date_text.tx_rect.collidepoint(self.mx, self.my):
-                self.date_text.state = True
-            else:
-                self.date_text.state = False
-            if self.country_text.tx_rect.collidepoint(self.mx, self.my):
-                self.country_text.state = True
-            else:
-                self.country_text.state = False
-            if self.genre_text.tx_rect.collidepoint(self.mx, self.my):
-                self.genre_text.state = True
-            else:
-                self.genre_text.state = False
+        for tx in self.texts_list:
+            if self.event.type == pygame.MOUSEBUTTONDOWN:
+                if tx.tx_rect.collidepoint(self.mx, self.my):
+                    tx.state = True
+                else:
+                    tx.state = False
+
             if self.description_text.tx_rect.collidepoint(self.mx, self.my):
                 self.description_state = True
             else:
                 self.description_state = False
-            if self.rating.tx_rect.collidepoint(self.mx, self.my):
-                self.rating.state = True
-            else:
-                self.rating.state = False
 
     def esc_mechanics(self):
         if self.event.type == pygame.KEYDOWN:
@@ -195,20 +164,13 @@ class Edit():
 
      # Mecánicas del enter
     def enter_mechanics(self):
-        if self.event.type == pygame.KEYDOWN:
-            if self.event.key == pygame.K_RETURN:
-                if self.name_text.state and len(self.name_text.text) != 0:
-                    self.name_text.text = self.name_text.text[:-1]
-                elif self.date_text.state and len(self.date_text.text) != 0:
-                    self.date_text.text = self.date_text.text[:-1]
-                elif self.country_text.state and len(self.country_text.text) != 0:
-                    self.country_text.text = self.country_text.text[:-1]
-                elif self.genre_text.state and len(self.genre_text.text) != 0:
-                    self.genre_text.text = self.genre_text.text[:-1]
-                elif self.rating.state and len(self.rating.text) != 0:
-                    self.rating.text = self.rating.text[:-1]
+        for t in self.texts_list:
+            if self.event.type == pygame.KEYDOWN:
+                if self.event.key == pygame.K_RETURN:
+                    if t.state and len(t.text) != 0:
+                        t.text = t.text[:-1]
+                        
                 elif self.description_state and len(self.description_list[self.index].text) != 0 and self.index < 14:
-                    print(self.index)
                     self.index += 1
                     self.description_list[self.index - 1].text = self.description_list[self.index - 1].text[:-1]
                 pass
@@ -290,17 +252,11 @@ class Edit():
         try:
             if self.event.type == pygame.MOUSEBUTTONDOWN:
                 if self.tick_rect.collidepoint(self.mx, self.my):
-                    if self.name_text.state:
-                        self.name_text.text = self.name_text.text[:-1]
-                    elif self.date_text.state:
-                        self.date_text.text = self.date_text.text[:-1]
-                    elif self.country_text.state:
-                        self.country_text.text = self.country_text.text[:-1]
-                    elif self.genre_text.state:
-                        self.genre_text.text = self.genre_text.text[:-1]
-                    elif self.rating.state:
-                        self.rating.text = self.rating.text[:-1]
-                    elif self.description_state:
+                    for t in self.texts_list:
+                        if t.state:
+                            t.text = t.text[:-1]
+                        
+                    if self.description_state:
                         self.description_list[self.index].text = self.description_list[self.index].text[:-1] 
                     for i in Edit_Description.description_list_temp:
                         self.description_list_text.append(i.text)
@@ -318,10 +274,12 @@ class Edit():
         except DataError:
             c.session.rollback()
 
-    # Función que registra si se apreto el botón para borrar la película
-    def get_delete(self):
-        if self.delete_button.collidepoint(self.mx, self.my):
-            if self.event.type == pygame.MOUSEBUTTONDOWN:
-                self.delete_button_state = True
-            elif self.event.type == pygame.MOUSEBUTTONUP:
-                self.delete_button_state = False
+    def get_buttons_press(self):
+        for b in self.edit_buttons_list:
+            if b.rect.collidepoint(self.mx, self.my):
+                if self.event.type == pygame.MOUSEBUTTONDOWN:
+                    b.state = True
+                elif self.event.type == pygame.MOUSEBUTTONUP:
+                    b.state = False
+
+# TODO Solucionar un bug que salto en el edit window cuando estaba cambiando los for por los ifs
