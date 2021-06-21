@@ -97,6 +97,7 @@ class Edit():
             self.esc_mechanics()
             self.get_tick()
             self.get_buttons_press()
+            self.edit_buttons_SQL()
 
     def draw_on_screen(self):
         self.screen.fill(GRAY)
@@ -152,17 +153,19 @@ class Edit():
                 else:
                     tx.state = False
 
-            if self.description_text.tx_rect.collidepoint(self.mx, self.my):
-                self.description_state = True
-            else:
-                self.description_state = False
+                if self.description_text.tx_rect.collidepoint(self.mx, self.my):
+                    self.description_state = True
+                else:
+                    self.description_state = False
 
     def esc_mechanics(self):
         if self.event.type == pygame.KEYDOWN:
             if self.event.key == pygame.K_ESCAPE:
+                Edit_Texts.texts_list_temp.clear()
+                Edit_Description.description_list_temp.clear()
                 self.escape += 1
 
-     # Mecánicas del enter
+    # Mecánicas del enter
     def enter_mechanics(self):
         for t in self.texts_list:
             if self.event.type == pygame.KEYDOWN:
@@ -170,10 +173,9 @@ class Edit():
                     if t.state and len(t.text) != 0:
                         t.text = t.text[:-1]
                         
-                elif self.description_state and len(self.description_list[self.index].text) != 0 and self.index < 14:
-                    self.index += 1
-                    self.description_list[self.index - 1].text = self.description_list[self.index - 1].text[:-1]
-                pass
+                    if self.description_state and len(self.description_list[self.index].text) != 0 and self.index < 14:
+                        self.index += 1
+                        self.description_list[self.index - 1].text = self.description_list[self.index - 1].text[:-1]
 
     def write_user_mecs(self):
         if self.event.type == pygame.KEYDOWN:
@@ -281,5 +283,18 @@ class Edit():
                     b.state = True
                 elif self.event.type == pygame.MOUSEBUTTONUP:
                     b.state = False
+            
+    def edit_buttons_SQL(self):
+        if self.delete_button.state == True:
+            e.delete_movies()
+            self.escape += 1
+        elif self.to_watch_button.state == True:
+            e.assign_to_watch()
+        elif self.already_seen_button.state == True:
+            e.assign_already_seen()
+        elif self.top_button.state == True:
+            e.assign_top()
+        elif self.worst_button == True:
+            e.assign_worst()
 
 # TODO Solucionar un bug que salto en el edit window cuando estaba cambiando los for por los ifs

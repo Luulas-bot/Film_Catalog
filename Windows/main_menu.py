@@ -354,6 +354,7 @@ class Main_menu():
             pygame.display.flip()
             clock.tick(fps)
 
+    # Función que corre la edit window
     def run_edit_movie(self):
         
         ed = Edit(size_edit)

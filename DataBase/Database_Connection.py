@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String, Integer, DateTime, CHAR, ForeignKey
 from datetime import datetime
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.sql.sqltypes import VARCHAR
+from sqlalchemy.sql.sqltypes import Binary, Boolean
 
 # Se crea la base
 Base = declarative_base()
@@ -56,6 +56,10 @@ class Movie_db(Base):
     genre_id = Column(CHAR(3), ForeignKey('Genero.id'))
     description = Column(String(915), nullable = True, unique = False)
     rating = Column(String(70), nullable = True, unique = False)
+    to_watch = Column(Integer(), nullable = True, unique = False)
+    already_seen = Column(Integer(), nullable = True, unique = False)
+    top_button = Column(Integer(), nullable = True, unique = False)
+    worst = Column(Integer(), nullable = True, unique = False)
 
 # Creación de la tabla de los países
 class Country(Base):
@@ -247,20 +251,47 @@ class Execute():
         self.update_description = ""
         self.update_rating = ""
 
-    def delete(self):
-        c.session.query(User).filter(
-            User.id > 0
+    def delete_movies(self):
+        c.session.query(Movie_User).filter(
+            Movie_User.movie_id == self.movie_id_def
+        ).delete()
+        
+        c.session.query(Movie_db).filter(
+            Movie_db.id == self.movie_id_def
         ).delete()
 
         c.session.commit()
 
+    def assign_to_watch(self):
+        self.to_watch = c.session.query(Movie_db).filter(
+            Movie_db.id == self.movie_id_def
+        )
+
+        self.to_watch.to_watch = 1
+        self.to_watch.already_seen = 0
+        
+    def assign_already_seen(self):
+        self.already_seen = c.session.query(Movie_db).filter(
+            Movie_db.id == self.movie_id_def
+        )
+
+        self.already_seen.already_seen = 1
+        self.already_seen.to_watch = 0
+
+    def assign_top(self):
+        pass
+
+    def assign_worst(self):
+        pass
+
 e = Execute()
 
-
+# ATENCION: Lamentablemente no encontré el tipo de dato preciso para las últimas cuatro columnas de la tabla "Pelicula". En 
+# SQL Alchemy existe el tipo de dato Boleano mientras que en SQL Server existe el tipo de dato bit y no pude hacer que ambos 
+# hagan su trabajo correctamente. Por ende terminé usando el tipo de dato int, que no es lo mejor en performance para la tarea.
+# Cualquier sugerencia se agradece.
 
 # TODO 
-# Crear un nuevo file que se llame "Edit_Buttons" en el que se cree una clase con todos los atributos que van a llevar los botones
-# del edit. Estos van a ser el "to watch" "already seen" "top" "worst".
 # Una vez creados esos botones la segunda tarea seria atribuirles esas propiedades a las peliculas. Eso se puede hacer creando mas 
 # columnas con la caracteristica de ser binario y leer de esa forma si es True o False.
 # Para la logica de arriba va a ser necesario crear una logica adicional que permita leer si una peli ya esta por ejemplo en 
