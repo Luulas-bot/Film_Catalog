@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String, Integer, DateTime, CHAR, ForeignKey
 from datetime import datetime
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.sql.sqltypes import Binary, Boolean
+from sqlalchemy.sql.sqltypes import SmallInteger
 
 # Se crea la base
 Base = declarative_base()
@@ -56,10 +56,10 @@ class Movie_db(Base):
     genre_id = Column(CHAR(3), ForeignKey('Genero.id'))
     description = Column(String(915), nullable = True, unique = False)
     rating = Column(String(70), nullable = True, unique = False)
-    to_watch = Column(Integer(), nullable = True, unique = False)
-    already_seen = Column(Integer(), nullable = True, unique = False)
-    top_button = Column(Integer(), nullable = True, unique = False)
-    worst = Column(Integer(), nullable = True, unique = False)
+    to_watch = Column(SmallInteger(), nullable = True, unique = False)
+    already_seen = Column(SmallInteger(), nullable = True, unique = False)
+    top_button = Column(SmallInteger(), nullable = True, unique = False)
+    worst = Column(SmallInteger(), nullable = True, unique = False)
 
 # Creación de la tabla de los países
 class Country(Base):
@@ -251,6 +251,7 @@ class Execute():
         self.update_description = ""
         self.update_rating = ""
 
+    # Borra la película seleccionada
     def delete_movies(self):
         c.session.query(Movie_User).filter(
             Movie_User.movie_id == self.movie_id_def
@@ -262,26 +263,94 @@ class Execute():
 
         c.session.commit()
 
+    # Asigna un uno si la pelicula está en modo "to_watch" a la db
     def assign_to_watch(self):
         self.to_watch = c.session.query(Movie_db).filter(
             Movie_db.id == self.movie_id_def
+        ).update(
+            {
+                'to_watch' : 1,
+                'already_seen' : 0
+            }
         )
 
-        self.to_watch.to_watch = 1
-        self.to_watch.already_seen = 0
-        
+        c.session.commit()
+        c.session.flush()
+
+    # Asigna un uno si la pelicula está en modo "already_seen" a la db
     def assign_already_seen(self):
-        self.already_seen = c.session.query(Movie_db).filter(
+        c.session.query(Movie_db).filter(
             Movie_db.id == self.movie_id_def
+        ).update(
+            {
+                'already_seen' : 1,
+                'to_watch' : 0
+            }
         )
 
-        self.already_seen.already_seen = 1
-        self.already_seen.to_watch = 0
+        c.session.commit()
+        c.session.flush()
 
+    # Asigna un uno si la pelicula está en modo "top" a la db
     def assign_top(self):
+        c.session.query(Movie_db).filter(
+            Movie_db.id == self.movie_id_def
+        ).update(
+            {
+                'top_button' : 1,
+                'worst' : 0
+            }
+        )
+
+        c.session.commit()
+        c.session.flush()
+
+    # Asigna un uno si la pelicula está en modo "worst" a la db
+    def assign_worst(self):
+        c.session.query(Movie_db).filter(
+            Movie_db.id == self.movie_id_def
+        ).update(
+            {
+                'worst' : 1,
+                'top_button' : 0
+            }
+        )
+
+        c.session.commit()
+        c.session.flush()
+
+    def filter_to_watch(self):
+        self.movie_id_filter_def = []
+        self.movies_display_name = []
+        self.movies_display_genre_name = []
+        
+        # tiene que ser con [0]
+        self.user_id_filter = c.session.query(User.id).filter(
+            User.username == self.working_user
+        ).first()
+        
+        # Para seleccionar uno tiene que ir con [0][0]
+        self.movie_id_filter_temp = c.session.query(Movie_User.movie_id).filter(
+            Movie_User.user_id == self.user_id_filter[0]
+        ).all()
+        
+        for id in self.movie_id_filter_temp:
+            self.movie_id_filter_def.append(c.session.query(Movie_db.name, Movie_db.genre_id).filter(
+                Movie_db.id == id[0]
+            ).filter(
+                Movie_db.to_watch == 1
+            ))
+        for i in self.movie_id_filter_def:
+            print(i[0])
+
+
+    def filter_already_seen(self):
         pass
 
-    def assign_worst(self):
+    def filter_top(self):
+        pass
+
+    def filter_worst(self):
         pass
 
 e = Execute()
@@ -292,12 +361,4 @@ e = Execute()
 # Cualquier sugerencia se agradece.
 
 # TODO 
-# Una vez creados esos botones la segunda tarea seria atribuirles esas propiedades a las peliculas. Eso se puede hacer creando mas 
-# columnas con la caracteristica de ser binario y leer de esa forma si es True o False.
-# Para la logica de arriba va a ser necesario crear una logica adicional que permita leer si una peli ya esta por ejemplo en 
-# "already seen". Si ese es el caso y el usuario quiere camibarla a to watch. Insertar en la columna de "already seen" un cero
-# y en la otra un 1.
-# Una vez finalizado toda esa parte lo ultimo que quedaria por hacer seria aplicar los filtros de busqueda en el main menu y hacer
-# un poco mas lindo el display de peliculas.
-# Una vez terminado todo lo de arriba y considerando que van a aparecer bugs. Taran ta tan
-# ----> FINALIZACION DEL PROYECTO <--------
+# Arreglar la porqueria de error que me da cuando intento filtrar las peliculas con dos filter en el to watch.

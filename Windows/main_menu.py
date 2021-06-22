@@ -186,12 +186,16 @@ class Main_menu():
                     button.state = not button.state
                     if button == self.to_watch_button and self.to_watch_button.state:
                         self.already_seen_button.state = False
+                        e.filter_to_watch()
                     if button == self.already_seen_button and self.already_seen_button:
                         self.to_watch_button.state = False
+                        e.filter_already_seen()
                     if button == self.top_button and self.top_button.state:
                         self.worst_button.state = False
+                        e.filter_top()
                     if button == self.worst_button and self.worst_button.state:
                         self.top_button.state = False
+                        e.filter_worst()
                     if button == self.genre_button and self.genre_button.state:
                         self.country_button.state = False
                         self.all_genre_buttons_active = True
