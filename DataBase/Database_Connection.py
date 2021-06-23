@@ -495,7 +495,47 @@ class Execute():
         for i in self.genre_name_filter_temp:
             self.movies_display_genre_name.append(i[0][0])
 
-e = Execute()
+    # Filtra por genero la busqueda
+    def genre_filter(self, genre):
+        self.get_genre_id = []
+        self.genre_name_filter_temp = []
+        self.name_filter_temp = []
+        self.movies_display_genre_name = []
+        self.movies_display_name = []
+        self.genre_id_def = []
 
-# TODO Lo que quedaría pendiente sería la búsqueda por países y la búsqueda por género. Así también como el funcionamiento del
-# botón de all.
+        self.user_id_filter = c.session.query(User.id).filter(
+            User.username == self.working_user
+        ).first()
+
+        self.movie_id_filter_temp = c.session.query(Movie_User.movie_id).filter(
+            Movie_User.user_id == self.user_id_filter[0]
+        ).all()
+        
+        for id in self.movie_id_filter_temp:    
+            self.get_genre_id.append(c.session.query(Movie_db.genre_id).filter(
+                Movie_db.id == id[0]
+            ))
+
+        for i in self.get_genre_id:
+            if f'{i[0][0]}' == f'{genre}':
+                print("Hola")
+                self.genre_id_def.append(i[0][0])
+
+        for g in self.genre_id_def:
+            self.genre_name_filter_temp.append(c.session.query(Genre.name).filter(
+                Genre.id == g
+            ))
+
+        for id in self.movie_id_filter_temp:
+            self.name_filter_temp.append(c.session.query(Movie_db.name).filter(
+                Movie_db.id == id[0]
+            ))
+        
+        for i in self.name_filter_temp:
+            self.movies_display_name.append(i[0][0])
+
+        for i in self.genre_name_filter_temp:
+            self.movies_display_genre_name.append(i[0][0])
+
+e = Execute()
