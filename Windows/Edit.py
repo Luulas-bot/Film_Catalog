@@ -294,7 +294,5 @@ class Edit():
             e.assign_already_seen()
         elif self.top_button.state == True:
             e.assign_top()
-        elif self.worst_button == True:
+        elif self.worst_button.state == True:
             e.assign_worst()
-
-# TODO Solucionar un bug que salto en el edit window cuando estaba cambiando los for por los ifs

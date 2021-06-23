@@ -184,24 +184,27 @@ class Main_menu():
             if self.event.type == pygame.MOUSEBUTTONDOWN:
                 if button.rect.collidepoint(self.mx, self.my):
                     button.state = not button.state
-                    if button == self.to_watch_button and self.to_watch_button.state:
-                        self.already_seen_button.state = False
-                        e.filter_to_watch()
-                    if button == self.already_seen_button and self.already_seen_button:
-                        self.to_watch_button.state = False
-                        e.filter_already_seen()
-                    if button == self.top_button and self.top_button.state:
-                        self.worst_button.state = False
-                        e.filter_top()
-                    if button == self.worst_button and self.worst_button.state:
-                        self.top_button.state = False
-                        e.filter_worst()
-                    if button == self.genre_button and self.genre_button.state:
-                        self.country_button.state = False
-                        self.all_genre_buttons_active = True
-                        self.country_textbox_active = False
-                    if button == self.country_button and self.country_button.state:
-                        self.genre_button.state = False
+                    if button.state:
+                        self.index -= 5
+                        if button == self.to_watch_button:
+                            e.filter_to_watch()
+                        elif button == self.already_seen_button:
+                            e.filter_already_seen()
+                        elif button == self.top_button:
+                            e.filter_top()
+                        elif button == self.worst_button:
+                            e.filter_worst()
+                        self.init_movies()
+                    else:
+                        button.state = False
+                        self.index -= 5
+                        e.select_movies_to_display()
+                        self.init_movies()
+
+            if self.country_button.state == False:
+                self.country_textbox_active = False
+            if self.genre_button.state:
+                self.all_genre_buttons_active = True
 
     # Registra si algún botón de género es presionado   
     def get_genre_button_press(self):

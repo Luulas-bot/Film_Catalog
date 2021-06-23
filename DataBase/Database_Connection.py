@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String, Integer, DateTime, CHAR, ForeignKey
 from datetime import datetime
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.sql.sqltypes import SmallInteger
+from sqlalchemy.sql.sqltypes import Boolean
 
 # Se crea la base
 Base = declarative_base()
@@ -56,10 +56,10 @@ class Movie_db(Base):
     genre_id = Column(CHAR(3), ForeignKey('Genero.id'))
     description = Column(String(915), nullable = True, unique = False)
     rating = Column(String(70), nullable = True, unique = False)
-    to_watch = Column(SmallInteger(), nullable = True, unique = False)
-    already_seen = Column(SmallInteger(), nullable = True, unique = False)
-    top_button = Column(SmallInteger(), nullable = True, unique = False)
-    worst = Column(SmallInteger(), nullable = True, unique = False)
+    to_watch = Column(Boolean(), nullable = True, unique = False)
+    already_seen = Column(Boolean(), nullable = True, unique = False)
+    top_button = Column(Boolean(), nullable = True, unique = False)
+    worst = Column(Boolean(), nullable = True, unique = False)
 
 # Creación de la tabla de los países
 class Country(Base):
@@ -320,9 +320,11 @@ class Execute():
         c.session.flush()
 
     def filter_to_watch(self):
-        self.movie_id_filter_def = []
         self.movies_display_name = []
         self.movies_display_genre_name = []
+        self.name_filter_temp = []
+        self.genreid_filter_temp = []
+        self.genre_name_filter_temp = []
         
         # tiene que ser con [0]
         self.user_id_filter = c.session.query(User.id).filter(
@@ -334,31 +336,166 @@ class Execute():
             Movie_User.user_id == self.user_id_filter[0]
         ).all()
         
-        for id in self.movie_id_filter_temp:
-            self.movie_id_filter_def.append(c.session.query(Movie_db.name, Movie_db.genre_id).filter(
-                Movie_db.id == id[0]
-            ).filter(
-                Movie_db.to_watch == 1
-            ))
-        for i in self.movie_id_filter_def:
-            print(i[0])
+        self.movie_id_filter_to_watch = c.session.query(Movie_db.id).filter(
+            Movie_db.to_watch == 1
+        ).all()
+        
+        self.movie_id_filter_def = set(self.movie_id_filter_temp).intersection(self.movie_id_filter_to_watch)
 
+        for id in self.movie_id_filter_def:
+            self.name_filter_temp.append(c.session.query(Movie_db.name).filter(
+                Movie_db.id == id[0]
+            ))
+
+        for i in self.movie_id_filter_def:
+            self.genreid_filter_temp.append(c.session.query(Movie_db.genre_id).filter(
+                Movie_db.id == i[0]
+            ))
+
+        for i in self.genreid_filter_temp:
+            self.genre_name_filter_temp.append(c.session.query(Genre.name).filter(
+                Genre.id == i[0][0]
+            )) 
+
+        for i in self.name_filter_temp:
+            self.movies_display_name.append(i[0][0])
+
+        for i in self.genre_name_filter_temp:
+            self.movies_display_genre_name.append(i[0][0])
 
     def filter_already_seen(self):
-        pass
+        self.movies_display_name = []
+        self.movies_display_genre_name = []
+        self.name_filter_temp = []
+        self.genreid_filter_temp = []
+        self.genre_name_filter_temp = []
+        
+        # tiene que ser con [0]
+        self.user_id_filter = c.session.query(User.id).filter(
+            User.username == self.working_user
+        ).first()
+        
+        # Para seleccionar uno tiene que ir con [0][0]
+        self.movie_id_filter_temp = c.session.query(Movie_User.movie_id).filter(
+            Movie_User.user_id == self.user_id_filter[0]
+        ).all()
+        
+        self.movie_id_filter_alreadyseen = c.session.query(Movie_db.id).filter(
+            Movie_db.already_seen == 1
+        ).all()
+        
+        self.movie_id_filter_def = set(self.movie_id_filter_temp).intersection(self.movie_id_filter_alreadyseen)
+
+        for id in self.movie_id_filter_def:
+            self.name_filter_temp.append(c.session.query(Movie_db.name).filter(
+                Movie_db.id == id[0]
+            ))
+
+        for i in self.movie_id_filter_def:
+            self.genreid_filter_temp.append(c.session.query(Movie_db.genre_id).filter(
+                Movie_db.id == i[0]
+            ))
+
+        for i in self.genreid_filter_temp:
+            self.genre_name_filter_temp.append(c.session.query(Genre.name).filter(
+                Genre.id == i[0][0]
+            )) 
+
+        for i in self.name_filter_temp:
+            self.movies_display_name.append(i[0][0])
+
+        for i in self.genre_name_filter_temp:
+            self.movies_display_genre_name.append(i[0][0])
 
     def filter_top(self):
-        pass
+        self.movies_display_name = []
+        self.movies_display_genre_name = []
+        self.name_filter_temp = []
+        self.genreid_filter_temp = []
+        self.genre_name_filter_temp = []
+        
+        # tiene que ser con [0]
+        self.user_id_filter = c.session.query(User.id).filter(
+            User.username == self.working_user
+        ).first()
+        
+        # Para seleccionar uno tiene que ir con [0][0]
+        self.movie_id_filter_temp = c.session.query(Movie_User.movie_id).filter(
+            Movie_User.user_id == self.user_id_filter[0]
+        ).all()
+        
+        self.movie_id_filter_top = c.session.query(Movie_db.id).filter(
+            Movie_db.top_button == 1
+        ).all()
+        
+        self.movie_id_filter_def = set(self.movie_id_filter_temp).intersection(self.movie_id_filter_top)
+
+        for id in self.movie_id_filter_def:
+            self.name_filter_temp.append(c.session.query(Movie_db.name).filter(
+                Movie_db.id == id[0]
+            ))
+
+        for i in self.movie_id_filter_def:
+            self.genreid_filter_temp.append(c.session.query(Movie_db.genre_id).filter(
+                Movie_db.id == i[0]
+            ))
+
+        for i in self.genreid_filter_temp:
+            self.genre_name_filter_temp.append(c.session.query(Genre.name).filter(
+                Genre.id == i[0][0]
+            )) 
+
+        for i in self.name_filter_temp:
+            self.movies_display_name.append(i[0][0])
+
+        for i in self.genre_name_filter_temp:
+            self.movies_display_genre_name.append(i[0][0])
 
     def filter_worst(self):
-        pass
+        self.movies_display_name = []
+        self.movies_display_genre_name = []
+        self.name_filter_temp = []
+        self.genreid_filter_temp = []
+        self.genre_name_filter_temp = []
+        
+        # tiene que ser con [0]
+        self.user_id_filter = c.session.query(User.id).filter(
+            User.username == self.working_user
+        ).first()
+        
+        # Para seleccionar uno tiene que ir con [0][0]
+        self.movie_id_filter_temp = c.session.query(Movie_User.movie_id).filter(
+            Movie_User.user_id == self.user_id_filter[0]
+        ).all()
+        
+        self.movie_id_filter_worst = c.session.query(Movie_db.id).filter(
+            Movie_db.worst == 1
+        ).all()
+        
+        self.movie_id_filter_def = set(self.movie_id_filter_temp).intersection(self.movie_id_filter_worst)
+
+        for id in self.movie_id_filter_def:
+            self.name_filter_temp.append(c.session.query(Movie_db.name).filter(
+                Movie_db.id == id[0]
+            ))
+
+        for i in self.movie_id_filter_def:
+            self.genreid_filter_temp.append(c.session.query(Movie_db.genre_id).filter(
+                Movie_db.id == i[0]
+            ))
+
+        for i in self.genreid_filter_temp:
+            self.genre_name_filter_temp.append(c.session.query(Genre.name).filter(
+                Genre.id == i[0][0]
+            )) 
+
+        for i in self.name_filter_temp:
+            self.movies_display_name.append(i[0][0])
+
+        for i in self.genre_name_filter_temp:
+            self.movies_display_genre_name.append(i[0][0])
 
 e = Execute()
 
-# ATENCION: Lamentablemente no encontré el tipo de dato preciso para las últimas cuatro columnas de la tabla "Pelicula". En 
-# SQL Alchemy existe el tipo de dato Boleano mientras que en SQL Server existe el tipo de dato bit y no pude hacer que ambos 
-# hagan su trabajo correctamente. Por ende terminé usando el tipo de dato int, que no es lo mejor en performance para la tarea.
-# Cualquier sugerencia se agradece.
-
-# TODO 
-# Arreglar la porqueria de error que me da cuando intento filtrar las peliculas con dos filter en el to watch.
+# TODO Lo que quedaría pendiente sería la búsqueda por países y la búsqueda por género. Así también como el funcionamiento del
+# botón de all.
