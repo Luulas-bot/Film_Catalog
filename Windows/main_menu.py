@@ -156,18 +156,20 @@ class Main_menu():
                 self.country_textbox_active = False
                 self.country_text = ""
                 self.country_button.state = False
-            if self.event.key == pygame.K_RETURN:
+            elif self.event.key == pygame.K_RETURN:
                 self.country_textbox_active = False
+                self.index -= self.index
+                self.pag = 1
+                e.country_text = self.country_text
+                e.filter_country()
+                self.init_movies()
                 self.country_text = ""
                 self.country_button.state = False
 
-        # Registra lo que presiona el usuario y lo guarda en una variable    
-        if self.country_textbox_active:
-            if self.event.type == pygame.KEYDOWN:
-                if self.event.key == pygame.K_BACKSPACE:
-                    self.country_text = self.country_text[:-1]
-                elif len(self.country_text) < 26:
-                    self.country_text += self.event.unicode
+            elif self.event.key == pygame.K_BACKSPACE:
+                self.country_text = self.country_text[:-1]
+            elif len(self.country_text) < 3:
+                self.country_text += self.event.unicode
 
     # Registra el presionado de todos los botones y acciona ciertas funcionalidades en consecuencia
     def get_all_buttons_press(self):
@@ -218,7 +220,7 @@ class Main_menu():
         if self.event.type == pygame.MOUSEBUTTONDOWN:
             if self.all_button.rect.collidepoint(self.mx, self.my):
                 self.all_button.state = True
-                self.index -= 5
+                self.index -= self.index
                 e.select_movies_to_display()
                 self.init_movies()
         elif self.event.type == pygame.MOUSEBUTTONUP:
@@ -229,19 +231,20 @@ class Main_menu():
     # Registra si algún botón de género es presionado   
     def get_genre_button_press(self):
         for button in self.genre_button_list:
-            if self.event.type == pygame.MOUSEBUTTONDOWN:
-                if button.rect.collidepoint(self.mx, self.my):
-                    button.state = True
-                    self.index -= self.index
-                    self.pag = 1
-                    self.list_index = self.genre_button_list.index(button)
-                    e.genre_filter(self.genre_abr_list[self.list_index])
-                    self.init_movies()
-            if self.event.type == pygame.MOUSEBUTTONUP:
-                if button.rect.collidepoint(self.mx, self.my):
-                    button.state = False
-                    self.genre_button.state = False
-                    self.all_genre_buttons_active = False
+            if self.all_genre_buttons_active:
+                if self.event.type == pygame.MOUSEBUTTONDOWN:
+                    if button.rect.collidepoint(self.mx, self.my):
+                        button.state = True
+                        self.index -= self.index
+                        self.pag = 1
+                        self.list_index = self.genre_button_list.index(button)
+                        e.genre_filter(self.genre_abr_list[self.list_index])
+                        self.init_movies()
+                if self.event.type == pygame.MOUSEBUTTONUP:
+                    if button.rect.collidepoint(self.mx, self.my):
+                        button.state = False
+                        self.genre_button.state = False
+                        self.all_genre_buttons_active = False
 
     # Registra si se presionó o no el all_button (en este caso llamado el main)
     def get_main_button_press(self):
@@ -405,7 +408,3 @@ class Main_menu():
             clock.tick(fps)
 
 pygame.quit()
-
-# TODO La logica de los botones de genero casi funciona pero tiene algun bug en alguna parte que me crashea todo. Creo que la 
-# Logica en la funcion en la base de datos esta bien. El problema esta creo en el momento en el que el display se queda sin 
-# peliculas que blitear. Fijarse porque pasa y resolverlo con un else en algun lado si hace falta.
