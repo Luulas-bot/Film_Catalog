@@ -192,13 +192,13 @@ class Main_menu():
                         self.index -= self.index
                         self.pag = 1
                         if button == self.to_watch_button:
-                            e.filter_to_watch()
+                            e.filter_movie(0)
                         elif button == self.already_seen_button:
-                            e.filter_already_seen()
+                            e.filter_movie(1)
                         elif button == self.top_button:
-                            e.filter_top()
+                            e.filter_movie(2)
                         elif button == self.worst_button:
-                            e.filter_worst()
+                            e.filter_movie(3)
                         self.init_movies()
             
             # Registra cuando se levanta el presionado del mouse para poder volver los botones a la normalidad y incluye algunas excepciones

@@ -307,12 +307,12 @@ class Edit():
             e.delete_movies()
             self.escape += 1
         elif self.to_watch_button.state == True:
-            e.assign_to_watch()
+            e.assign_filter('already_seen', 'to_watch')
         elif self.already_seen_button.state == True:
-            e.assign_already_seen()
+            e.assign_filter('to_watch', 'already_seen')
         elif self.top_button.state == True:
-            e.assign_top()
+            e.assign_filter('worst', 'top_button')
         elif self.worst_button.state == True:
-            e.assign_worst()
+            e.assign_filter('top_button', 'worst')
 
 pygame.quit()

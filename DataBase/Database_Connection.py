@@ -45,6 +45,9 @@ class User(Base):
     password = Column(String(50), nullable = False, unique = False)
     created_at = Column(DateTime, default = datetime.now)
 
+    def __str__(self):
+        return self.username
+
 # Creación de la tabla de las películas
 class Movie_db(Base):
     __tablename__ = "Pelicula"
@@ -290,55 +293,13 @@ class Execute():
         c.session.commit()
 
     # Asigna un uno si la pelicula está en modo "to_watch" a la db
-    def assign_to_watch(self):
-        self.to_watch = c.session.query(Movie_db).filter(
+    def assign_filter(self, filter_0, filter_1):
+        self.assign_filt = c.session.query(Movie_db).filter(
             Movie_db.id == self.movie_id_def
         ).update(
             {
-                'to_watch' : 1,
-                'already_seen' : 0
-            }
-        )
-
-        c.session.commit()
-        c.session.flush()
-
-    # Asigna un uno si la pelicula está en modo "already_seen" a la db
-    def assign_already_seen(self):
-        c.session.query(Movie_db).filter(
-            Movie_db.id == self.movie_id_def
-        ).update(
-            {
-                'already_seen' : 1,
-                'to_watch' : 0
-            }
-        )
-
-        c.session.commit()
-        c.session.flush()
-
-    # Asigna un uno si la pelicula está en modo "top" a la db
-    def assign_top(self):
-        c.session.query(Movie_db).filter(
-            Movie_db.id == self.movie_id_def
-        ).update(
-            {
-                'top_button' : 1,
-                'worst' : 0
-            }
-        )
-
-        c.session.commit()
-        c.session.flush()
-
-    # Asigna un uno si la pelicula está en modo "worst" a la db
-    def assign_worst(self):
-        c.session.query(Movie_db).filter(
-            Movie_db.id == self.movie_id_def
-        ).update(
-            {
-                'worst' : 1,
-                'top_button' : 0
+                f'{filter_1}' : 1,
+                f'{filter_0}' : 0
             }
         )
 
@@ -346,7 +307,7 @@ class Execute():
         c.session.flush()
 
     # Filtra las películas con el filtro "to_watch"
-    def filter_to_watch(self):
+    def filter_movie(self, param):
         self.movies_display_name = []
         self.movies_display_genre_name = []
         self.name_filter_temp = []
@@ -363,13 +324,14 @@ class Execute():
             Movie_User.user_id == self.user_id_filter[0]
         ).all()
         
-        # Filtra todas las películas de la db que tengan un uno en el campo "to_watch"
-        self.movie_id_filter_to_watch = c.session.query(Movie_db.id).filter(
-            Movie_db.to_watch == 1
-        ).all()
-        
-        # Obtiene los duplicados de la lista de todas las pelis del usuario, y todas las pelis con el campo en un de "to_watch"
-        self.movie_id_filter_def = set(self.movie_id_filter_temp).intersection(self.movie_id_filter_to_watch)
+        if param == 0:
+            self.filter_to_watch()
+        elif param == 1:
+            self.filter_already_seen()
+        elif param == 2:
+            self.filter_top()
+        elif param == 3:
+            self.filter_worst()
 
         # Obtiene el nombre de la película a través del id
         for id in self.movie_id_filter_def:
@@ -397,135 +359,33 @@ class Execute():
         for i in self.genre_name_filter_temp:
             self.movies_display_genre_name.append(i[0][0])
 
-    # Filtra las películas por el campo "already_seen". Mismo funcionamiento que la función para filtrar por el "to_watch"
-    def filter_already_seen(self):
-        self.movies_display_name = []
-        self.movies_display_genre_name = []
-        self.name_filter_temp = []
-        self.genreid_filter_temp = []
-        self.genre_name_filter_temp = []
-        
-        self.user_id_filter = c.session.query(User.id).filter(
-            User.username == self.working_user
-        ).first()
-
-        self.movie_id_filter_temp = c.session.query(Movie_User.movie_id).filter(
-            Movie_User.user_id == self.user_id_filter[0]
+    def filter_to_watch(self):
+        self.movie_id_filter_to_watch = c.session.query(Movie_db.id).filter(
+            Movie_db.to_watch == 1
         ).all()
-        
+
+        self.movie_id_filter_def = set(self.movie_id_filter_temp).intersection(self.movie_id_filter_to_watch)
+
+    def filter_already_seen(self):
         self.movie_id_filter_alreadyseen = c.session.query(Movie_db.id).filter(
             Movie_db.already_seen == 1
         ).all()
         
         self.movie_id_filter_def = set(self.movie_id_filter_temp).intersection(self.movie_id_filter_alreadyseen)
 
-        for id in self.movie_id_filter_def:
-            self.name_filter_temp.append(c.session.query(Movie_db.name).filter(
-                Movie_db.id == id[0]
-            ))
-
-        for i in self.movie_id_filter_def:
-            self.genreid_filter_temp.append(c.session.query(Movie_db.genre_id).filter(
-                Movie_db.id == i[0]
-            ))
-
-        for i in self.genreid_filter_temp:
-            self.genre_name_filter_temp.append(c.session.query(Genre.name).filter(
-                Genre.id == i[0][0]
-            )) 
-
-        for i in self.name_filter_temp:
-            self.movies_display_name.append(i[0][0])
-
-        for i in self.genre_name_filter_temp:
-            self.movies_display_genre_name.append(i[0][0])
-
-    # Filtra las películas por el campo "top". Mismo funcionamiento que la función para filtrar por el "to_watch"
     def filter_top(self):
-        self.movies_display_name = []
-        self.movies_display_genre_name = []
-        self.name_filter_temp = []
-        self.genreid_filter_temp = []
-        self.genre_name_filter_temp = []
-        
- 
-        self.user_id_filter = c.session.query(User.id).filter(
-            User.username == self.working_user
-        ).first()
-        
-        self.movie_id_filter_temp = c.session.query(Movie_User.movie_id).filter(
-            Movie_User.user_id == self.user_id_filter[0]
-        ).all()
-        
         self.movie_id_filter_top = c.session.query(Movie_db.id).filter(
             Movie_db.top_button == 1
         ).all()
         
         self.movie_id_filter_def = set(self.movie_id_filter_temp).intersection(self.movie_id_filter_top)
 
-        for id in self.movie_id_filter_def:
-            self.name_filter_temp.append(c.session.query(Movie_db.name).filter(
-                Movie_db.id == id[0]
-            ))
-
-        for i in self.movie_id_filter_def:
-            self.genreid_filter_temp.append(c.session.query(Movie_db.genre_id).filter(
-                Movie_db.id == i[0]
-            ))
-
-        for i in self.genreid_filter_temp:
-            self.genre_name_filter_temp.append(c.session.query(Genre.name).filter(
-                Genre.id == i[0][0]
-            )) 
-
-        for i in self.name_filter_temp:
-            self.movies_display_name.append(i[0][0])
-
-        for i in self.genre_name_filter_temp:
-            self.movies_display_genre_name.append(i[0][0])
-
-    # Filtra las películas por el campo "worst". Mismo funcionamiento que la función para filtrar por el "to_watch"
     def filter_worst(self):
-        self.movies_display_name = []
-        self.movies_display_genre_name = []
-        self.name_filter_temp = []
-        self.genreid_filter_temp = []
-        self.genre_name_filter_temp = []
-        
-        self.user_id_filter = c.session.query(User.id).filter(
-            User.username == self.working_user
-        ).first()
-        
-        self.movie_id_filter_temp = c.session.query(Movie_User.movie_id).filter(
-            Movie_User.user_id == self.user_id_filter[0]
-        ).all()
-        
         self.movie_id_filter_worst = c.session.query(Movie_db.id).filter(
             Movie_db.worst == 1
         ).all()
         
         self.movie_id_filter_def = set(self.movie_id_filter_temp).intersection(self.movie_id_filter_worst)
-
-        for id in self.movie_id_filter_def:
-            self.name_filter_temp.append(c.session.query(Movie_db.name).filter(
-                Movie_db.id == id[0]
-            ))
-
-        for i in self.movie_id_filter_def:
-            self.genreid_filter_temp.append(c.session.query(Movie_db.genre_id).filter(
-                Movie_db.id == i[0]
-            ))
-
-        for i in self.genreid_filter_temp:
-            self.genre_name_filter_temp.append(c.session.query(Genre.name).filter(
-                Genre.id == i[0][0]
-            )) 
-
-        for i in self.name_filter_temp:
-            self.movies_display_name.append(i[0][0])
-
-        for i in self.genre_name_filter_temp:
-            self.movies_display_genre_name.append(i[0][0])
 
     # Filtra por genero la busqueda
     def genre_filter(self, genre):
@@ -587,8 +447,7 @@ class Execute():
         # Limpia la lista de los nombres de género
         for i in self.genre_name_filter_temp:
             self.movies_display_genre_name.append(i[0][0])
-    
-    # Filtra por el país que el usuario escribió
+        
     def filter_country(self):
         self.genre_id_def = []
         self.genre_name_filter_temp = []
