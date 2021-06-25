@@ -1,0 +1,10 @@
+# created by virtualenv automatically
+/__pycache__
+/include
+/Scripts
+/Lib
+/Files/__pycache__
+*.pyc
+*.cfg
+*.json
+/.vscode/settings.json
