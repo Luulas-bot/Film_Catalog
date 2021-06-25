@@ -145,7 +145,7 @@ class Login():
                     self.pass_textbox_active = False
                     self.user_textbox_active = True
 
-    # Condiciones que registran la si está presionado o no una textbox
+    # Condiciones que registran si está presionado o no una textbox
     def get_textbox_press(self):
         if self.event.type == pygame.MOUSEBUTTONDOWN:
             if self.user_text_box.collidepoint(self.event.pos):

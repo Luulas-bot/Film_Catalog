@@ -1,3 +1,4 @@
+# Imports
 import pygame
 import sys
 from Constants.Constants import (
@@ -9,8 +10,10 @@ from Classes.Movies import Movies
 from DataBase.Database_Connection import e
 from Windows.Edit import Edit
 
+# Inicialización de pygame
 pygame.init()
 
+# Clase del menú principal
 class Main_menu():
 
     # Función constructora
@@ -37,9 +40,6 @@ class Main_menu():
         pygame.display.quit()
         self.screen = pygame.display.set_mode(self.size)
         pygame.display.set_caption("Sign Up")
-        
-        # Boleano para saber si los botones de los géneros están presionados o no
-        self.all_genre_buttons_active = False
 
         # Variable que contiene la pagina en la que se encuentra el usuario       
         self.pag = 1
@@ -62,6 +62,7 @@ class Main_menu():
         self.exit_button = Buttons("Images/exit_button.png", "Images/exit_pressed_button.png", (0, 700, 200, 100), (0, 700))
         self.add_button = Buttons("Images/add_new_button.png", "Images/add_new_pressed_button.png", (900, 0, 200, 100), (900, 0))
 
+        # Lista de los botónes de filtro general
         self.button_list = []
 
         for i in Buttons.buttons_list_temp:
@@ -80,10 +81,17 @@ class Main_menu():
         self.terror_button = Genre_Buttons("Images/terror_button.png", "Images/terror_pressed_button.png", (200, 610, 120, 60), (200, 610))
         self.documentary_button = Genre_Buttons("Images/documentary_button.png", "Images/documentary_pressed_button.png", (200, 670, 120, 60), (200, 670))
 
+        # Lista de los botónes de género
         self.genre_button_list = []
 
         for i in Genre_Buttons.genre_buttons_list_temp:
             self.genre_button_list.append(i)
+
+        # Lista que contiene las abreviaciones de los géneros
+        self.genre_abr_list = ['ACC', 'CFT', 'COM', 'DRA', 'FAN', 'MEL', 'MUS', 'ROM', 'SUS', 'TER', 'DOC']
+
+        # Boleano para saber si los botones de los géneros están presionados o no
+        self.all_genre_buttons_active = False
 
         # Variable que se usa para recorrer la lista de películas
         self.index = 0
@@ -102,7 +110,6 @@ class Main_menu():
 
         self.init_movies()
 
-        self.genre_abr_list = ['ACC', 'CFT', 'COM', 'DRA', 'FAN', 'MEL', 'MUS', 'ROM', 'SUS', 'TER', 'DOC']
     # Función que registra los eventos
     def events(self):
         for self.event in pygame.event.get():
@@ -216,7 +223,7 @@ class Main_menu():
         else:
             self.country_textbox_active = False
 
-        # Funcionamiento del botón "all"
+        # Funcionamiento del botón "all", que es diferente al resto
         if self.event.type == pygame.MOUSEBUTTONDOWN:
             if self.all_button.rect.collidepoint(self.mx, self.my):
                 self.all_button.state = True
@@ -246,7 +253,7 @@ class Main_menu():
                         self.genre_button.state = False
                         self.all_genre_buttons_active = False
 
-    # Registra si se presionó o no el all_button (en este caso llamado el main)
+    # Registra si se presionó o no el all_button (en este caso llamado el main, para no confundir con la otra función)
     def get_main_button_press(self):
         if self.event.type == pygame.MOUSEBUTTONDOWN:
             if self.all_button.rect.collidepoint(self.mx, self.my):
@@ -359,7 +366,8 @@ class Main_menu():
             else:
                 self.screen.blit(i.name_blit, (i.blit_coords_name))
             self.screen.blit(i.genre_blit, (i.blit_coords_genre))
-        
+
+    # Función que registra si se presionó una película y cúal en ese caso  
     def get_movies_press(self):
         for i in self.movies_list:
             if self.event.type == pygame.MOUSEBUTTONDOWN:    

@@ -1,3 +1,4 @@
+# Imports
 import pygame
 import sys
 from Constants.Constants import (
@@ -7,10 +8,13 @@ from Classes.NM_Texts import NM_Text, NM_Description
 from DataBase.Database_Connection import c, e
 from sqlalchemy.exc import IntegrityError
 
+# Inicialización de pygame
 pygame.init()
 
+# Clase de la ventana
 class AddMovie():
      
+    # Función constructora
     def __init__(self, size):
          self.size = size
          self.init_stats()
@@ -115,6 +119,7 @@ class AddMovie():
         self.screen.blit(self.genre_description2, (50, 650))
         self.screen.blit(self.genre_description3, (50, 670))
 
+        # Cambia los colores de las textboxes
         self.change_tx_color()
 
         # Dibuja por pantalla los inputs de texto del usuario
@@ -122,8 +127,10 @@ class AddMovie():
             self.text_surface = self.font2.render(t.text, True, BLUE)
             self.screen.blit(self.text_surface, t.text_coords)
         
+        # Hace un display de el texto que se escribe en la textbox de la descripción
         self.description_display()
 
+        # Condición que blitea o no el error
         if self.error_c_g_state == True:
             self.screen.blit(self.error_c_g, (50, 557))
         elif self.error_name_state == True:

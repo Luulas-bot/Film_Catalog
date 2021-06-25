@@ -1,3 +1,4 @@
+# Imports
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String, Integer, DateTime, CHAR, ForeignKey
@@ -10,7 +11,8 @@ Base = declarative_base()
 
 # Creación de la conexión con la base de datos
 class Connection():
-
+    
+    # Función constructora
     def __init__(self):
         self.set_vars()
     
@@ -37,18 +39,17 @@ class Connection():
 class User(Base):
     __tablename__ = 'Usuario'
 
+    # Creación de las columnas
     id = Column(Integer(), primary_key = True, autoincrement = True, nullable = False)
     username = Column(String(50), nullable = False, unique = True)
     password = Column(String(50), nullable = False, unique = False)
     created_at = Column(DateTime, default = datetime.now)
 
-    def __str__(self):
-        return self.username
-
 # Creación de la tabla de las películas
 class Movie_db(Base):
     __tablename__ = "Pelicula"
 
+    # Creación de las columnas
     id = Column(Integer(), primary_key = True, autoincrement = True, nullable = False)
     name = Column(String(70), nullable = False, unique = False)
     movie_date = Column(String(50), nullable = True, unique = False)
@@ -65,6 +66,7 @@ class Movie_db(Base):
 class Country(Base):
     __tablename__ = 'Pais'
 
+    # Creación de las columnas
     id = Column(CHAR(3), primary_key = True, nullable = False)
     name = Column(String(50), nullable = False, unique = True)
 
@@ -72,6 +74,7 @@ class Country(Base):
 class Genre(Base):
     __tablename__ = "Genero"
 
+    # Creación de las columnas
     id = Column(CHAR(3), primary_key = True, nullable = False)
     name = Column(String(50), nullable = False, unique = True)
 
@@ -79,6 +82,7 @@ class Genre(Base):
 class Movie_User(Base):
     __tablename__ = 'Pelicula_Usuario'
 
+    # Creación de las columnas
     id = Column(Integer(), primary_key = True, autoincrement = True, nullable = False)
     movie_id = Column(Integer(), ForeignKey('Pelicula.id'))
     user_id = Column(Integer(), ForeignKey('Usuario.id'))
@@ -88,6 +92,7 @@ c = Connection()
 # Creación de la clase que contiene lo scripts para manejar la base de datos
 class Execute():
     
+    # Función constructora
     def __init__(self):
         c.run_engine()
         c.create_session()
@@ -164,31 +169,39 @@ class Execute():
         self.movies_display_genreid = []
         self.movies_display_genre_name = []
 
+        # Toma el id del usuario en uso
         self.user_id_display = c.session.query(User.id).filter(
             User.username == self.working_user
         ).first()
 
+        # Filtra todas los id de las películas del usuario en uso
         self.movies_display_id = c.session.query(Movie_User.movie_id).filter(
             Movie_User.user_id == self.user_id_display[0]
         )
+
+        # Toma a partir de los id de las películas, sus nombres
         for i in self.movies_display_id:
             self.movies_display_name_temp.append(c.session.query(Movie_db.name).filter(
                 Movie_db.id == i[0]
             ))
-        
+
+        # Toma a partir de los id de las películas sus id de género
         for i in self.movies_display_id:
             self.movies_display_genreid_temp.append(c.session.query(Movie_db.genre_id).filter(
                 Movie_db.id == i[0]
             ))
 
+        # Toma a partir de los id de género los nombres de esos géneros
         for i in self.movies_display_genreid_temp:
             self.movies_display_genre_name_temp.append(c.session.query(Genre.name).filter(
                 Genre.id == i[0][0]
             )) 
 
+        # Limpia la lista de nombres
         for i in self.movies_display_name_temp:
             self.movies_display_name.append(i[0][0])
 
+        # Limpia la lista de los nombres de los géneros
         for i in self.movies_display_genre_name_temp:
             self.movies_display_genre_name.append(i[0][0])
 
@@ -198,14 +211,17 @@ class Execute():
         self.movie_atr_edit_temp = []   
         self.movie_id_temp = []
 
+        # Toma el id del usuario en uso
         self.user_id_edit = c.session.query(User.id).filter(
             User.username == self.working_user
         ).first()
-        
+
+        # Filtra todos los id de las películas de ese usuario
         self.movie_id_edit = c.session.query(Movie_User.movie_id).filter(
             Movie_User.user_id == self.user_id_edit[0]
         ).all()
         
+        # Toma el id en específico de la película que se seleccionó
         for id in self.movie_id_edit:
             self.movie_id_temp.append(c.session.query(Movie_db.id).filter(
                 Movie_db.name == self.movie_name_search
@@ -213,16 +229,19 @@ class Execute():
                 Movie_db.id == id[0]
             ).first())
         
+        # Limpia la lista para quedarse solo con el id en específico
         for i in self.movie_id_temp:
             if i != None:
                 self.movie_id_def = i[0]
             else:
                 pass
 
+        # Filtra todos los atributos que se quieren meter en variables a través del id
         self.movie_atr_edit_temp.append(c.session.query(Movie_db.name, Movie_db.movie_date, Movie_db.country_id, Movie_db.genre_id, Movie_db.description, Movie_db.rating).filter(
             Movie_db.id == self.movie_id_def
         )) 
 
+        # Transfiere los atributos a unas variables
         self.movie_name_edit = self.movie_atr_edit_temp[0][0][0]
         self.movie_date_edit = self.movie_atr_edit_temp[0][0][1]
         self.movie_country_edit = self.movie_atr_edit_temp[0][0][2]
@@ -233,9 +252,12 @@ class Execute():
     # Actualiza los registros de la pelicula editada
     def update_changes(self):
 
+        # Crea una variable que contenga todos las columnas de la película con el id que se seleccionó 
         self.update_list = c.session.query(Movie_db).filter(
             Movie_db.id == self.movie_id_def 
         )
+
+        # Updatea las columnas de esa películas
         self.update_list[0].name = self.update_name
         self.update_list[0].movie_date = self.update_date
         self.update_list[0].country_id = self.update_countryid
@@ -245,6 +267,7 @@ class Execute():
 
         c.session.commit()
 
+        # Limpia las variables para que sean reutilizables
         self.update_name = ""
         self.update_date = ""
         self.update_countryid = ""
@@ -254,10 +277,12 @@ class Execute():
 
     # Borra la película seleccionada
     def delete_movies(self):
+        # Borra la película que se seleccionó de la tabla de las películas y usuarios
         c.session.query(Movie_User).filter(
             Movie_User.movie_id == self.movie_id_def
         ).delete()
         
+        # Borra la película de la tabla de las películas
         c.session.query(Movie_db).filter(
             Movie_db.id == self.movie_id_def
         ).delete()
@@ -562,7 +587,8 @@ class Execute():
         # Limpia la lista de los nombres de género
         for i in self.genre_name_filter_temp:
             self.movies_display_genre_name.append(i[0][0])
-        
+    
+    # Filtra por el país que el usuario escribió
     def filter_country(self):
         self.genre_id_def = []
         self.genre_name_filter_temp = []

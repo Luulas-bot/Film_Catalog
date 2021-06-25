@@ -1,3 +1,4 @@
+# Imports
 import pygame
 import sys
 from Constants.Constants import GRAY, BLUE, WHITE, LIGHTGRAY, LIGHTBLUE
@@ -6,12 +7,18 @@ from DataBase.Database_Connection import e, c
 from sqlalchemy.exc import DataError, IntegrityError
 from Classes.Edit_Buttons import Edit_Buttons
 
+# Inicialización de pygame
+pygame.init()
+
+# Clase de la ventana
 class Edit():
 
+    # Función constructora
     def __init__(self, size):
         self.size = size
         self.init_stats()
 
+    # Inicializa las stats inciales
     def init_stats(self):
         pygame.display.quit()
         self.screen = pygame.display.set_mode(self.size)
@@ -31,6 +38,7 @@ class Edit():
         # Variable que define si se toca la tecla escape o no
         self.escape = 0
 
+        # Las textboxes junto con sus textos
         self.name_text = Edit_Texts((55, 57), f"{e.movie_name_edit}", (50, 50, 500, 30), (50, 50), (55, 57))
         self.date_text = Edit_Texts((55, 132), f"{e.movie_date_edit}", (50, 125, 500, 30), (50, 100), (55, 132))
         self.country_text = Edit_Texts ((55, 207), f"{e.movie_country_edit}", (50, 200, 200, 30), (50, 150), (55, 207))
@@ -52,8 +60,10 @@ class Edit():
         self.description_text14 = Edit_Description((55, 516), f"{e.movie_description_edit[793:854]}", (50, 275, 500, 275), (50, 200))
         self.description_text15 = Edit_Description((55, 534), f"{e.movie_description_edit[854:915]}", (50, 275, 500, 275), (50, 200))
 
+        # Variable única que define si la description_tx está o no apretada
         self.description_state = False
 
+        # Listas de los textos y textboxes
         self.texts_list = []
         self.description_list = []
         self.description_list_text = []
@@ -64,12 +74,14 @@ class Edit():
         for i in Edit_Texts.texts_list_temp:
             self.texts_list.append(i)
 
+        # Índice principal para indexar los reglones de la descripción
         self.index = 0
 
         # Tick
         self.tick_rect = pygame.Rect(550, 550, 30, 30)
         self.tick = pygame.image.load("Images/tick.png")
 
+        # Lista de todos los botónes de la ventana
         self.edit_buttons_list = []
 
         # Buttons
@@ -82,6 +94,7 @@ class Edit():
         for button in Edit_Buttons.temp_list:
             self.edit_buttons_list.append(button)        
 
+    # Función que registra los eventos de la ventana
     def events(self):
         for self.event in pygame.event.get():
             if self.event.type == pygame.QUIT:
@@ -99,9 +112,11 @@ class Edit():
             self.get_buttons_press()
             self.edit_buttons_SQL()
 
+    # Función que dibuja por pantalla todo
     def draw_on_screen(self):
         self.screen.fill(GRAY)
 
+        # Bliteo de los títulos
         self.screen.blit(self.name_title, (50, 30))
         self.screen.blit(self.date_title, (50, 105))
         self.screen.blit(self.country_title, (50, 180))
@@ -111,6 +126,7 @@ class Edit():
 
         self.change_tx_color()
 
+        # Bliteo del texto que escribe el usuario por pantalla
         for t in self.texts_list:
             self.text_surface = self.font2.render(t.text, True, BLUE)
             self.screen.blit(self.text_surface, t.text_coords) 
@@ -120,11 +136,12 @@ class Edit():
         # Dibuja por pantalla el tick
         self.screen.blit(self.tick, (550, 550))
 
-        # Dibuja por pantalla el boton de delete
+        # Dibuja por pantalla el botón de delete
         for b in self.edit_buttons_list:
             pygame.draw.rect(self.screen, b.color, b.rect, 0, 5)
             self.screen.blit(b.text, b.text_coords)
 
+    # Cambia el color de las textboxes dependiendo si están activas o no
     def change_tx_color(self):
         for tx in self.texts_list:
             tx.change_color()
@@ -134,7 +151,7 @@ class Edit():
         else:
             self.color_movie_description_tx = LIGHTGRAY
 
-        # Esta parte de abajo cambia el color de los botones, no de ls tx
+        # Esta parte de abajo cambia el color de los botones, no de las textboxes
         for b in self.edit_buttons_list:
             b.change_color()
 
@@ -158,6 +175,7 @@ class Edit():
                 else:
                     self.description_state = False
 
+    # Mecánicas del escape
     def esc_mechanics(self):
         if self.event.type == pygame.KEYDOWN:
             if self.event.key == pygame.K_ESCAPE:
@@ -177,24 +195,19 @@ class Edit():
                         self.index += 1
                         self.description_list[self.index - 1].text = self.description_list[self.index - 1].text[:-1]
 
+    # Mecánicas para registrar lo que escribe el usuario
     def write_user_mecs(self):
         if self.event.type == pygame.KEYDOWN:
-            if self.event.key == pygame.K_BACKSPACE and self.name_text.state:
-                self.texts_list[0].text = self.texts_list[0].text[:-1] 
-            elif self.name_text.state and len(self.texts_list[0].text) < 61:
-                self.texts_list[0].text += self.event.unicode
-            if self.event.key == pygame.K_BACKSPACE and self.date_text.state:
-                self.texts_list[1].text = self.texts_list[1].text[:-1]
-            elif self.date_text.state and len(self.texts_list[1].text) < 61:
-                self.texts_list[1].text += self.event.unicode
-            if self.event.key == pygame.K_BACKSPACE and self.country_text.state:
-                self.texts_list[2].text = self.texts_list[2].text[:-1]
-            elif self.country_text.state and len(self.texts_list[2].text) <= 3:
-                self.texts_list[2].text += self.event.unicode
-            if self.event.key == pygame.K_BACKSPACE and self.genre_text.state:
-                self.texts_list[3].text = self.texts_list[3].text[:-1]
-            elif self.genre_text.state and len(self.texts_list[3].text) <= 3:
-                self.texts_list[3].text += self.event.unicode
+            for b in self.texts_list[:2]:
+                if self.event.key == pygame.K_BACKSPACE and b.state:
+                    b.text = b.text[:-1]
+                elif b.state and len(b.text) < 61:
+                    b.text += self.event.unicode
+            for d in self.texts_list[2:4]:
+                if self.event.key == pygame.K_BACKSPACE and d.state:
+                    d.text = d.text[:-1]
+                elif d.state and len(d.text) < 61:
+                    d.text += self.event.unicode
             if self.event.key == pygame.K_BACKSPACE and self.rating.state:
                 self.rating.text = self.rating.text[:-1]
             elif self.rating.state and len(self.rating.text) <= 60:
@@ -202,6 +215,7 @@ class Edit():
             
             self.description_mechanics()
 
+    # Mecánicas del taburador
     def tab_mechanics(self):
         if self.event.type == pygame.KEYDOWN:
             if self.event.key == pygame.K_TAB:
@@ -232,6 +246,7 @@ class Edit():
                     self.rating.state = False
                     self.name_text.state = True
 
+    # Mecánicas de la inserción del texto del usuario en la descripción
     def description_mechanics(self):
         if self.event.key == pygame.K_BACKSPACE and self.description_state:
             self.description_list[self.index].text = self.description_list[self.index].text[:-1]
@@ -250,6 +265,7 @@ class Edit():
             self.surface = self.font2.render(i.text, True, (47, 86, 233))
             self.screen.blit(self.surface, (i.blit_coords))
 
+    # Registra si se aprieta el tick
     def get_tick(self):
         try:
             if self.event.type == pygame.MOUSEBUTTONDOWN:
@@ -276,6 +292,7 @@ class Edit():
         except DataError:
             c.session.rollback()
 
+    # Registra si se aprieta un botón y en ese caso cuál
     def get_buttons_press(self):
         for b in self.edit_buttons_list:
             if b.rect.collidepoint(self.mx, self.my):
@@ -284,6 +301,7 @@ class Edit():
                 elif self.event.type == pygame.MOUSEBUTTONUP:
                     b.state = False
             
+    # Llama a la función correspondiente para seleccionar los datos determinados de la db, dependiendo que botón se apretó
     def edit_buttons_SQL(self):
         if self.delete_button.state == True:
             e.delete_movies()
@@ -296,3 +314,5 @@ class Edit():
             e.assign_top()
         elif self.worst_button.state == True:
             e.assign_worst()
+
+pygame.quit()
