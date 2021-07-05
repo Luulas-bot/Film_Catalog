@@ -1,25 +1,21 @@
 # Imports
 import pygame
 import sys
-from Constants.Constants import (
-    WHITE, BLUE, GRAY, LIGHTGRAY, clock, fps, size_add_new, size_edit
-)
-from Windows.New_movie import AddMovie
-from Classes.Buttons import Buttons, Genre_Buttons
-from Classes.Movies import Movies
-from DataBase.Database_Connection import e
-from Windows.Edit import Edit
+from Constants.constants import WHITE, BLUE, GRAY, LIGHTGRAY, clock, fps, size_edit, size_new_movie, size_edit
+from Classes import Buttons, GenreButtons, Movies
+from SmallWindows import Edit, NewMovie
 
 # Inicialización de pygame
 pygame.init()
 
 # Clase del menú principal
-class Main_menu():
+class MainMenu():
 
     # Función constructora
-    def __init__(self, size):
+    def __init__(self, size, dm):
         self.size = size
         self.init_stats()
+        self.dm = dm
 
     # Función alterna para correr el main_menu
     def run_main_menu(self):
@@ -36,7 +32,7 @@ class Main_menu():
         
     # Función que determina las variables iniciales
     def init_stats(self):
-        
+
         pygame.display.quit()
         self.screen = pygame.display.set_mode(self.size)
         pygame.display.set_caption("Sign Up")
@@ -69,22 +65,22 @@ class Main_menu():
             self.button_list.append(i)
 
         # Botónes de género
-        self.action_button = Genre_Buttons("Images/action_button.png", "Images/action_pressed_button.png", (200, 70, 120, 60), (200, 70))
-        self.science_fiction_button = Genre_Buttons("Images/science_fiction.png", "Images/science_fiction_pressed_button.png", (200, 130, 120, 60), (200, 130))
-        self.comedy_button = Genre_Buttons("Images/comedy_button.png", "Images/comedy_pressed_button.png", (200, 190, 120, 60), (200, 190))
-        self.drama_button = Genre_Buttons("Images/drama_button.png", "Images/drama_pressed_button.png", (200, 250, 120, 60), (200, 250))
-        self.fantasy_button = Genre_Buttons("Images/fantasy_button.png", "Images/fantasy_pressed_button.png", (200, 310, 120, 60), (200, 310))
-        self.melodrama_button = Genre_Buttons("Images/melodrama_button.png", "Images/melodrama_pressed_button.png", (200, 370, 120, 60), (200, 370))
-        self.musical_button = Genre_Buttons("Images/musical_button.png", "Images/musical_pressed_button.png", (200, 430, 120, 60), (200, 430))
-        self.romance_button = Genre_Buttons("Images/romance_button.png", "Images/romance_pressed_button.png", (200, 490, 120, 60), (200, 490))
-        self.suspense_button = Genre_Buttons("Images/suspense_button.png", "Images/suspense_pressed_button.png", (200, 550, 120, 60), (200, 550))
-        self.terror_button = Genre_Buttons("Images/terror_button.png", "Images/terror_pressed_button.png", (200, 610, 120, 60), (200, 610))
-        self.documentary_button = Genre_Buttons("Images/documentary_button.png", "Images/documentary_pressed_button.png", (200, 670, 120, 60), (200, 670))
+        self.action_button = GenreButtons("Images/action_button.png", "Images/action_pressed_button.png", (200, 70, 120, 60), (200, 70))
+        self.science_fiction_button = GenreButtons("Images/science_fiction.png", "Images/science_fiction_pressed_button.png", (200, 130, 120, 60), (200, 130))
+        self.comedy_button = GenreButtons("Images/comedy_button.png", "Images/comedy_pressed_button.png", (200, 190, 120, 60), (200, 190))
+        self.drama_button = GenreButtons("Images/drama_button.png", "Images/drama_pressed_button.png", (200, 250, 120, 60), (200, 250))
+        self.fantasy_button = GenreButtons("Images/fantasy_button.png", "Images/fantasy_pressed_button.png", (200, 310, 120, 60), (200, 310))
+        self.melodrama_button = GenreButtons("Images/melodrama_button.png", "Images/melodrama_pressed_button.png", (200, 370, 120, 60), (200, 370))
+        self.musical_button = GenreButtons("Images/musical_button.png", "Images/musical_pressed_button.png", (200, 430, 120, 60), (200, 430))
+        self.romance_button = GenreButtons("Images/romance_button.png", "Images/romance_pressed_button.png", (200, 490, 120, 60), (200, 490))
+        self.suspense_button = GenreButtons("Images/suspense_button.png", "Images/suspense_pressed_button.png", (200, 550, 120, 60), (200, 550))
+        self.terror_button = GenreButtons("Images/terror_button.png", "Images/terror_pressed_button.png", (200, 610, 120, 60), (200, 610))
+        self.documentary_button = GenreButtons("Images/documentary_button.png", "Images/documentary_pressed_button.png", (200, 670, 120, 60), (200, 670))
 
         # Lista de los botónes de género
         self.genre_button_list = []
 
-        for i in Genre_Buttons.genre_buttons_list_temp:
+        for i in GenreButtons.genre_buttons_list_temp:
             self.genre_button_list.append(i)
 
         # Lista que contiene las abreviaciones de los géneros
@@ -96,7 +92,7 @@ class Main_menu():
         # Variable que se usa para recorrer la lista de películas
         self.index = 0
         
-        e.select_movies_to_display()
+        self.dm.select_movies_to_display()
 
         # Flecha para cambiar de página
         self.arrow_right = pygame.image.load("Images/arrow_right.png")
@@ -167,8 +163,8 @@ class Main_menu():
                 self.country_textbox_active = False
                 self.index -= self.index
                 self.pag = 1
-                e.country_text = self.country_text
-                e.filter_country()
+                self.dm.country_text = self.country_text
+                self.dm.filter_country()
                 self.init_movies()
                 self.country_text = ""
                 self.country_button.state = False
@@ -192,13 +188,13 @@ class Main_menu():
                         self.index -= self.index
                         self.pag = 1
                         if button == self.to_watch_button:
-                            e.filter_movie(0)
+                            self.dm.filter_movie(0)
                         elif button == self.already_seen_button:
-                            e.filter_movie(1)
+                            self.dm.filter_movie(1)
                         elif button == self.top_button:
-                            e.filter_movie(2)
+                            self.dm.filter_movie(2)
                         elif button == self.worst_button:
-                            e.filter_movie(3)
+                            self.dm.filter_movie(3)
                         self.init_movies()
             
             # Registra cuando se levanta el presionado del mouse para poder volver los botones a la normalidad y incluye algunas excepciones
@@ -228,7 +224,7 @@ class Main_menu():
             if self.all_button.rect.collidepoint(self.mx, self.my):
                 self.all_button.state = True
                 self.index -= self.index
-                e.select_movies_to_display()
+                self.dm.select_movies_to_display()
                 self.init_movies()
         elif self.event.type == pygame.MOUSEBUTTONUP:
             if self.all_button.rect.collidepoint(self.mx, self.my):
@@ -245,7 +241,7 @@ class Main_menu():
                         self.index -= self.index
                         self.pag = 1
                         self.list_index = self.genre_button_list.index(button)
-                        e.genre_filter(self.genre_abr_list[self.list_index])
+                        self.dm.genre_filter(self.genre_abr_list[self.list_index])
                         self.init_movies()
                 if self.event.type == pygame.MOUSEBUTTONUP:
                     if button.rect.collidepoint(self.mx, self.my):
@@ -334,23 +330,23 @@ class Main_menu():
     def init_movies(self):
         self.movies_list.clear()
         Movies.movies_list_temp.clear()
-        if self.index < len(e.movies_display_name):    
-            self.movie = Movies("Images/movies_rect.png", (290, 120), (300, 130), (300, 230), e.movies_display_name[self.index], e.movies_display_genre_name[self.index])
+        if self.index < len(self.dm.movies_display_name):    
+            self.movie = Movies("Images/movies_rect.png", (290, 120), (300, 130), (300, 230), self.dm.movies_display_name[self.index], self.dmmovies_display_genre_name[self.index])
         self.index += 1
-        if self.index < len(e.movies_display_name):  
-            self.movie2 = Movies("Images/movies_rect.png", (540, 120), (550, 130), (550, 230), e.movies_display_name[self.index], e.movies_display_genre_name[self.index])
+        if self.index < len(self.dmmovies_display_name):  
+            self.movie2 = Movies("Images/movies_rect.png", (540, 120), (550, 130), (550, 230), self.dmmovies_display_name[self.index], self.dmmovies_display_genre_name[self.index])
         self.index += 1
-        if self.index < len(e.movies_display_name):  
-            self.movie3 = Movies("Images/movies_rect.png", (800, 120), (810, 130), (810, 230), e.movies_display_name[self.index], e.movies_display_genre_name[self.index])
+        if self.index < len(self.dmmovies_display_name):  
+            self.movie3 = Movies("Images/movies_rect.png", (800, 120), (810, 130), (810, 230), self.dmmovies_display_name[self.index], self.dmmovies_display_genre_name[self.index])
         self.index += 1
-        if self.index < len(e.movies_display_name):  
-            self.movie4 = Movies("Images/movies_rect.png", (290, 450), (300, 460), (300, 560), e.movies_display_name[self.index], e.movies_display_genre_name[self.index])
+        if self.index < len(self.dmmovies_display_name):  
+            self.movie4 = Movies("Images/movies_rect.png", (290, 450), (300, 460), (300, 560), self.dmmovies_display_name[self.index], self.dmmovies_display_genre_name[self.index])
         self.index += 1
-        if self.index < len(e.movies_display_name):  
-            self.movie5 = Movies("Images/movies_rect.png", (540, 450), (550, 460), (550, 560), e.movies_display_name[self.index], e.movies_display_genre_name[self.index])
+        if self.index < len(self.dmmovies_display_name):  
+            self.movie5 = Movies("Images/movies_rect.png", (540, 450), (550, 460), (550, 560), self.dmmovies_display_name[self.index], self.dmmovies_display_genre_name[self.index])
         self.index += 1
-        if self.index < len(e.movies_display_name):  
-            self.movie6 = Movies("Images/movies_rect.png", (800, 450), (810, 460), (810, 560), e.movies_display_name[self.index], e.movies_display_genre_name[self.index])
+        if self.index < len(self.dmmovies_display_name):  
+            self.movie6 = Movies("Images/movies_rect.png", (800, 450), (810, 460), (810, 560), self.dmmovies_display_name[self.index], self.dmmovies_display_genre_name[self.index])
         else:
             pass
 
@@ -372,8 +368,8 @@ class Main_menu():
         for i in self.movies_list:
             if self.event.type == pygame.MOUSEBUTTONDOWN:    
                 if i.rect.collidepoint(self.mx, self.my):
-                    e.movie_name_search = i.movie_name
-                    e.select_edit_data()
+                    self.dmmovie_name_search = i.movie_name
+                    self.dmselect_edit_data()
                     self.run_edit_movie()
                     del self.text_box_font
                     del self.font1
@@ -382,15 +378,13 @@ class Main_menu():
     # Corre el menú para crear una nueva película
     def run_add_new_movie(self):
 
-        am = AddMovie(size_add_new)
+        self.nm = NewMovie(size_new_movie, self.dm)
 
         while True:
-            am.events()
-            am.draw_on_screen()
+            self.nm.events()
+            self.nm.draw_on_screen()
 
-            if am.escape >= 1:
-                del self.text_box_font
-                del self.font1
+            if self.nm.escape >= 1:
                 self.run_main_menu()
                 break
 
@@ -399,16 +393,14 @@ class Main_menu():
 
     # Función que corre la edit window
     def run_edit_movie(self):
-        
-        ed = Edit(size_edit)
+
+        self.ed = Edit(size_edit, self.dm)
 
         while True:
-            ed.events()
-            ed.draw_on_screen()
+            self.ed.events()
+            self.ed.draw_on_screen()
 
-            if ed.escape >= 1:
-                del ed.font1
-                del ed.font2
+            if self.ed.escape >= 1:
                 self.run_main_menu()
                 break
 

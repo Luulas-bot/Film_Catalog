@@ -1,105 +1,14 @@
-# Imports
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, String, Integer, DateTime, CHAR, ForeignKey
-from datetime import datetime
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.sql.sqltypes import Boolean
-
-# Se crea la base
-Base = declarative_base()
-
-# Creación de la conexión con la base de datos
-class Connection():
-    
-    # Función constructora
-    def __init__(self):
-        self.set_vars()
-    
-    # Inicializa las variables
-    def set_vars(self):
-        self.SERVER = '192.168.0.252:1433'
-        self.DATABASE = 'Film'
-        self.DRIVER = 'ODBC Driver 17 for SQL Server'
-        self.USERNAME = 'SA'
-        self.PASSWORD = 'papadopulos'
-        self.DATABASE_CONNECTION = f'mssql://{self.USERNAME}:{self.PASSWORD}@{self.SERVER}/{self.DATABASE}?driver={self.DRIVER}'
-
-    # Crea una sesión
-    def create_session(self):
-        Session = sessionmaker()
-        self.session = Session.configure(bind = self.engine)
-        self.session = Session()
-
-    # Corre el motor de la base de datos
-    def run_engine(self):
-        self.engine = create_engine(self.DATABASE_CONNECTION)
-
-# Creación de la tabla de usuario
-class User(Base):
-    __tablename__ = 'Usuario'
-
-    # Creación de las columnas
-    id = Column(Integer(), primary_key = True, autoincrement = True, nullable = False)
-    username = Column(String(50), nullable = False, unique = True)
-    password = Column(String(50), nullable = False, unique = False)
-    created_at = Column(DateTime, default = datetime.now)
-
-    def __str__(self):
-        return self.username
-
-# Creación de la tabla de las películas
-class Movie_db(Base):
-    __tablename__ = "Pelicula"
-
-    # Creación de las columnas
-    id = Column(Integer(), primary_key = True, autoincrement = True, nullable = False)
-    name = Column(String(70), nullable = False, unique = False)
-    movie_date = Column(String(50), nullable = True, unique = False)
-    country_id = Column(CHAR(3), ForeignKey('Pais.id'))
-    genre_id = Column(CHAR(3), ForeignKey('Genero.id'))
-    description = Column(String(915), nullable = True, unique = False)
-    rating = Column(String(70), nullable = True, unique = False)
-    to_watch = Column(Boolean(), nullable = True, unique = False)
-    already_seen = Column(Boolean(), nullable = True, unique = False)
-    top_button = Column(Boolean(), nullable = True, unique = False)
-    worst = Column(Boolean(), nullable = True, unique = False)
-
-# Creación de la tabla de los países
-class Country(Base):
-    __tablename__ = 'Pais'
-
-    # Creación de las columnas
-    id = Column(CHAR(3), primary_key = True, nullable = False)
-    name = Column(String(50), nullable = False, unique = True)
-
-# Creación de la tabla de los géneros
-class Genre(Base):
-    __tablename__ = "Genero"
-
-    # Creación de las columnas
-    id = Column(CHAR(3), primary_key = True, nullable = False)
-    name = Column(String(50), nullable = False, unique = True)
-
-# Creación de la tabla que contiene a los usuarios con sus respectivas películas
-class Movie_User(Base):
-    __tablename__ = 'Pelicula_Usuario'
-
-    # Creación de las columnas
-    id = Column(Integer(), primary_key = True, autoincrement = True, nullable = False)
-    movie_id = Column(Integer(), ForeignKey('Pelicula.id'))
-    user_id = Column(Integer(), ForeignKey('Usuario.id'))
-
-c = Connection()
+from Database_models import Base, Connection, User, MovieUser, MovieDb, Genre, Country
 
 # Creación de la clase que contiene lo scripts para manejar la base de datos
-class Execute():
+class DbManager():
     
     # Función constructora
     def __init__(self):
-        c.run_engine()
-        c.create_session()
-        Base.metadata.create_all(c.engine)
+        self.cn = Connection()
+        self.cn.run_engine()
+        self.cn.create_session()
+        Base.metadata.create_all(self.cn.engine)
         
         self.movie_name_search = ""
         self.update_name = ""
@@ -116,15 +25,15 @@ class Execute():
         self.in_var2 = in_var2
         self.user = User(username = f'{self.in_var1}', password = f'{self.in_var2}')
 
-        c.session.add(self.user)
+        self.cn.session.add(self.user)
 
-        c.session.commit()
+        self.cn.session.commit()
         
     # Lectura de los datos de un usuario en específico para el Login
     def select_login(self, username, password):
         self.username_sl = username
         self.password_sl = password
-        self.user_sl = c.session.query(User).filter(
+        self.user_sl = self.cn.session.query(User).filter(
             User.username == self.username_sl
         ).filter(
             User.password == self.password_sl
@@ -140,27 +49,27 @@ class Execute():
         self.genre_movie = genre
         self.description_movie = description
 
-        self.movie = Movie_db(name = f'{self.name_movie}', movie_date = f'{self.date_movie}', country_id = f'{self.country_movie}',
+        self.movie = MovieDb(name = f'{self.name_movie}', movie_date = f'{self.date_movie}', country_id = f'{self.country_movie}',
         genre_id = f'{self.genre_movie}', description = f'{self.description_movie}')
         
-        c.session.add(self.movie)
-        c.session.flush()
-        c.session.commit()
+        self.cn.session.add(self.movie)
+        self.cn.session.flush()
+        self.cn.session.commit()
 
     # Función para insertar a la tabla 'Pelicula_Usuario' la película insertada recientemente y el usuario que la insertó
     def insert_Pelicula_Usuario(self):
-        
-        self.movie_id = c.session.query(Movie_db.id).all()
 
-        self.selected_user_id = c.session.query(User.id).filter(
+        self.movie_id = self.cn.session.query(MovieDb.id).all()
+
+        self.selected_user_id = self.cn.session.query(User.id).filter(
             User.username == self.working_user
         ).first()
 
-        self.movie_user = Movie_User(movie_id = f'{self.movie_id[-1][0]}', user_id = f'{self.selected_user_id[0]}')
+        self.movie_user = MovieUser(movie_id = f'{self.movie_id[-1][0]}', user_id = f'{self.selected_user_id[0]}')
         
-        c.session.add(self.movie_user)
-        c.session.flush()
-        c.session.commit()
+        self.cn.session.add(self.movie_user)
+        self.cn.session.flush()
+        self.cn.session.commit()
 
     # Función que a través de select, filtros e inner joins arma algunas listas con los nombres de las películas y sus géneros
     def select_movies_to_display(self):
@@ -173,30 +82,30 @@ class Execute():
         self.movies_display_genre_name = []
 
         # Toma el id del usuario en uso
-        self.user_id_display = c.session.query(User.id).filter(
+        self.user_id_display = self.cn.session.query(User.id).filter(
             User.username == self.working_user
         ).first()
 
         # Filtra todas los id de las películas del usuario en uso
-        self.movies_display_id = c.session.query(Movie_User.movie_id).filter(
-            Movie_User.user_id == self.user_id_display[0]
+        self.movies_display_id = self.cn.session.query(MovieUser.movie_id).filter(
+            MovieUser.user_id == self.user_id_display[0]
         )
 
         # Toma a partir de los id de las películas, sus nombres
         for i in self.movies_display_id:
-            self.movies_display_name_temp.append(c.session.query(Movie_db.name).filter(
-                Movie_db.id == i[0]
+            self.movies_display_name_temp.append(self.cn.session.query(MovieDb.name).filter(
+                MovieDb.id == i[0]
             ))
 
         # Toma a partir de los id de las películas sus id de género
         for i in self.movies_display_id:
-            self.movies_display_genreid_temp.append(c.session.query(Movie_db.genre_id).filter(
-                Movie_db.id == i[0]
+            self.movies_display_genreid_temp.append(self.cn.session.query(MovieDb.genre_id).filter(
+                MovieDb.id == i[0]
             ))
 
         # Toma a partir de los id de género los nombres de esos géneros
         for i in self.movies_display_genreid_temp:
-            self.movies_display_genre_name_temp.append(c.session.query(Genre.name).filter(
+            self.movies_display_genre_name_temp.append(self.cn.session.query(Genre.name).filter(
                 Genre.id == i[0][0]
             )) 
 
@@ -215,21 +124,21 @@ class Execute():
         self.movie_id_temp = []
 
         # Toma el id del usuario en uso
-        self.user_id_edit = c.session.query(User.id).filter(
+        self.user_id_edit = self.cn.session.query(User.id).filter(
             User.username == self.working_user
         ).first()
 
         # Filtra todos los id de las películas de ese usuario
-        self.movie_id_edit = c.session.query(Movie_User.movie_id).filter(
-            Movie_User.user_id == self.user_id_edit[0]
+        self.movie_id_edit = self.cn.session.query(MovieUser.movie_id).filter(
+            MovieUser.user_id == self.user_id_edit[0]
         ).all()
         
         # Toma el id en específico de la película que se seleccionó
         for id in self.movie_id_edit:
-            self.movie_id_temp.append(c.session.query(Movie_db.id).filter(
-                Movie_db.name == self.movie_name_search
+            self.movie_id_temp.append(self.cn.session.query(MovieDb.id).filter(
+                MovieDb.name == self.movie_name_search
             ).filter(
-                Movie_db.id == id[0]
+                MovieDb.id == id[0]
             ).first())
         
         # Limpia la lista para quedarse solo con el id en específico
@@ -240,8 +149,8 @@ class Execute():
                 pass
 
         # Filtra todos los atributos que se quieren meter en variables a través del id
-        self.movie_atr_edit_temp.append(c.session.query(Movie_db.name, Movie_db.movie_date, Movie_db.country_id, Movie_db.genre_id, Movie_db.description, Movie_db.rating).filter(
-            Movie_db.id == self.movie_id_def
+        self.movie_atr_edit_temp.append(self.cn.session.query(MovieDb.name, MovieDb.movie_date, MovieDb.country_id, MovieDb.genre_id, MovieDb.description, MovieDb.rating).filter(
+            MovieDb.id == self.movie_id_def
         )) 
 
         # Transfiere los atributos a unas variables
@@ -256,8 +165,8 @@ class Execute():
     def update_changes(self):
 
         # Crea una variable que contenga todos las columnas de la película con el id que se seleccionó 
-        self.update_list = c.session.query(Movie_db).filter(
-            Movie_db.id == self.movie_id_def 
+        self.update_list = self.cn.session.query(MovieDb).filter(
+            MovieDb.id == self.movie_id_def 
         )
 
         # Updatea las columnas de esa películas
@@ -268,7 +177,7 @@ class Execute():
         self.update_list[0].description = self.update_description
         self.update_list[0].rating = self.update_rating
 
-        c.session.commit()
+        self.cn.session.commit()
 
         # Limpia las variables para que sean reutilizables
         self.update_name = ""
@@ -281,21 +190,21 @@ class Execute():
     # Borra la película seleccionada
     def delete_movies(self):
         # Borra la película que se seleccionó de la tabla de las películas y usuarios
-        c.session.query(Movie_User).filter(
-            Movie_User.movie_id == self.movie_id_def
+        self.cn.session.query(MovieUser).filter(
+            MovieUser.movie_id == self.movie_id_def
         ).delete()
         
         # Borra la película de la tabla de las películas
-        c.session.query(Movie_db).filter(
-            Movie_db.id == self.movie_id_def
+        self.cn.session.query(MovieDb).filter(
+            MovieDb.id == self.movie_id_def
         ).delete()
 
-        c.session.commit()
+        self.cn.session.commit()
 
     # Asigna un uno si la pelicula está en modo "to_watch" a la db
     def assign_filter(self, filter_0, filter_1):
-        self.assign_filt = c.session.query(Movie_db).filter(
-            Movie_db.id == self.movie_id_def
+        self.assign_filt = self.cn.session.query(MovieDb).filter(
+            MovieDb.id == self.movie_id_def
         ).update(
             {
                 f'{filter_1}' : 1,
@@ -303,8 +212,8 @@ class Execute():
             }
         )
 
-        c.session.commit()
-        c.session.flush()
+        self.cn.session.commit()
+        self.cn.session.flush()
 
     # Filtra las películas con el filtro "to_watch"
     def filter_movie(self, param):
@@ -315,13 +224,13 @@ class Execute():
         self.genre_name_filter_temp = []
         
         # Filtra el usuario que está en uso
-        self.user_id_filter = c.session.query(User.id).filter(
+        self.user_id_filter = self.cn.session.query(User.id).filter(
             User.username == self.working_user
         ).first()
         
         # Filtra todas las películas del usuario que está en uso
-        self.movie_id_filter_temp = c.session.query(Movie_User.movie_id).filter(
-            Movie_User.user_id == self.user_id_filter[0]
+        self.movie_id_filter_temp = self.cn.session.query(MovieUser.movie_id).filter(
+            MovieUser.user_id == self.user_id_filter[0]
         ).all()
         
         if param == 0:
@@ -335,19 +244,19 @@ class Execute():
 
         # Obtiene el nombre de la película a través del id
         for id in self.movie_id_filter_def:
-            self.name_filter_temp.append(c.session.query(Movie_db.name).filter(
-                Movie_db.id == id[0]
+            self.name_filter_temp.append(self.cn.session.query(MovieDb.name).filter(
+                MovieDb.id == id[0]
             ))
 
         # Obtiene el id de género
         for i in self.movie_id_filter_def:
-            self.genreid_filter_temp.append(c.session.query(Movie_db.genre_id).filter(
-                Movie_db.id == i[0]
+            self.genreid_filter_temp.append(self.cn.session.query(MovieDb.genre_id).filter(
+                MovieDb.id == i[0]
             ))
 
         # Obtiene el nombre de género a través de su id
         for i in self.genreid_filter_temp:
-            self.genre_name_filter_temp.append(c.session.query(Genre.name).filter(
+            self.genre_name_filter_temp.append(self.cn.session.query(Genre.name).filter(
                 Genre.id == i[0][0]
             )) 
 
@@ -360,29 +269,29 @@ class Execute():
             self.movies_display_genre_name.append(i[0][0])
 
     def filter_to_watch(self):
-        self.movie_id_filter_to_watch = c.session.query(Movie_db.id).filter(
-            Movie_db.to_watch == 1
+        self.movie_id_filter_to_watch = self.cn.session.query(MovieDb.id).filter(
+            MovieDb.to_watch == 1
         ).all()
 
         self.movie_id_filter_def = set(self.movie_id_filter_temp).intersection(self.movie_id_filter_to_watch)
 
     def filter_already_seen(self):
-        self.movie_id_filter_alreadyseen = c.session.query(Movie_db.id).filter(
-            Movie_db.already_seen == 1
+        self.movie_id_filter_alreadyseen = self.cn.session.query(MovieDb.id).filter(
+            MovieDb.already_seen == 1
         ).all()
         
         self.movie_id_filter_def = set(self.movie_id_filter_temp).intersection(self.movie_id_filter_alreadyseen)
 
     def filter_top(self):
-        self.movie_id_filter_top = c.session.query(Movie_db.id).filter(
-            Movie_db.top_button == 1
+        self.movie_id_filter_top = self.cn.session.query(MovieDb.id).filter(
+            MovieDb.top_button == 1
         ).all()
         
         self.movie_id_filter_def = set(self.movie_id_filter_temp).intersection(self.movie_id_filter_top)
 
     def filter_worst(self):
-        self.movie_id_filter_worst = c.session.query(Movie_db.id).filter(
-            Movie_db.worst == 1
+        self.movie_id_filter_worst = self.cn.session.query(MovieDb.id).filter(
+            MovieDb.worst == 1
         ).all()
         
         self.movie_id_filter_def = set(self.movie_id_filter_temp).intersection(self.movie_id_filter_worst)
@@ -397,19 +306,19 @@ class Execute():
         self.genre_id_def = []
 
         # Obtiene el id del usuario en funcionamiento
-        self.user_id_filter = c.session.query(User.id).filter(
+        self.user_id_filter = self.cn.session.query(User.id).filter(
             User.username == self.working_user
         ).first()
 
         # Obtiene todos los id de las películas del usuario en funcionamiento
-        self.movie_id_filter_temp = c.session.query(Movie_User.movie_id).filter(
-            Movie_User.user_id == self.user_id_filter[0]
+        self.movie_id_filter_temp = self.cn.session.query(MovieUser.movie_id).filter(
+            MovieUser.user_id == self.user_id_filter[0]
         ).all()
         
         # Obtiene todos los id de género de las películas
         for id in self.movie_id_filter_temp:    
-            self.get_genre_id.append(c.session.query(Movie_db.genre_id).filter(
-                Movie_db.id == id[0]
+            self.get_genre_id.append(self.cn.session.query(MovieDb.genre_id).filter(
+                MovieDb.id == id[0]
             ))
 
         # Filtra los id de género a través del parámetro que se pasó
@@ -419,8 +328,8 @@ class Execute():
 
         # Filtra todos los id de películas que tengan el mismo género
         if len(self.genre_id_def) != 0:
-            self.movie_id_genre_filter = c.session.query(Movie_db.id).filter(
-                Movie_db.genre_id == self.genre_id_def[0]
+            self.movie_id_genre_filter = self.cn.session.query(MovieDb.id).filter(
+                MovieDb.genre_id == self.genre_id_def[0]
             ).all()
         else:
             self.movie_id_genre_filter = []
@@ -430,14 +339,14 @@ class Execute():
 
         # Cambia el id de género por el nombre del género
         for g in self.genre_id_def:
-            self.genre_name_filter_temp.append(c.session.query(Genre.name).filter(
+            self.genre_name_filter_temp.append(self.cn.session.query(Genre.name).filter(
                 Genre.id == g
             ))
 
         # Cambia el id de la película por el nombre de la película
         for id in self.movie_id_filter_def:
-            self.name_filter_temp.append(c.session.query(Movie_db.name).filter(
-                Movie_db.id == id[0]
+            self.name_filter_temp.append(self.cn.session.query(MovieDb.name).filter(
+                MovieDb.id == id[0]
             ))
 
         # Limpia la lista de nombres
@@ -456,36 +365,36 @@ class Execute():
         self.movies_display_name = []
 
         # Obtiene el id del usuario en funcionamiento
-        self.user_id_filter = c.session.query(User.id).filter(
+        self.user_id_filter = self.cn.session.query(User.id).filter(
             User.username == self.working_user
         ).first()
 
         # Obtiene todos los id de las películas del usuario en funcionamiento
-        self.movie_id_filter_temp = c.session.query(Movie_User.movie_id).filter(
-            Movie_User.user_id == self.user_id_filter[0]
+        self.movie_id_filter_temp = self.cn.session.query(MovieUser.movie_id).filter(
+            MovieUser.user_id == self.user_id_filter[0]
         ).all()
 
-        self.movie_id_country_filter = c.session.query(Movie_db.id).filter(
-            Movie_db.country_id == self.country_text
+        self.movie_id_country_filter = self.cn.session.query(MovieDb.id).filter(
+            MovieDb.country_id == self.country_text
         ).all()
 
         self.movie_id_def = set(self.movie_id_filter_temp).intersection(self.movie_id_country_filter)
 
         # Cambia el id de género por el nombre del género
         for i in self.movie_id_def:
-            self.genre_id_def.append(c.session.query(Movie_db.genre_id).filter(
-                Movie_db.id== i[0]
+            self.genre_id_def.append(self.cn.session.query(MovieDb.genre_id).filter(
+                MovieDb.id== i[0]
             ))
 
         for i in self.genre_id_def:
-            self.genre_name_filter_temp.append(c.session.query(Genre.name).filter(
+            self.genre_name_filter_temp.append(self.cn.session.query(Genre.name).filter(
                 Genre.id == i[0][0]
             ))
 
         # Cambia el id de la película por el nombre de la película
         for id in self.movie_id_def:
-            self.name_filter_temp.append(c.session.query(Movie_db.name).filter(
-                Movie_db.id == id[0]
+            self.name_filter_temp.append(self.cn.session.query(MovieDb.name).filter(
+                MovieDb.id == id[0]
             ))
         
         # Limpia la lista de nombres
@@ -496,4 +405,3 @@ class Execute():
         for i in self.genre_name_filter_temp:
             self.movies_display_genre_name.append(i[0][0])
 
-e = Execute()

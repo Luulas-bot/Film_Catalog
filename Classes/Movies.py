@@ -1,5 +1,5 @@
 import pygame
-from Constants.Constants import WHITE
+from Constants.constants import WHITE
 
 pygame.init()
 

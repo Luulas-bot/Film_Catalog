@@ -1,8 +1,8 @@
 import pygame
-from Constants.Constants import WHITE, LIGHTGRAY, BLUE, LIGHTBLUE
+from Constants.constants import WHITE, LIGHTGRAY, BLUE, LIGHTBLUE
 
 # Clase de los botones del edit
-class Edit_Buttons():
+class EditButtons():
 
     temp_list = []
 

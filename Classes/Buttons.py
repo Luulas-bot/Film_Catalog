@@ -19,7 +19,7 @@ class Buttons():
         self.state = False
         self.buttons_list_temp.append(self)
 
-class Genre_Buttons():
+class GenreButtons():
 
     genre_buttons_list_temp = []
 

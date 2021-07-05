@@ -1,11 +1,9 @@
 # Imports
 import pygame
 import sys
-from Constants.Constants import GRAY, BLUE, WHITE, LIGHTGRAY, LIGHTBLUE
-from Classes.Edit_Texts import Edit_Texts, Edit_Description
-from DataBase.Database_Connection import e, c
-from sqlalchemy.exc import DataError, IntegrityError
-from Classes.Edit_Buttons import Edit_Buttons
+from Constants.constants import GRAY, BLUE, WHITE, LIGHTGRAY, LIGHTBLUE
+from Classes import EditTexts, EditDescription, EditButtons
+from sqlalchemy.exc import DataError
 
 # Inicialización de pygame
 pygame.init()
@@ -14,9 +12,10 @@ pygame.init()
 class Edit():
 
     # Función constructora
-    def __init__(self, size):
+    def __init__(self, size, dm):
         self.size = size
         self.init_stats()
+        self.dm = dm
 
     # Inicializa las stats inciales
     def init_stats(self):
@@ -39,26 +38,26 @@ class Edit():
         self.escape = 0
 
         # Las textboxes junto con sus textos
-        self.name_text = Edit_Texts((55, 57), f"{e.movie_name_edit}", (50, 50, 500, 30), (50, 50), (55, 57))
-        self.date_text = Edit_Texts((55, 132), f"{e.movie_date_edit}", (50, 125, 500, 30), (50, 100), (55, 132))
-        self.country_text = Edit_Texts ((55, 207), f"{e.movie_country_edit}", (50, 200, 200, 30), (50, 150), (55, 207))
-        self.genre_text = Edit_Texts((305, 207),f"{e.movie_genre_edit}", (300, 200, 200, 30), (200, 150), (305, 207))
-        self.rating = Edit_Texts((55, 607), f"{e.movie_rating_edit}", (50, 600, 500, 30), (50, 600), (55, 607))
-        self.description_text = Edit_Description((55, 282), f"{e.movie_description_edit[:61]}", (50, 275, 500, 275), (50, 200))
-        self.description_text2 = Edit_Description((55, 300), f"{e.movie_description_edit[61:122]}", (50, 275, 500, 275), (50, 200))
-        self.description_text3 = Edit_Description((55, 318), f"{e.movie_description_edit[122:183]}", (50, 275, 500, 275), (50, 200))
-        self.description_text4 = Edit_Description((55, 336), f"{e.movie_description_edit[183:244]}", (50, 275, 500, 275), (50, 200))
-        self.description_text5 = Edit_Description((55, 354), f"{e.movie_description_edit[244:305]}", (50, 275, 500, 275), (50, 200))
-        self.description_text6 = Edit_Description((55, 372), f"{e.movie_description_edit[305:366]}", (50, 275, 500, 275), (50, 200))
-        self.description_text7 = Edit_Description((55, 390), f"{e.movie_description_edit[366:427]}", (50, 275, 500, 275), (50, 200))
-        self.description_text8 = Edit_Description((55, 408), f"{e.movie_description_edit[427:488]}", (50, 275, 500, 275), (50, 200))
-        self.description_text9 = Edit_Description((55, 426), f"{e.movie_description_edit[488:549]}", (50, 275, 500, 275), (50, 200))
-        self.description_text10 = Edit_Description((55, 444), f"{e.movie_description_edit[549:610]}", (50, 275, 500, 275), (50, 200))
-        self.description_text11 = Edit_Description((55, 462), f"{e.movie_description_edit[610:671]}", (50, 275, 500, 275), (50, 200))
-        self.description_text12 = Edit_Description((55, 480), f"{e.movie_description_edit[671:732]}", (50, 275, 500, 275), (50, 200))
-        self.description_text13 = Edit_Description((55, 498), f"{e.movie_description_edit[732:793]}", (50, 275, 500, 275), (50, 200))
-        self.description_text14 = Edit_Description((55, 516), f"{e.movie_description_edit[793:854]}", (50, 275, 500, 275), (50, 200))
-        self.description_text15 = Edit_Description((55, 534), f"{e.movie_description_edit[854:915]}", (50, 275, 500, 275), (50, 200))
+        self.name_text = EditTexts((55, 57), f"{self.dm.movie_name_edit}", (50, 50, 500, 30), (50, 50), (55, 57))
+        self.date_text = EditTexts((55, 132), f"{self.dm.movie_date_edit}", (50, 125, 500, 30), (50, 100), (55, 132))
+        self.country_text = EditTexts ((55, 207), f"{self.dm.movie_country_edit}", (50, 200, 200, 30), (50, 150), (55, 207))
+        self.genre_text = EditTexts((305, 207),f"{self.dm.movie_genre_edit}", (300, 200, 200, 30), (200, 150), (305, 207))
+        self.rating = EditTexts((55, 607), f"{self.dm.movie_rating_edit}", (50, 600, 500, 30), (50, 600), (55, 607))
+        self.description_text = EditDescription((55, 282), f"{self.dm.movie_description_edit[:61]}", (50, 275, 500, 275), (50, 200))
+        self.description_text2 = EditDescription((55, 300), f"{self.dm.movie_description_edit[61:122]}", (50, 275, 500, 275), (50, 200))
+        self.description_text3 = EditDescription((55, 318), f"{self.dm.movie_description_edit[122:183]}", (50, 275, 500, 275), (50, 200))
+        self.description_text4 = EditDescription((55, 336), f"{self.dm.movie_description_edit[183:244]}", (50, 275, 500, 275), (50, 200))
+        self.description_text5 = EditDescription((55, 354), f"{self.dm.movie_description_edit[244:305]}", (50, 275, 500, 275), (50, 200))
+        self.description_text6 = EditDescription((55, 372), f"{self.dm.movie_description_edit[305:366]}", (50, 275, 500, 275), (50, 200))
+        self.description_text7 = EditDescription((55, 390), f"{self.dm.movie_description_edit[366:427]}", (50, 275, 500, 275), (50, 200))
+        self.description_text8 = EditDescription((55, 408), f"{self.dm.movie_description_edit[427:488]}", (50, 275, 500, 275), (50, 200))
+        self.description_text9 = EditDescription((55, 426), f"{self.dm.movie_description_edit[488:549]}", (50, 275, 500, 275), (50, 200))
+        self.description_text10 = EditDescription((55, 444), f"{self.dm.movie_description_edit[549:610]}", (50, 275, 500, 275), (50, 200))
+        self.description_text11 = EditDescription((55, 462), f"{self.dm.movie_description_edit[610:671]}", (50, 275, 500, 275), (50, 200))
+        self.description_text12 = EditDescription((55, 480), f"{self.dm.movie_description_edit[671:732]}", (50, 275, 500, 275), (50, 200))
+        self.description_text13 = EditDescription((55, 498), f"{self.dm.movie_description_edit[732:793]}", (50, 275, 500, 275), (50, 200))
+        self.description_text14 = EditDescription((55, 516), f"{self.dm.movie_description_edit[793:854]}", (50, 275, 500, 275), (50, 200))
+        self.description_text15 = EditDescription((55, 534), f"{self.dm.movie_description_edit[854:915]}", (50, 275, 500, 275), (50, 200))
 
         # Variable única que define si la description_tx está o no apretada
         self.description_state = False
@@ -68,10 +67,10 @@ class Edit():
         self.description_list = []
         self.description_list_text = []
 
-        for i in Edit_Description.description_list_temp:
+        for i in EditDescription.description_list_temp:
             self.description_list.append(i)
 
-        for i in Edit_Texts.texts_list_temp:
+        for i in EditTexts.texts_list_temp:
             self.texts_list.append(i)
 
         # Índice principal para indexar los reglones de la descripción
@@ -85,13 +84,13 @@ class Edit():
         self.edit_buttons_list = []
 
         # Buttons
-        self.delete_button = Edit_Buttons((30, 650, 100, 30), "DELETE", (57, 658))
-        self.to_watch_button = Edit_Buttons((140, 650, 100, 30), "TO WATCH", (156, 658))
-        self.already_seen_button = Edit_Buttons((250, 650, 100, 30), "ALREADY SEEN", (252, 658))
-        self.top_button = Edit_Buttons((360, 650, 100, 30), "TOP", (398, 658))
-        self.worst_button = Edit_Buttons((470, 650, 100, 30), "WORST", (498, 658))
+        self.delete_button = EditButtons((30, 650, 100, 30), "DELETE", (57, 658))
+        self.to_watch_button = EditButtons((140, 650, 100, 30), "TO WATCH", (156, 658))
+        self.already_seen_button = EditButtons((250, 650, 100, 30), "ALREADY SEEN", (252, 658))
+        self.top_button = EditButtons((360, 650, 100, 30), "TOP", (398, 658))
+        self.worst_button = EditButtons((470, 650, 100, 30), "WORST", (498, 658))
         
-        for button in Edit_Buttons.temp_list:
+        for button in EditButtons.temp_list:
             self.edit_buttons_list.append(button)        
 
     # Función que registra los eventos de la ventana
@@ -179,8 +178,8 @@ class Edit():
     def esc_mechanics(self):
         if self.event.type == pygame.KEYDOWN:
             if self.event.key == pygame.K_ESCAPE:
-                Edit_Texts.texts_list_temp.clear()
-                Edit_Description.description_list_temp.clear()
+                EditTexts.texts_list_temp.clear()
+                EditDescription.description_list_temp.clear()
                 self.escape += 1
 
     # Mecánicas del enter
@@ -276,21 +275,21 @@ class Edit():
                         
                     if self.description_state:
                         self.description_list[self.index].text = self.description_list[self.index].text[:-1] 
-                    for i in Edit_Description.description_list_temp:
+                    for i in EditDescription.description_list_temp:
                         self.description_list_text.append(i.text)
-                    e.update_name = self.name_text.text
-                    e.update_date = self.date_text.text
-                    e.update_countryid = self.country_text.text
-                    e.update_genre_id = self.genre_text.text
-                    e.update_description = " ".join(self.description_list_text)
-                    e.update_rating = self.rating.text
+                    self.dmupdate_name = self.name_text.text
+                    self.dmupdate_date = self.date_text.text
+                    self.dmupdate_countryid = self.country_text.text
+                    self.dmupdate_genre_id = self.genre_text.text
+                    self.dmupdate_description = " ".join(self.description_list_text)
+                    self.dmupdate_rating = self.rating.text
                     self.description_list_text.clear()
-                    e.update_changes()
-                    Edit_Texts.texts_list_temp.clear()
-                    Edit_Description.description_list_temp.clear()
+                    self.dmupdate_changes()
+                    EditTexts.texts_list_temp.clear()
+                    EditDescription.description_list_temp.clear()
                     self.escape += 1
         except DataError:
-            c.session.rollback()
+            self.dm.cn.session.rollback()
 
     # Registra si se aprieta un botón y en ese caso cuál
     def get_buttons_press(self):
@@ -304,15 +303,15 @@ class Edit():
     # Llama a la función correspondiente para seleccionar los datos determinados de la db, dependiendo que botón se apretó
     def edit_buttons_SQL(self):
         if self.delete_button.state == True:
-            e.delete_movies()
+            self.dmdelete_movies()
             self.escape += 1
         elif self.to_watch_button.state == True:
-            e.assign_filter('already_seen', 'to_watch')
+            self.dmassign_filter('already_seen', 'to_watch')
         elif self.already_seen_button.state == True:
-            e.assign_filter('to_watch', 'already_seen')
+            self.dmassign_filter('to_watch', 'already_seen')
         elif self.top_button.state == True:
-            e.assign_filter('worst', 'top_button')
+            self.dmassign_filter('worst', 'top_button')
         elif self.worst_button.state == True:
-            e.assign_filter('top_button', 'worst')
+            self.dmassign_filter('top_button', 'worst')
 
 pygame.quit()

@@ -1,23 +1,22 @@
 # Imports
 import pygame
 import sys
-from Constants.Constants import (
-    GRAY, WHITE, LIGHTGRAY, BLUE, LIGHTBLUE, GOLD
-)
-from Classes.NM_Texts import NM_Text, NM_Description
-from DataBase.Database_Connection import c, e
+from Constants.constants import GRAY, WHITE, LIGHTGRAY, BLUE, LIGHTBLUE, GOLD
+from Classes import NmText, NmDescription
 from sqlalchemy.exc import IntegrityError
+from Database_manager import dm
 
 # Inicialización de pygame
 pygame.init()
 
 # Clase de la ventana
-class AddMovie():
+class NewMovie():
      
     # Función constructora
     def __init__(self, size):
          self.size = size
          self.init_stats()
+         self.dm = dm
 
     # Función que define las variables inciales de la window
     def init_stats(self):
@@ -57,35 +56,35 @@ class AddMovie():
         self.tick_rect = pygame.Rect(550, 550, 30, 30)
         self.tick = pygame.image.load("Images/tick.png")
 
-        # NM_Text texts   
-        self.name_text = NM_Text((55, 57), "", (50, 50, 500, 30), (50, 50), (55, 57))
-        self.date_text = NM_Text((55, 132), "", (50, 125, 500, 30), (50, 100), (55, 132))
-        self.country_text = NM_Text ((55, 207), "", (50, 200, 200, 30), (50, 150), (55, 207))
-        self.genre_text = NM_Text((305, 207),"", (300, 200, 200, 30), (200, 150), (305, 207))
-        self.description_text = NM_Description((55, 282), "", (50, 275, 500, 275), (50, 200))
-        self.description_text2 = NM_Description((55, 300), "", (50, 275, 500, 275), (50, 200))
-        self.description_text3 = NM_Description((55, 318), "", (50, 275, 500, 275), (50, 200))
-        self.description_text4 = NM_Description((55, 336), "", (50, 275, 500, 275), (50, 200))
-        self.description_text5 = NM_Description((55, 354), "", (50, 275, 500, 275), (50, 200))
-        self.description_text6 = NM_Description((55, 372), "", (50, 275, 500, 275), (50, 200))
-        self.description_text7 = NM_Description((55, 390), "", (50, 275, 500, 275), (50, 200))
-        self.description_text8 = NM_Description((55, 408), "", (50, 275, 500, 275), (50, 200))
-        self.description_text9 = NM_Description((55, 426), "", (50, 275, 500, 275), (50, 200))
-        self.description_text10 = NM_Description((55, 444), "", (50, 275, 500, 275), (50, 200))
-        self.description_text11 = NM_Description((55, 462), "", (50, 275, 500, 275), (50, 200))
-        self.description_text12 = NM_Description((55, 480), "", (50, 275, 500, 275), (50, 200))
-        self.description_text13 = NM_Description((55, 498), "", (50, 275, 500, 275), (50, 200))
-        self.description_text14 = NM_Description((55, 516), "", (50, 275, 500, 275), (50, 200))
-        self.description_text15 = NM_Description((55, 534), "", (50, 275, 500, 275), (50, 200))
+        # NmText texts   
+        self.name_text = NmText((55, 57), "", (50, 50, 500, 30), (50, 50), (55, 57))
+        self.date_text = NmText((55, 132), "", (50, 125, 500, 30), (50, 100), (55, 132))
+        self.country_text = NmText ((55, 207), "", (50, 200, 200, 30), (50, 150), (55, 207))
+        self.genre_text = NmText((305, 207),"", (300, 200, 200, 30), (200, 150), (305, 207))
+        self.description_text = NmDescription((55, 282), "", (50, 275, 500, 275), (50, 200))
+        self.description_text2 = NmDescription((55, 300), "", (50, 275, 500, 275), (50, 200))
+        self.description_text3 = NmDescription((55, 318), "", (50, 275, 500, 275), (50, 200))
+        self.description_text4 = NmDescription((55, 336), "", (50, 275, 500, 275), (50, 200))
+        self.description_text5 = NmDescription((55, 354), "", (50, 275, 500, 275), (50, 200))
+        self.description_text6 = NmDescription((55, 372), "", (50, 275, 500, 275), (50, 200))
+        self.description_text7 = NmDescription((55, 390), "", (50, 275, 500, 275), (50, 200))
+        self.description_text8 = NmDescription((55, 408), "", (50, 275, 500, 275), (50, 200))
+        self.description_text9 = NmDescription((55, 426), "", (50, 275, 500, 275), (50, 200))
+        self.description_text10 = NmDescription((55, 444), "", (50, 275, 500, 275), (50, 200))
+        self.description_text11 = NmDescription((55, 462), "", (50, 275, 500, 275), (50, 200))
+        self.description_text12 = NmDescription((55, 480), "", (50, 275, 500, 275), (50, 200))
+        self.description_text13 = NmDescription((55, 498), "", (50, 275, 500, 275), (50, 200))
+        self.description_text14 = NmDescription((55, 516), "", (50, 275, 500, 275), (50, 200))
+        self.description_text15 = NmDescription((55, 534), "", (50, 275, 500, 275), (50, 200))
     
         # Listas que contienen parcialmente o totalmente los textos y textboxes definidos arrriba
         self.description_list = []
         self.texts_list = []
 
-        for i in NM_Description.description_list_temp:
+        for i in NmDescription.description_list_temp:
             self.description_list.append(i)
 
-        for i in NM_Text.texts_list_temp:
+        for i in NmText.texts_list_temp:
             self.texts_list.append(i)
 
     # Función que registra los eventos
@@ -240,11 +239,11 @@ class AddMovie():
                 if self.tick_rect.collidepoint(self.mx, self.my):
                     if len(self.name_text.text) != 0:    
                         self.description_list_text = []
-                        for i in NM_Description.description_list_temp:
+                        for i in NmDescription.description_list_temp:
                             self.description_list_text.append(i.text)
                         self.all_descriptions = ' '.join(self.description_list_text)
-                        e.insert_movies(self.name_text.text, self.date_text.text, self.country_text.text, self.genre_text.text, self.all_descriptions)
-                        e.insert_Pelicula_Usuario()
+                        self.dm.insert_movies(self.name_text.text, self.date_text.text, self.country_text.text, self.genre_text.text, self.all_descriptions)
+                        self.dm.insert_Pelicula_Usuario()
                         self.escape += 1
                         self.name_text.text = ''
                         self.date_text.text = ''
@@ -252,15 +251,15 @@ class AddMovie():
                         self.genre_text.text = ''
                         for i in self.description_list:
                             i.text = ''
-                        NM_Text.texts_list_temp.clear()
-                        NM_Description.description_list_temp.clear()
+                        NmText.texts_list_temp.clear()
+                        NmDescription.description_list_temp.clear()
                     else:
                         self.error_name_state = True
                         self.error_c_g_state = False    
         except IntegrityError:
             self.error_c_g_state = True
             self.error_name_state = False
-            c.session.rollback()
+            self.dm.cn.session.rollback()
                 
     # Muestra las líneas de la descripción por pantalla
     def description_display(self): 

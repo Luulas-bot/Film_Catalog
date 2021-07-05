@@ -1,7 +1,7 @@
-from Constants.Constants import WHITE, LIGHTGRAY
+from Constants.constants import WHITE, LIGHTGRAY
 import pygame
 
-class Edit_Texts():
+class EditTexts():
 
     texts_list_temp = []
 
@@ -20,7 +20,7 @@ class Edit_Texts():
         else:
             self.color = LIGHTGRAY
 
-class Edit_Description():
+class EditDescription():
 
     description_list_temp = []
 

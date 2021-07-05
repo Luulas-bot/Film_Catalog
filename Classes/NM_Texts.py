@@ -1,7 +1,7 @@
 import pygame
-from Constants.Constants import WHITE, LIGHTGRAY
+from Constants.constants import WHITE, LIGHTGRAY
 
-class NM_Text():
+class NmText():
 
     texts_list_temp = []
 
@@ -20,7 +20,7 @@ class NM_Text():
         else:
             self.color = LIGHTGRAY
 
-class NM_Description():
+class NmDescription():
 
     description_list_temp = []
 

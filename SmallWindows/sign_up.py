@@ -1,10 +1,7 @@
 # Imports
 import pygame
 import sys
-from Constants.Constants import (
-    WHITE, BLUE, GRAY, LIGHTGRAY, LIGHTBLUE
-)
-from DataBase.Database_Connection import c, e
+from Constants.constants import WHITE, BLUE, GRAY, LIGHTGRAY, LIGHTBLUE
 from sqlalchemy.exc import IntegrityError
 
 # Inicialización de pygame
@@ -20,12 +17,13 @@ class Su_Textbox():
         self.color = LIGHTGRAY
 
 # Definición de la clase que es toda la ventana
-class Sign_up():
+class SignUp():
 
     # Función constructora
-    def __init__(self, size):
+    def __init__(self, size, dm):
         self.size_sign_up = size
         self.init_stats()
+        self.dm = dm
 
     # Función que setea las variables inciales
     def init_stats(self):
@@ -163,7 +161,7 @@ class Sign_up():
             if len(self.password.text) > 6: 
                 if self.password.text == self.re_password.text:
                     if len(self.username.text) > 0:
-                        e.insert_sign_up(self.username.text, self.password.text)
+                        self.dm.insert_sign_up(self.username.text, self.password.text)
                         self.new_user_created += 1
                         self.new_user_created_text += 1
                         self.username.text = ""
@@ -192,7 +190,7 @@ class Sign_up():
             self.pass_no_match = False
             self.user_no_min = False
             self.user_error = True
-            c.session.rollback()
+            self.dm.cn.session.rollback()
         
     # Mecánicas del taburador
     def tab_mechanics(self):

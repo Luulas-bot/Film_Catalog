@@ -1,12 +1,10 @@
 # Imports
 import pygame
 import sys
-from Constants.Constants import (
-    LIGHTBLUE, size_login, WHITE, clock, fps, BLUE, GRAY, LIGHTGRAY, size_sign_up, size_main_menu
-)
-from Windows.Sign_up import Sign_up
-from Windows.main_menu import Main_menu
-from DataBase.Database_Connection import c, e
+from Constants.constants import LIGHTBLUE, size_login, WHITE, clock, fps, BLUE, GRAY, LIGHTGRAY, size_sign_up, size_main_menu
+from SmallWindows import SignUp
+from MainWindow import MainMenu
+from Database_manager import dm
 
 # Inicialización de pygame
 pygame.init()
@@ -14,9 +12,10 @@ pygame.init()
 # Clase de la pantalla de Login
 class Login():
     
-    def __init__(self, size):
+    def __init__(self, size, dm):
         self.size = size
-    
+        self.dm = dm
+
     # Función que corre la pantalla del login
     def run_login(self):
         self.done = True
@@ -45,6 +44,8 @@ class Login():
     # Función que determina las variables iniciales
     def init_stats(self):
         
+        self.su = SignUp(size_sign_up, self.dm)
+
         pygame.display.quit()
         self.screen = pygame.display.set_mode(self.size)
         pygame.display.set_caption("Login")
@@ -104,7 +105,7 @@ class Login():
         self.screen.blit(text_surface2, (107, 338))
 
         # Se dibuja por pantalla que se ha creado un nuevo usuario
-        if su.new_user_created_text >= 1:
+        if self.su.new_user_created_text >= 1:
             if self.sign_up_corr_bol:
                 self.screen.blit(self.sign_up_corr, (50, 410))
         
@@ -122,8 +123,8 @@ class Login():
                         self.hidden_password = self.hidden_password[:-1]
                     if self.user_textbox_active:
                         self.username_text = self.username_text[:-1]
-                    e.select_login(self.username_text, self.password_text)
-                    if str(self.username_text) == str(e.user_sl[0]):
+                    self.dm.select_login(self.username_text, self.password_text)
+                    if str(self.username_text) == str(self.dm.user_sl[0]):
                         self.done = False
                         return self.run_main_menu()
         except IndexError:
@@ -193,12 +194,11 @@ class Login():
     def run_main_menu(self):
         bol_main_menu = True   
 
-        m = Main_menu(size_main_menu)
-        for i in [self.font1, self.font2, self.font3, self.font4, self.text_box_font1, self.text_box_font2]:
-            del i    
+        self.mm = MainMenu(size_main_menu, self.dm)
+
         while bol_main_menu:
-            m.events()
-            m.draw_on_screen()
+            self.mm.events()
+            self.mm.draw_on_screen()
             
             pygame.display.flip()
             clock.tick(fps)
@@ -208,46 +208,38 @@ class Login():
     def run_sign_up(self):
         bol_sign_up = True   
 
-        su = Sign_up(size_sign_up)
-        for i in [self.font1, self.font2, self.font3, self.font4, self.text_box_font1, self.text_box_font2]:
-            del i    
+        self.su = SignUp(size_sign_up, self.dm)
 
         while bol_sign_up:
-            su.events()
-            su.draw_on_screen() 
+            self.su.events()
+            self.su.draw_on_screen() 
 
             # Condición para la creación de una nueva ventana de Login luego el Sign Up
-            if su.new_user_created >= 1:
-                su.new_user_created -= 1
+            if self.su.new_user_created >= 1:
+                self.su.new_user_created -= 1
                 lg.sign_up_corr_bol = True
                 lg.wrong_user = False
                 lg.username_text = ""
                 lg.password_text = ""
                 lg.hidden_password = ""
                 lg.run_login()
-                for i in [su.font1, su.font2, su.font4, su.font5, su.font6, su.text_box_font2, su.text_box_font1]:
-                    del i
                 break
             
             # Condición para retornar al menú de login
-            if su.escape == 1:
-                su.escape -= 1
+            if self.su.escape == 1:
+                self.su.escape -= 1
                 lg.username_text = ""
                 lg.password_text = ""
                 lg.hidden_password = ""
                 lg.sign_up_corr_bol = False
                 lg.wrong_user = False
                 lg.run_login()
-                for i in [su.font1, su.font2, su.font4, su.font5, su.font6, su.text_box_font2, su.text_box_font1]:
-                    del i
                 break
 
             pygame.display.flip()
             clock.tick(fps)
 
-su = Sign_up(size_sign_up)
-
-lg = Login(size_login)
+lg = Login(size_login, dm)
 lg.run_login()
 
 pygame.quit()
