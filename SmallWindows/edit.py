@@ -4,6 +4,7 @@ import sys
 from Constants.constants import GRAY, BLUE, WHITE, LIGHTGRAY, LIGHTBLUE
 from Classes import EditTexts, EditDescription, EditButtons
 from sqlalchemy.exc import DataError
+from Database_manager import dm
 
 # Inicialización de pygame
 pygame.init()
@@ -15,10 +16,11 @@ class Edit():
     def __init__(self, size, dm):
         self.size = size
         self.init_stats()
-        self.dm = dm
 
     # Inicializa las stats inciales
     def init_stats(self):
+        self.dm = dm
+        
         pygame.display.quit()
         self.screen = pygame.display.set_mode(self.size)
         pygame.display.set_caption("Edit")
@@ -277,14 +279,14 @@ class Edit():
                         self.description_list[self.index].text = self.description_list[self.index].text[:-1] 
                     for i in EditDescription.description_list_temp:
                         self.description_list_text.append(i.text)
-                    self.dmupdate_name = self.name_text.text
-                    self.dmupdate_date = self.date_text.text
-                    self.dmupdate_countryid = self.country_text.text
-                    self.dmupdate_genre_id = self.genre_text.text
-                    self.dmupdate_description = " ".join(self.description_list_text)
-                    self.dmupdate_rating = self.rating.text
+                    self.dm.update_name = self.name_text.text
+                    self.dm.update_date = self.date_text.text
+                    self.dm.update_countryid = self.country_text.text
+                    self.dm.update_genre_id = self.genre_text.text
+                    self.dm.update_description = " ".join(self.description_list_text)
+                    self.dm.update_rating = self.rating.text
                     self.description_list_text.clear()
-                    self.dmupdate_changes()
+                    self.dm.update_changes()
                     EditTexts.texts_list_temp.clear()
                     EditDescription.description_list_temp.clear()
                     self.escape += 1
@@ -303,15 +305,15 @@ class Edit():
     # Llama a la función correspondiente para seleccionar los datos determinados de la db, dependiendo que botón se apretó
     def edit_buttons_SQL(self):
         if self.delete_button.state == True:
-            self.dmdelete_movies()
+            self.dm.delete_movies()
             self.escape += 1
         elif self.to_watch_button.state == True:
-            self.dmassign_filter('already_seen', 'to_watch')
+            self.dm.assign_filter('already_seen', 'to_watch')
         elif self.already_seen_button.state == True:
-            self.dmassign_filter('to_watch', 'already_seen')
+            self.dm.assign_filter('to_watch', 'already_seen')
         elif self.top_button.state == True:
-            self.dmassign_filter('worst', 'top_button')
+            self.dm.assign_filter('worst', 'top_button')
         elif self.worst_button.state == True:
-            self.dmassign_filter('top_button', 'worst')
+            self.dm.assign_filter('top_button', 'worst')
 
 pygame.quit()

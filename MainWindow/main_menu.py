@@ -4,6 +4,7 @@ import sys
 from Constants.constants import WHITE, BLUE, GRAY, LIGHTGRAY, clock, fps, size_edit, size_new_movie, size_edit
 from Classes import Buttons, GenreButtons, Movies
 from SmallWindows import Edit, NewMovie
+from Database_manager import dm
 
 # Inicialización de pygame
 pygame.init()
@@ -12,10 +13,9 @@ pygame.init()
 class MainMenu():
 
     # Función constructora
-    def __init__(self, size, dm):
+    def __init__(self, size):
         self.size = size
         self.init_stats()
-        self.dm = dm
 
     # Función alterna para correr el main_menu
     def run_main_menu(self):
@@ -33,6 +33,8 @@ class MainMenu():
     # Función que determina las variables iniciales
     def init_stats(self):
 
+        self.dm = dm
+
         pygame.display.quit()
         self.screen = pygame.display.set_mode(self.size)
         pygame.display.set_caption("Sign Up")
@@ -46,6 +48,8 @@ class MainMenu():
         self.country_text = ""
         self.country_textbox_active = False
         self.country_textbox = pygame.Rect(200, 625, 300, 50)
+
+        Buttons.buttons_list_temp.clear()
 
         # Botones
         self.all_button = Buttons("Images/all_button.png", "Images/all_pressed_button.png", (0, 0, 200, 100), (0, 0))
@@ -63,6 +67,8 @@ class MainMenu():
 
         for i in Buttons.buttons_list_temp:
             self.button_list.append(i)
+
+        GenreButtons.genre_buttons_list_temp.clear()
 
         # Botónes de género
         self.action_button = GenreButtons("Images/action_button.png", "Images/action_pressed_button.png", (200, 70, 120, 60), (200, 70))
@@ -134,7 +140,6 @@ class MainMenu():
         self.screen.fill(GRAY)
 
         self.draw_buttons()
-        self.draw_genre_buttons()
 
         for i in self.movies_list:
             self.screen.blit(i.image, (i.rect))
@@ -144,6 +149,8 @@ class MainMenu():
         self.screen.blit(self.arrow_right, (1050, 380))
 
         self.blit_movies()
+
+        self.draw_genre_buttons()
                 
         if self.arrow_left_bol:
             self.screen.blit(self.arrow_left, (220, 380))
@@ -331,22 +338,22 @@ class MainMenu():
         self.movies_list.clear()
         Movies.movies_list_temp.clear()
         if self.index < len(self.dm.movies_display_name):    
-            self.movie = Movies("Images/movies_rect.png", (290, 120), (300, 130), (300, 230), self.dm.movies_display_name[self.index], self.dmmovies_display_genre_name[self.index])
+            self.movie = Movies("Images/movies_rect.png", (290, 120), (300, 130), (300, 230), self.dm.movies_display_name[self.index], self.dm.movies_display_genre_name[self.index])
         self.index += 1
-        if self.index < len(self.dmmovies_display_name):  
-            self.movie2 = Movies("Images/movies_rect.png", (540, 120), (550, 130), (550, 230), self.dmmovies_display_name[self.index], self.dmmovies_display_genre_name[self.index])
+        if self.index < len(self.dm.movies_display_name):  
+            self.movie2 = Movies("Images/movies_rect.png", (540, 120), (550, 130), (550, 230), self.dm.movies_display_name[self.index], self.dm.movies_display_genre_name[self.index])
         self.index += 1
-        if self.index < len(self.dmmovies_display_name):  
-            self.movie3 = Movies("Images/movies_rect.png", (800, 120), (810, 130), (810, 230), self.dmmovies_display_name[self.index], self.dmmovies_display_genre_name[self.index])
+        if self.index < len(self.dm.movies_display_name):  
+            self.movie3 = Movies("Images/movies_rect.png", (800, 120), (810, 130), (810, 230), self.dm.movies_display_name[self.index], self.dm.movies_display_genre_name[self.index])
         self.index += 1
-        if self.index < len(self.dmmovies_display_name):  
-            self.movie4 = Movies("Images/movies_rect.png", (290, 450), (300, 460), (300, 560), self.dmmovies_display_name[self.index], self.dmmovies_display_genre_name[self.index])
+        if self.index < len(self.dm.movies_display_name):  
+            self.movie4 = Movies("Images/movies_rect.png", (290, 450), (300, 460), (300, 560), self.dm.movies_display_name[self.index], self.dm.movies_display_genre_name[self.index])
         self.index += 1
-        if self.index < len(self.dmmovies_display_name):  
-            self.movie5 = Movies("Images/movies_rect.png", (540, 450), (550, 460), (550, 560), self.dmmovies_display_name[self.index], self.dmmovies_display_genre_name[self.index])
+        if self.index < len(self.dm.movies_display_name):  
+            self.movie5 = Movies("Images/movies_rect.png", (540, 450), (550, 460), (550, 560), self.dm.movies_display_name[self.index], self.dm.movies_display_genre_name[self.index])
         self.index += 1
-        if self.index < len(self.dmmovies_display_name):  
-            self.movie6 = Movies("Images/movies_rect.png", (800, 450), (810, 460), (810, 560), self.dmmovies_display_name[self.index], self.dmmovies_display_genre_name[self.index])
+        if self.index < len(self.dm.movies_display_name):  
+            self.movie6 = Movies("Images/movies_rect.png", (800, 450), (810, 460), (810, 560), self.dm.movies_display_name[self.index], self.dm.movies_display_genre_name[self.index])
         else:
             pass
 
@@ -368,8 +375,8 @@ class MainMenu():
         for i in self.movies_list:
             if self.event.type == pygame.MOUSEBUTTONDOWN:    
                 if i.rect.collidepoint(self.mx, self.my):
-                    self.dmmovie_name_search = i.movie_name
-                    self.dmselect_edit_data()
+                    self.dm.movie_name_search = i.movie_name
+                    self.dm.select_edit_data()
                     self.run_edit_movie()
                     del self.text_box_font
                     del self.font1
@@ -378,7 +385,7 @@ class MainMenu():
     # Corre el menú para crear una nueva película
     def run_add_new_movie(self):
 
-        self.nm = NewMovie(size_new_movie, self.dm)
+        self.nm = NewMovie(size_new_movie, dm)
 
         while True:
             self.nm.events()
@@ -394,7 +401,7 @@ class MainMenu():
     # Función que corre la edit window
     def run_edit_movie(self):
 
-        self.ed = Edit(size_edit, self.dm)
+        self.ed = Edit(size_edit, dm)
 
         while True:
             self.ed.events()

@@ -4,7 +4,6 @@ import sys
 from Constants.constants import GRAY, WHITE, LIGHTGRAY, BLUE, LIGHTBLUE, GOLD
 from Classes import NmText, NmDescription
 from sqlalchemy.exc import IntegrityError
-from Database_manager import dm
 
 # Inicialización de pygame
 pygame.init()
@@ -13,7 +12,7 @@ pygame.init()
 class NewMovie():
      
     # Función constructora
-    def __init__(self, size):
+    def __init__(self, size, dm):
          self.size = size
          self.init_stats()
          self.dm = dm

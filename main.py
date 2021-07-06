@@ -194,7 +194,7 @@ class Login():
     def run_main_menu(self):
         bol_main_menu = True   
 
-        self.mm = MainMenu(size_main_menu, self.dm)
+        self.mm = MainMenu(size_main_menu)
 
         while bol_main_menu:
             self.mm.events()
@@ -208,7 +208,7 @@ class Login():
     def run_sign_up(self):
         bol_sign_up = True   
 
-        self.su = SignUp(size_sign_up, self.dm)
+        self.su = SignUp(size_sign_up, dm)
 
         while bol_sign_up:
             self.su.events()

@@ -132,7 +132,7 @@ class DbManager():
         self.movie_id_edit = self.cn.session.query(MovieUser.movie_id).filter(
             MovieUser.user_id == self.user_id_edit[0]
         ).all()
-        
+
         # Toma el id en específico de la película que se seleccionó
         for id in self.movie_id_edit:
             self.movie_id_temp.append(self.cn.session.query(MovieDb.id).filter(
@@ -140,7 +140,7 @@ class DbManager():
             ).filter(
                 MovieDb.id == id[0]
             ).first())
-        
+
         # Limpia la lista para quedarse solo con el id en específico
         for i in self.movie_id_temp:
             if i != None:
@@ -298,6 +298,7 @@ class DbManager():
 
     # Filtra por genero la busqueda
     def genre_filter(self, genre):
+        
         self.get_genre_id = []
         self.genre_name_filter_temp = []
         self.name_filter_temp = []
