@@ -13,13 +13,13 @@ pygame.init()
 class Edit():
 
     # Función constructora
-    def __init__(self, size, dm):
+    def __init__(self, size, db_manager):
         self.size = size
         self.init_stats()
+        self.dm = db_manager
 
     # Inicializa las stats inciales
     def init_stats(self):
-        self.dm = dm
         
         pygame.display.quit()
         self.screen = pygame.display.set_mode(self.size)
@@ -62,21 +62,21 @@ class Edit():
         self.description_text15 = EditDescription((55, 534), f"{self.dm.movie_description_edit[854:915]}", (50, 275, 500, 275), (50, 200))
 
         # Variable única que define si la description_tx está o no apretada
-        self.description_state = False
+        self.desc_state = False
 
         # Listas de los textos y textboxes
         self.texts_list = []
-        self.description_list = []
-        self.description_list_text = []
+        self.desc_list = []
+        self.desc_list_text = []
 
         for i in EditDescription.description_list_temp:
-            self.description_list.append(i)
+            self.desc_list.append(i)
 
         for i in EditTexts.texts_list_temp:
             self.texts_list.append(i)
 
         # Índice principal para indexar los reglones de la descripción
-        self.index = 0
+        self.desc_index = 0
 
         # Tick
         self.tick_rect = pygame.Rect(550, 550, 30, 30)
@@ -85,7 +85,7 @@ class Edit():
         # Lista de todos los botónes de la ventana
         self.edit_buttons_list = []
 
-        # Buttons
+        # Botones
         self.delete_button = EditButtons((30, 650, 100, 30), "DELETE", (57, 658))
         self.to_watch_button = EditButtons((140, 650, 100, 30), "TO WATCH", (156, 658))
         self.already_seen_button = EditButtons((250, 650, 100, 30), "ALREADY SEEN", (252, 658))
@@ -105,7 +105,7 @@ class Edit():
             self.mx, self.my = pygame.mouse.get_pos()
 
             self.get_tx_state()
-            self.write_user_mecs()
+            self.write_user_mechanics()
             self.tab_mechanics()
             self.enter_mechanics()
             self.esc_mechanics()
@@ -127,6 +127,12 @@ class Edit():
 
         self.change_tx_color()
 
+        # Dibuja las textboxes con su color por pantalla
+        for tx in self.texts_list:
+            pygame.draw.rect(self.screen, tx.color, tx.tx_rect, 0, 5)
+        
+        pygame.draw.rect(self.screen, self.color_movie_description_tx, self.description_text.tx_rect, 0, 5)
+
         # Bliteo del texto que escribe el usuario por pantalla
         for t in self.texts_list:
             self.text_surface = self.font2.render(t.text, True, BLUE)
@@ -147,7 +153,7 @@ class Edit():
         for tx in self.texts_list:
             tx.change_color()
 
-        if self.description_state == True:
+        if self.desc_state == True:
             self.color_movie_description_tx = WHITE
         else:
             self.color_movie_description_tx = LIGHTGRAY
@@ -155,12 +161,6 @@ class Edit():
         # Esta parte de abajo cambia el color de los botones, no de las textboxes
         for b in self.edit_buttons_list:
             b.change_color()
-
-        # Dibuja las textboxes con su color por pantalla
-        for tx in self.texts_list:
-            pygame.draw.rect(self.screen, tx.color, tx.tx_rect, 0, 5)
-        
-        pygame.draw.rect(self.screen, self.color_movie_description_tx, self.description_text.tx_rect, 0, 5)
 
     # Define si están activas o no las textboxes
     def get_tx_state(self):
@@ -172,9 +172,9 @@ class Edit():
                     tx.state = False
 
                 if self.description_text.tx_rect.collidepoint(self.mx, self.my):
-                    self.description_state = True
+                    self.desc_state = True
                 else:
-                    self.description_state = False
+                    self.desc_state = False
 
     # Mecánicas del escape
     def esc_mechanics(self):
@@ -192,12 +192,12 @@ class Edit():
                     if t.state and len(t.text) != 0:
                         t.text = t.text[:-1]
                         
-                    if self.description_state and len(self.description_list[self.index].text) != 0 and self.index < 14:
-                        self.index += 1
-                        self.description_list[self.index - 1].text = self.description_list[self.index - 1].text[:-1]
+                    if self.desc_state and len(self.desc_list[self.desc_index].text) != 0 and self.desc_index < 14:
+                        self.desc_index += 1
+                        self.desc_list[self.desc_index - 1].text = self.desc_list[self.desc_index - 1].text[:-1]
 
     # Mecánicas para registrar lo que escribe el usuario
-    def write_user_mecs(self):
+    def write_user_mechanics(self):
         if self.event.type == pygame.KEYDOWN:
             for b in self.texts_list[:2]:
                 if self.event.key == pygame.K_BACKSPACE and b.state:
@@ -237,10 +237,10 @@ class Edit():
                     if len(self.genre_text.text) != 3:    
                         self.texts_list[3].text = self.texts_list[3].text[:-1]
                     self.genre_text.state = False
-                    self.description_state = True
-                elif self.description_state:
-                    self.description_list[self.index].text = self.description_list[self.index].text[:-1]
-                    self.description_state = False
+                    self.desc_state = True
+                elif self.desc_state:
+                    self.desc_list[self.desc_index].text = self.desc_list[self.desc_index].text[:-1]
+                    self.desc_state = False
                     self.rating.state = True
                 elif self.rating.state:   
                     self.rating.text = self.rating.text[:-1]
@@ -249,20 +249,20 @@ class Edit():
 
     # Mecánicas de la inserción del texto del usuario en la descripción
     def description_mechanics(self):
-        if self.event.key == pygame.K_BACKSPACE and self.description_state:
-            self.description_list[self.index].text = self.description_list[self.index].text[:-1]
-            if self.index < 14 and len(self.description_list[self.index].text) == 0 and self.index != 0:
-                self.index -= 1
-        elif self.description_state and len(self.description_list[self.index].text) < 61:
-            self.description_list[self.index].text += self.event.unicode
-        elif len(self.description_list[self.index].text) > 59 and self.index < 14 and self.description_state:
-            self.description_list[self.index].state = True
-            self.description_list[self.index - 1].state = False
-            self.index += 1
+        if self.event.key == pygame.K_BACKSPACE and self.desc_state:
+            self.desc_list[self.desc_index].text = self.desc_list[self.desc_index].text[:-1]
+            if self.desc_index < 14 and len(self.desc_list[self.desc_index].text) == 0 and self.desc_index != 0:
+                self.desc_index -= 1
+        elif self.desc_state and len(self.desc_list[self.desc_index].text) < 61:
+            self.desc_list[self.desc_index].text += self.event.unicode
+        elif len(self.desc_list[self.desc_index].text) > 59 and self.desc_index < 14 and self.desc_state:
+            self.desc_list[self.desc_index].state = True
+            self.desc_list[self.desc_index - 1].state = False
+            self.desc_index += 1
         
     # Muestra las líneas de la descripción por pantalla
     def description_display(self): 
-        for i in self.description_list:   
+        for i in self.desc_list:   
             self.surface = self.font2.render(i.text, True, (47, 86, 233))
             self.screen.blit(self.surface, (i.blit_coords))
 
@@ -274,18 +274,19 @@ class Edit():
                     for t in self.texts_list:
                         if t.state:
                             t.text = t.text[:-1]
-                        
-                    if self.description_state:
-                        self.description_list[self.index].text = self.description_list[self.index].text[:-1] 
+
+                    # Se updatean los datos en la base de datos    
+                    if self.desc_state:
+                        self.desc_list[self.desc_index].text = self.desc_list[self.desc_index].text[:-1] 
                     for i in EditDescription.description_list_temp:
-                        self.description_list_text.append(i.text)
+                        self.desc_list_text.append(i.text)
                     self.dm.update_name = self.name_text.text
                     self.dm.update_date = self.date_text.text
                     self.dm.update_countryid = self.country_text.text
                     self.dm.update_genre_id = self.genre_text.text
-                    self.dm.update_description = " ".join(self.description_list_text)
+                    self.dm.update_description = " ".join(self.desc_list_text)
                     self.dm.update_rating = self.rating.text
-                    self.description_list_text.clear()
+                    self.desc_list_text.clear()
                     self.dm.update_changes()
                     EditTexts.texts_list_temp.clear()
                     EditDescription.description_list_temp.clear()

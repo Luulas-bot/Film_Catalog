@@ -33,6 +33,7 @@ class MainMenu():
     # Función que determina las variables iniciales
     def init_stats(self):
 
+        # Se define dentro de la clase la variable del "db_manager"
         self.dm = dm
 
         pygame.display.quit()
@@ -46,8 +47,8 @@ class MainMenu():
         self.text_box_font = pygame.font.SysFont("consolas", 20)
         self.font1 = pygame.font.SysFont("consolas", 22)
         self.country_text = ""
-        self.country_textbox_active = False
-        self.country_textbox = pygame.Rect(200, 625, 300, 50)
+        self.country_textbox_bol = False
+        self.country_textbox_rect = pygame.Rect(200, 625, 300, 50)
 
         Buttons.buttons_list_temp.clear()
 
@@ -65,6 +66,7 @@ class MainMenu():
         # Lista de los botónes de filtro general
         self.button_list = []
 
+        # Se añaden todos los botónes a una lista
         for i in Buttons.buttons_list_temp:
             self.button_list.append(i)
 
@@ -86,6 +88,7 @@ class MainMenu():
         # Lista de los botónes de género
         self.genre_button_list = []
 
+        # Se añaden los botones de género a una lista
         for i in GenreButtons.genre_buttons_list_temp:
             self.genre_button_list.append(i)
 
@@ -93,21 +96,21 @@ class MainMenu():
         self.genre_abr_list = ['ACC', 'CFT', 'COM', 'DRA', 'FAN', 'MEL', 'MUS', 'ROM', 'SUS', 'TER', 'DOC']
 
         # Boleano para saber si los botones de los géneros están presionados o no
-        self.all_genre_buttons_active = False
+        self.all_genre_buttons_bol = False
 
         # Variable que se usa para recorrer la lista de películas
-        self.index = 0
+        self.movie_index = 0
         
         self.dm.select_movies_to_display()
 
-        # Flecha para cambiar de página
+        # Flechas para cambiar de página
         self.arrow_right = pygame.image.load("Images/arrow_right.png")
         self.arrow_right_rect = pygame.Rect(1050, 380, 40, 40)
         self.arrow_left = pygame.image.load("Images/arrow_left.png")
         self.arrow_left_rect = pygame.Rect(220, 380, 40, 40)
         self.arrow_left_bol = False
 
-        # Lista de las películas en fomr ade sprites
+        # Lista de las películas
         self.movies_list = []
 
         self.init_movies()
@@ -121,19 +124,19 @@ class MainMenu():
             # Obtiene la posición del mouse
             self.mx, self.my = pygame.mouse.get_pos()
             
-            self.get_main_button_press()
+            self.get_all_button_press()
             self.get_add_button_press()
-            self.get_all_buttons_press()
+            self.get_every_button_press()
             self.country_textbox_mechanics()
             self.get_genre_button_press()
-            self.exit_button_mecs()
-            self.get_arrow_right()
-            self.display_arrow_left()
+            self.exit_button_mechanics()
+            self.arrow_right_mechanics()
+            self.arrow_left_mechanics()
             self.get_movies_press()
 
             # Registra si el genre_button está activo o no y descativa los botones de los géneros
             if self.genre_button.state == False:
-                self.all_genre_buttons_active = False
+                self.all_genre_buttons_bol = False
 
     # Función que dibuja por pantalla los elementos
     def draw_on_screen(self):
@@ -141,19 +144,20 @@ class MainMenu():
 
         self.draw_buttons()
 
+        # Dibuja por pantalla las películas
         for i in self.movies_list:
             self.screen.blit(i.image, (i.rect))
 
         self.draw_country_text()
 
-        self.screen.blit(self.arrow_right, (1050, 380))
+        # Dibuja por pantalla las flechas
+        self.screen.blit(self.arrow_right, (1050, 380))      
+        if self.arrow_left_bol:
+            self.screen.blit(self.arrow_left, (220, 380))
 
         self.blit_movies()
 
         self.draw_genre_buttons()
-                
-        if self.arrow_left_bol:
-            self.screen.blit(self.arrow_left, (220, 380))
         
         # Se dibuja la pagina por pantalla
         self.text_pag = self.font1.render(f"Página {self.pag}", True, WHITE)
@@ -161,14 +165,14 @@ class MainMenu():
 
     # Crea una textbox para determinar el país que se usará como filtro
     def country_textbox_mechanics(self):    
-        if self.event.type == pygame.KEYDOWN and self.country_textbox_active:
+        if self.event.type == pygame.KEYDOWN and self.country_textbox_bol:
             if self.event.key == pygame.K_ESCAPE:
-                self.country_textbox_active = False
+                self.country_textbox_bol = False
                 self.country_text = ""
                 self.country_button.state = False
             elif self.event.key == pygame.K_RETURN:
-                self.country_textbox_active = False
-                self.index -= self.index
+                self.country_textbox_bol = False
+                self.movie_index -= self.movie_index
                 self.pag = 1
                 self.dm.country_text = self.country_text
                 self.dm.filter_country()
@@ -182,70 +186,58 @@ class MainMenu():
                 self.country_text += self.event.unicode
 
     # Registra el presionado de todos los botones y acciona ciertas funcionalidades en consecuencia
-    def get_all_buttons_press(self):
-        for button in self.button_list[1:-1]:    
+    def get_every_button_press(self):
+        for self.button in self.button_list[1:-1]:    
             if self.event.type == pygame.MOUSEBUTTONDOWN:
-                if button.rect.collidepoint(self.mx, self.my):
-                    if button != self.genre_button and self.genre_button.state:
+                if self.button.rect.collidepoint(self.mx, self.my):
+                    if self.button != self.genre_button and self.genre_button.state:
                         self.genre_button.state = False
-                    elif button != self.country_button and self.country_button.state:
+                    elif self.button != self.country_button and self.country_button.state:
                         self.country_button.state = False
-                    button.state = True
-                    if button.state:
-                        self.index -= self.index
+                    self.button.state = True
+                    if self.button.state:
+                        self.movie_index -= self.movie_index
                         self.pag = 1
-                        if button == self.to_watch_button:
+                        if self.button == self.to_watch_button:
                             self.dm.filter_movie(0)
-                        elif button == self.already_seen_button:
+                        elif self.button == self.already_seen_button:
                             self.dm.filter_movie(1)
-                        elif button == self.top_button:
+                        elif self.button == self.top_button:
                             self.dm.filter_movie(2)
-                        elif button == self.worst_button:
+                        elif self.button == self.worst_button:
                             self.dm.filter_movie(3)
                         self.init_movies()
             
-            # Registra cuando se levanta el presionado del mouse para poder volver los botones a la normalidad y incluye algunas excepciones
+            # Registra cuando se levanta el presionado del mouse para poder volver los botones a la normalidad e incluye algunas excepciones
             elif self.event.type == pygame.MOUSEBUTTONUP:
-                if button.rect.collidepoint(self.mx, self.my):
-                    if button == self.genre_button:
-                        button.state = False
+                if self.button.rect.collidepoint(self.mx, self.my):
+                    if self.button == self.genre_button:
+                        self.button.state = False
                         self.genre_button.state = True
-                        self.all_genre_buttons_active = True
+                        self.all_genre_buttons_bol = True
                         self.country_button.state = False
-                        self.country_textbox_active = False
-                    elif button == self.country_button:
-                        button.state = False
-                        self.all_genre_buttons_active = False
+                        self.country_textbox_bol = False
+                    elif self.button == self.country_button:
+                        self.button.state = False
+                        self.all_genre_buttons_bol = False
                         self.country_button.state = True
                     else:
-                        button.state = False
+                        self.button.state = False
                     
         # Condición para saber si la textbox tiene que ir activa o no
         if self.country_button.state == True:
-            self.country_textbox_active = True
+            self.country_textbox_bol = True
         else:
-            self.country_textbox_active = False
-
-        # Funcionamiento del botón "all", que es diferente al resto
-        if self.event.type == pygame.MOUSEBUTTONDOWN:
-            if self.all_button.rect.collidepoint(self.mx, self.my):
-                self.all_button.state = True
-                self.index -= self.index
-                self.dm.select_movies_to_display()
-                self.init_movies()
-        elif self.event.type == pygame.MOUSEBUTTONUP:
-            if self.all_button.rect.collidepoint(self.mx, self.my):
-                self.all_button.state = False
-
+            self.country_textbox_bol = False
 
     # Registra si algún botón de género es presionado   
     def get_genre_button_press(self):
         for button in self.genre_button_list:
-            if self.all_genre_buttons_active:
+            if self.all_genre_buttons_bol:
                 if self.event.type == pygame.MOUSEBUTTONDOWN:
                     if button.rect.collidepoint(self.mx, self.my):
                         button.state = True
-                        self.index -= self.index
+                        self.movie_index -= self.movie_index
                         self.pag = 1
                         self.list_index = self.genre_button_list.index(button)
                         self.dm.genre_filter(self.genre_abr_list[self.list_index])
@@ -254,22 +246,22 @@ class MainMenu():
                     if button.rect.collidepoint(self.mx, self.my):
                         button.state = False
                         self.genre_button.state = False
-                        self.all_genre_buttons_active = False
+                        self.all_genre_buttons_bol = False
 
-    # Registra si se presionó o no el all_button (en este caso llamado el main, para no confundir con la otra función)
-    def get_main_button_press(self):
+    # Registra si se presionó o no el all_button
+    def get_all_button_press(self):
         if self.event.type == pygame.MOUSEBUTTONDOWN:
             if self.all_button.rect.collidepoint(self.mx, self.my):
                 self.all_button.state = True
+                self.movie_index -= self.movie_index
+                self.dm.select_movies_to_display()
+                self.init_movies()
         elif self.event.type == pygame.MOUSEBUTTONUP:
             if self.all_button.rect.collidepoint(self.mx, self.my):
-                for button in self.button_list:
-                    button.state = False
-                    self.all_genre_buttons_active = False
-                    self.country_textbox_active = False
+                self.all_button.state = False
                 
     # Mecánicas del exit_button
-    def exit_button_mecs(self):
+    def exit_button_mechanics(self):
         if self.event.type == pygame.MOUSEBUTTONDOWN:
             if self.exit_button.rect.collidepoint(self.mx, self.my):
                 self.exit_button.state = True
@@ -287,8 +279,8 @@ class MainMenu():
             if self.add_button.rect.collidepoint(self.mx, self.my):
                 for button in self.button_list:
                     button.state = False
-                    self.all_genre_buttons_active = False
-                    self.country_textbox_active = False
+                    self.all_genre_buttons_bol = False
+                    self.country_textbox_bol = False
                 return self.run_add_new_movie()
 
     # Dibuja los botones por pantalla
@@ -302,7 +294,7 @@ class MainMenu():
     # Dibuja los botones de género por pantalla
     def draw_genre_buttons(self):
         for button in self.genre_button_list:
-            if self.all_genre_buttons_active:
+            if self.all_genre_buttons_bol:
                 if button.state == True:
                     self.screen.blit(button.pressed_button, button.coords)
                 else:
@@ -310,26 +302,28 @@ class MainMenu():
 
     # Dibuja el texto ingresado por el usuario en la textbox de los países
     def draw_country_text(self):
-        if self.country_textbox_active:
-            pygame.draw.rect(self.screen, WHITE, self.country_textbox, 0, 5)
+        if self.country_textbox_bol:
+            pygame.draw.rect(self.screen, WHITE, self.country_textbox_rect, 0, 5)
             text_surface = self.text_box_font.render(self.country_text, True, BLUE)
             self.screen.blit(text_surface, (207, 645))
 
-    def get_arrow_right(self):
+    # Mecánicas de la flecha de la derecha
+    def arrow_right_mechanics(self):
         if self.event.type == pygame.MOUSEBUTTONDOWN:
             if self.arrow_right_rect.collidepoint(self.mx, self.my):
-                self.index += 1
+                self.movie_index += 1
                 self.init_movies()
                 self.pag += 1
 
-    def display_arrow_left(self):
-        if self.index < 6:
+    # Mecánicas de la flecha de la izquierda
+    def arrow_left_mechanics(self):
+        if self.movie_index < 6:
             self.arrow_left_bol = False
-        elif self.index >= 6:
+        elif self.movie_index >= 6:
             self.arrow_left_bol = True
             if self.arrow_left_bol and self.event.type == pygame.MOUSEBUTTONDOWN:
                 if self.arrow_left_rect.collidepoint(self.mx, self.my):
-                    self.index -= 11
+                    self.movie_index -= 11
                     self.init_movies()
                     self.pag -= 1
     
@@ -337,23 +331,23 @@ class MainMenu():
     def init_movies(self):
         self.movies_list.clear()
         Movies.movies_list_temp.clear()
-        if self.index < len(self.dm.movies_display_name):    
-            self.movie = Movies("Images/movies_rect.png", (290, 120), (300, 130), (300, 230), self.dm.movies_display_name[self.index], self.dm.movies_display_genre_name[self.index])
-        self.index += 1
-        if self.index < len(self.dm.movies_display_name):  
-            self.movie2 = Movies("Images/movies_rect.png", (540, 120), (550, 130), (550, 230), self.dm.movies_display_name[self.index], self.dm.movies_display_genre_name[self.index])
-        self.index += 1
-        if self.index < len(self.dm.movies_display_name):  
-            self.movie3 = Movies("Images/movies_rect.png", (800, 120), (810, 130), (810, 230), self.dm.movies_display_name[self.index], self.dm.movies_display_genre_name[self.index])
-        self.index += 1
-        if self.index < len(self.dm.movies_display_name):  
-            self.movie4 = Movies("Images/movies_rect.png", (290, 450), (300, 460), (300, 560), self.dm.movies_display_name[self.index], self.dm.movies_display_genre_name[self.index])
-        self.index += 1
-        if self.index < len(self.dm.movies_display_name):  
-            self.movie5 = Movies("Images/movies_rect.png", (540, 450), (550, 460), (550, 560), self.dm.movies_display_name[self.index], self.dm.movies_display_genre_name[self.index])
-        self.index += 1
-        if self.index < len(self.dm.movies_display_name):  
-            self.movie6 = Movies("Images/movies_rect.png", (800, 450), (810, 460), (810, 560), self.dm.movies_display_name[self.index], self.dm.movies_display_genre_name[self.index])
+        if self.movie_index < len(self.dm.movies_display_name):    
+            self.movie = Movies("Images/movies_rect.png", (290, 120), (300, 130), (300, 230), self.dm.movies_display_name[self.movie_index], self.dm.movies_display_genre_name[self.movie_index])
+        self.movie_index += 1
+        if self.movie_index < len(self.dm.movies_display_name):  
+            self.movie2 = Movies("Images/movies_rect.png", (540, 120), (550, 130), (550, 230), self.dm.movies_display_name[self.movie_index], self.dm.movies_display_genre_name[self.movie_index])
+        self.movie_index += 1
+        if self.movie_index < len(self.dm.movies_display_name):  
+            self.movie3 = Movies("Images/movies_rect.png", (800, 120), (810, 130), (810, 230), self.dm.movies_display_name[self.movie_index], self.dm.movies_display_genre_name[self.movie_index])
+        self.movie_index += 1
+        if self.movie_index < len(self.dm.movies_display_name):  
+            self.movie4 = Movies("Images/movies_rect.png", (290, 450), (300, 460), (300, 560), self.dm.movies_display_name[self.movie_index], self.dm.movies_display_genre_name[self.movie_index])
+        self.movie_index += 1
+        if self.movie_index < len(self.dm.movies_display_name):  
+            self.movie5 = Movies("Images/movies_rect.png", (540, 450), (550, 460), (550, 560), self.dm.movies_display_name[self.movie_index], self.dm.movies_display_genre_name[self.movie_index])
+        self.movie_index += 1
+        if self.movie_index < len(self.dm.movies_display_name):  
+            self.movie6 = Movies("Images/movies_rect.png", (800, 450), (810, 460), (810, 560), self.dm.movies_display_name[self.movie_index], self.dm.movies_display_genre_name[self.movie_index])
         else:
             pass
 
@@ -378,8 +372,6 @@ class MainMenu():
                     self.dm.movie_name_search = i.movie_name
                     self.dm.select_edit_data()
                     self.run_edit_movie()
-                    del self.text_box_font
-                    del self.font1
                     break
 
     # Corre el menú para crear una nueva película

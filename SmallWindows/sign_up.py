@@ -8,7 +8,7 @@ from sqlalchemy.exc import IntegrityError
 pygame.init()
 
 # Creación de una clase que va a ser usada posteriormente para las textboxes
-class Su_Textbox():
+class SuTextbox():
 
     def __init__(self, text, rect):
         self.text = text
@@ -20,10 +20,10 @@ class Su_Textbox():
 class SignUp():
 
     # Función constructora
-    def __init__(self, size, dm):
+    def __init__(self, size, db_manager):
         self.size_sign_up = size
         self.init_stats()
-        self.dm = dm
+        self.dm = db_manager
 
     # Función que setea las variables inciales
     def init_stats(self):
@@ -44,33 +44,31 @@ class SignUp():
         self.password_title = self.font2.render("Contraseña", True, LIGHTBLUE)
         self.re_password_title = self.font4.render("Re-escriba la contraseña", True, LIGHTBLUE)
 
-        # Fuentes y textos del Sign Up correctamente con sus errores
+        # Fuentes y textos de los errores que pueden aparecer por pantalla
         self.font5 = pygame.font.SysFont("consolas", 20, bold = True)
         self.font6 = pygame.font.SysFont("consolas", 17, bold = True)
-        self.text1 = self.font5.render("Las contraseñas no concuerdan", True, LIGHTBLUE)
-        self.text2 = self.font6.render("La contraseña debe ser mayor a 6 carácteres", True, LIGHTBLUE)
-        self.text3 = self.font6.render("El campo 'Usuario' no puede estar en blanco", True, LIGHTBLUE)
-        self.text4 = self.font5.render("El nombre de usuario ya está ocupado", True, LIGHTBLUE)
+        self.error_output1 = self.font5.render("Las contraseñas no concuerdan", True, LIGHTBLUE)
+        self.error_output2 = self.font6.render("La contraseña debe ser mayor a 6 carácteres", True, LIGHTBLUE)
+        self.error_output3 = self.font6.render("El campo 'Usuario' no puede estar en blanco", True, LIGHTBLUE)
+        self.error_output4 = self.font5.render("El nombre de usuario ya está ocupado", True, LIGHTBLUE)
 
         # Boleanos de los errores
         self.pass_no_match = False
         self.pass_no_min = False
         self.user_no_min = False
+        self.user_error_duplicate = False
 
-        self.username = Su_Textbox("", (100, 170, 300, 50))
-        self.password = Su_Textbox("", (100, 270, 300, 50))
-        self.re_password = Su_Textbox("", (100, 370, 300, 50))
+        # Creación de las variables que manejan tanto la textbox como el texto dentro de ella
+        self.username = SuTextbox("", (100, 170, 300, 50))
+        self.password = SuTextbox("", (100, 270, 300, 50))
+        self.re_password = SuTextbox("", (100, 370, 300, 50))
 
         # Variables modificables del texto entrado por el usuario
         self.hidden_password = ""
         self.re_hidden_password = ""       
-        
-        # Boleanos para saber si salta determinado error
-        self.user_error = False
 
         # Variable que registra si se ha creado un usuario
         self.new_user_created = 0
-        self.new_user_created_text = 0
 
         # Variable que registra si se sale de la ventana o no
         self.escape = 0
@@ -91,7 +89,12 @@ class SignUp():
     def draw_on_screen(self):
         self.screen.fill(GRAY)
 
-        self.select_draw_color_textbox()
+        self.change_color_textbox()
+
+        # Se dibujan por pantalla las textboxes
+        pygame.draw.rect(self.screen, self.username.color, self.username.rect, 0, 5)
+        pygame.draw.rect(self.screen, self.password.color, self.password.rect, 0, 5)
+        pygame.draw.rect(self.screen, self.re_password.color, self.re_password.rect, 0, 5)
             
         # Se dibujan por pantalla los títulos y subtítulos
         self.screen.blit(self.new_user_title, (110, 30))
@@ -119,21 +122,19 @@ class SignUp():
             else:
                 self.password.state = False
 
-    # Condición que registra el enter
+    # Mecánicas del enter
     def enter_mechanics(self):
         if self.event.type == pygame.KEYDOWN:
             if self.event.key == pygame.K_RETURN:
                 if self.username.state:
-                    self.sign_up_data()
                     self.username.text = self.username.text[:-1]
                 if self.password.state:
-                    self.sign_up_data()
                     self.password.text = self.password.text[:-1]
                     self.hidden_password = self.hidden_password[:-1]
                 elif self.re_password.state:
                     self.re_password.text = self.re_password.text[:-1]
                     self.re_hidden_password = self.re_hidden_password[:-1]
-                    self.sign_up_data()
+                self.sign_up_data()
 
     # Escribe el teto ingresado por el usuario en una variable y maneja el bug del backspace
     def get_user_text(self):
@@ -163,33 +164,31 @@ class SignUp():
                     if len(self.username.text) > 0:
                         self.dm.insert_sign_up(self.username.text, self.password.text)
                         self.new_user_created += 1
-                        self.new_user_created_text += 1
                         self.username.text = ""
                         self.password.text = ""
                         self.hidden_password = ""
                         self.re_password.text = ""
-                        self.re_hidden_password = ""
-                            
+                        self.re_hidden_password = "" 
                     else:
                         self.user_no_min = True
                         self.pass_no_min = False
                         self.pass_no_match = False
-                        self.user_error = False
+                        self.user_error_duplicate = False
                 else:
                     self.pass_no_match = True
                     self.pass_no_min = False
                     self.user_no_min = False
-                    self.user_error = False
+                    self.user_error_duplicate = False
             else:
                 self.pass_no_min = True
                 self.pass_no_match = False
                 self.user_no_min = False
-                self.user_error = False
+                self.user_error_duplicate = False
         except IntegrityError:
             self.pass_no_min = False
             self.pass_no_match = False
             self.user_no_min = False
-            self.user_error = True
+            self.user_error_duplicate = True
             self.dm.cn.session.rollback()
         
     # Mecánicas del taburador
@@ -214,14 +213,14 @@ class SignUp():
                     self.username.state = True
                     self.re_password.state = False
 
-    # mecánicas del escape
+    # Mecánicas del escape
     def esc_mechanics(self):
         if self.event.type == pygame.KEYDOWN:
             if self.event.key == pygame.K_ESCAPE:
                 self.escape += 1
 
     # Cambio del color de las textboxes dependiendo si están presionadas o no y se las diubja
-    def select_draw_color_textbox(self):
+    def change_color_textbox(self):
         if self.username.state:
             self.username.color = WHITE
         else:
@@ -235,31 +234,27 @@ class SignUp():
         else:
             self.re_password.color = LIGHTGRAY
 
-        pygame.draw.rect(self.screen, self.username.color, self.username.rect, 0, 5)
-        pygame.draw.rect(self.screen, self.password.color, self.password.rect, 0, 5)
-        pygame.draw.rect(self.screen, self.re_password.color, self.re_password.rect, 0, 5)
-
     # Dibuja los errores por pantalla
     def draw_errors(self):
         if self.pass_no_match:
-            self.screen.blit(self.text1, (90, 450))
-        if self.pass_no_min:
-            self.screen.blit(self.text2, (60, 450))
-        if self.user_no_min:
-            self.screen.blit(self.text3, (60, 450))
-        if self.user_error:
-            self.screen.blit(self.text4, (60, 450))
+            self.screen.blit(self.error_output1, (90, 450))
+        elif self.pass_no_min:
+            self.screen.blit(self.error_output2, (60, 450))
+        elif self.user_no_min:
+            self.screen.blit(self.error_output3, (60, 450))
+        elif self.user_error_duplicate:
+            self.screen.blit(self.error_output4, (60, 450))
 
     # Se dibuja por pantalla las teclas que presiona el usuario
     def draw_user_text(self):
         if len(self.username.text) >= 1:    
-            text_surface1 = self.text_box_font1.render(self.username.text, True, BLUE)
-            self.screen.blit(text_surface1, (107, 188))
+            self.username_surface = self.text_box_font1.render(self.username.text, True, BLUE)
+            self.screen.blit(self.username_surface, (107, 188))
         if len(self.password.text) >= 1:    
-            text_surface2 = self.text_box_font2.render(self.hidden_password, True, BLUE)
-            self.screen.blit(text_surface2, (107, 293))
+            self.password_surface = self.text_box_font2.render(self.hidden_password, True, BLUE)
+            self.screen.blit(self.password_surface, (107, 293))
         if len(self.re_password.text) >= 1:    
-            text_surface3 = self.text_box_font1.render(self.re_hidden_password, True, BLUE)
-            self.screen.blit(text_surface3, (107, 393))
+            self.re_password_surface = self.text_box_font1.render(self.re_hidden_password, True, BLUE)
+            self.screen.blit(self.re_password_surface, (107, 393))
 
 pygame.quit()

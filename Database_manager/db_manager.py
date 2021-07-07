@@ -1,3 +1,4 @@
+# Imports
 from Database_models import Base, Connection, User, MovieUser, MovieDb, Genre, Country
 
 # Creación de la clase que contiene lo scripts para manejar la base de datos
@@ -20,10 +21,10 @@ class DbManager():
         self.country_text = ""
 
     # Inserción de los datos de un nuevo usuario creado a la tabla Usuario
-    def insert_sign_up(self, in_var1, in_var2):
-        self.in_var1 = in_var1
-        self.in_var2 = in_var2
-        self.user = User(username = f'{self.in_var1}', password = f'{self.in_var2}')
+    def insert_sign_up(self, username, password):
+        self.username = username
+        self.password = password
+        self.user = User(username = f'{self.username}', password = f'{self.password}')
 
         self.cn.session.add(self.user)
 
@@ -49,22 +50,27 @@ class DbManager():
         self.genre_movie = genre
         self.description_movie = description
 
+        # Inserta las peliculas en la variable
         self.movie = MovieDb(name = f'{self.name_movie}', movie_date = f'{self.date_movie}', country_id = f'{self.country_movie}',
         genre_id = f'{self.genre_movie}', description = f'{self.description_movie}')
         
+        # Añade la variable a la session y comitea
         self.cn.session.add(self.movie)
         self.cn.session.flush()
         self.cn.session.commit()
 
     # Función para insertar a la tabla 'Pelicula_Usuario' la película insertada recientemente y el usuario que la insertó
-    def insert_Pelicula_Usuario(self):
-
+    def insert_pelicula_usuario(self):
+        
+        # Selecciona todas las peliculas de la db
         self.movie_id = self.cn.session.query(MovieDb.id).all()
 
+        # Selecciona el id del usuario en uso
         self.selected_user_id = self.cn.session.query(User.id).filter(
             User.username == self.working_user
         ).first()
 
+        # Añade la ultíma película que se agregó a la table "Pelicula_Usuario" junto con su usuario correspondiente
         self.movie_user = MovieUser(movie_id = f'{self.movie_id[-1][0]}', user_id = f'{self.selected_user_id[0]}')
         
         self.cn.session.add(self.movie_user)
@@ -233,6 +239,7 @@ class DbManager():
             MovieUser.user_id == self.user_id_filter[0]
         ).all()
         
+        # Dependiendo el parámetro que se pasó, se aplica el filtro correspondiente
         if param == 0:
             self.filter_to_watch()
         elif param == 1:
@@ -268,6 +275,7 @@ class DbManager():
         for i in self.genre_name_filter_temp:
             self.movies_display_genre_name.append(i[0][0])
 
+    # Filtra las películas si están en modo "to_watch"
     def filter_to_watch(self):
         self.movie_id_filter_to_watch = self.cn.session.query(MovieDb.id).filter(
             MovieDb.to_watch == 1
@@ -275,6 +283,7 @@ class DbManager():
 
         self.movie_id_filter_def = set(self.movie_id_filter_temp).intersection(self.movie_id_filter_to_watch)
 
+    # Filtra las películas si están en modo "already_seen"
     def filter_already_seen(self):
         self.movie_id_filter_alreadyseen = self.cn.session.query(MovieDb.id).filter(
             MovieDb.already_seen == 1
@@ -282,6 +291,7 @@ class DbManager():
         
         self.movie_id_filter_def = set(self.movie_id_filter_temp).intersection(self.movie_id_filter_alreadyseen)
 
+    # Filtra las películas si están en modo "top"
     def filter_top(self):
         self.movie_id_filter_top = self.cn.session.query(MovieDb.id).filter(
             MovieDb.top_button == 1
@@ -289,6 +299,7 @@ class DbManager():
         
         self.movie_id_filter_def = set(self.movie_id_filter_temp).intersection(self.movie_id_filter_top)
 
+    # Filtra las películas si están en modo "worst"
     def filter_worst(self):
         self.movie_id_filter_worst = self.cn.session.query(MovieDb.id).filter(
             MovieDb.worst == 1
@@ -296,7 +307,7 @@ class DbManager():
         
         self.movie_id_filter_def = set(self.movie_id_filter_temp).intersection(self.movie_id_filter_worst)
 
-    # Filtra por genero la busqueda
+    # Filtra por género la busqueda
     def genre_filter(self, genre):
         
         self.get_genre_id = []
@@ -358,6 +369,7 @@ class DbManager():
         for i in self.genre_name_filter_temp:
             self.movies_display_genre_name.append(i[0][0])
         
+    # Filtra las películas por el país dado
     def filter_country(self):
         self.genre_id_def = []
         self.genre_name_filter_temp = []
@@ -375,10 +387,12 @@ class DbManager():
             MovieUser.user_id == self.user_id_filter[0]
         ).all()
 
+        # Obtiene el id de las películas que tengan el mismo "country_id" que el pasado como parámetro
         self.movie_id_country_filter = self.cn.session.query(MovieDb.id).filter(
             MovieDb.country_id == self.country_text
         ).all()
 
+        # Se queda con los duplicados
         self.movie_id_def = set(self.movie_id_filter_temp).intersection(self.movie_id_country_filter)
 
         # Cambia el id de género por el nombre del género
@@ -387,6 +401,7 @@ class DbManager():
                 MovieDb.id== i[0]
             ))
 
+        # Obtiene el nombre de género a partir de sus id
         for i in self.genre_id_def:
             self.genre_name_filter_temp.append(self.cn.session.query(Genre.name).filter(
                 Genre.id == i[0][0]
