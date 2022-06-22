@@ -16,7 +16,7 @@ Summarising, a catalog of your personal movies to solve the problem when someone
    The language the program is written on is `python`. The reason for that is because is a simple language and it has a great module called `SQL Alchemy` which is great to manage your `Database`.
    
 ### Can you download this program in you computer?
-   Unfortunatly, there is no way for me to distribute this program for anyone to use. The reason for that is mainly beacuse the program, as said previously, works with a `Database` that runs in my computer with the `SQL Server`. Which means that the program only works using my `SQL Server`. Big programs, proects or games that need a `Database`, get a server in which they can build one. That is not my case.
+   Unfortunatly, there is no way for me to distribute this program for anyone to use it. The reason for that is mainly beacuse the program, as said previously, works with a `Database` that runs in my computer with the `SQL Server`. Which means that the program only works using my `SQL Server`. Big programs, proects or games that need a `Database`, get a server in which they can build one. That is not my case.
 
 There is also the problem that i run the program from the sript. Even if i could create an `.exe` file, it would only work for `Windows`.
 
